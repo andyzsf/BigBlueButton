@@ -1,0 +1,90 @@
+Application {
+	themeColor: #000000;
+	backgroundGradientAlphas: 1, 1;  
+	backgroundGradientColors: #111111, #111111;/* top and bottom layers */
+	color: #d0d0d0; /* text color */
+}
+
+MDICanvas {
+	backgroundColor: #303030;
+}
+
+Button {
+	highlightAlphas: 0, 0;
+	fillAlphas: 1, 1, 1, 1;
+    /*fillColors: #000000, #666666, #000000, #999999;*/
+	fillColors: #555555, #555555, #999999, #999999;
+	color: #d0d0d0;
+	textRollOverColor: #d0d0d0;
+	themeColor: #000000;
+}
+
+.mypanelTitle {
+   color: #d0d0d0; /* windows title */
+}
+
+/* it will modify the microphone settings and the logout window */
+TitleWindow {
+	backgroundColor: #252525;
+	borderColor: #000000;
+}
+
+/* it will modify the listeners list and the chat messages area */
+List {
+	color: #cccccc;
+	backgroundColor: #444444;
+}
+
+.mdiWindowFocus {
+	backgroundColor: #000000;
+	borderColor: #252525;
+	titleStyleName: "mypanelTitle";
+}
+
+.mdiWindowNoFocus {
+	backgroundColor: #000000; 
+	borderColor: #252525;
+	titleStyleName: "mypanelTitle";
+	borderAlpha: 0.95;
+}
+
+/* this will affect the chat */
+TabNavigator {
+   horizontalAlign: left;
+   backgroundColor: #444444;
+   color: #cccccc;
+   dropShadowEnabled: false;
+   tabStyleName: "myTabs";
+   firstTabStyleName: "myTabs";
+   lastTabStyleName: "myTabs";
+   selectedTabTextStyleName: "mySelectedTabs";
+}
+
+.myTabs {
+   fillAlphas: 0.75, 0.65;
+   fillColors: #000000, #333333;
+   backgroundColor: #333333;
+   color: #cccccc;
+   textRollOverColor: #ffffff;
+   themeColor: #333333;
+
+}
+
+.mySelectedTabs {
+   color: #cccccc;
+   textRollOverColor: #ffffff;
+   textAlign: center;
+}
+
+/* it will affect the participants list */
+DataGrid {
+   backgroundColor: #000000;
+   alternatingItemColors: #505050, #606060;
+   headerColors: #333333, #000000;
+   rollOverColor: #cccccc;
+   textRollOverColor: #333333;
+   borderColor: #cccccc;
+   selectionColor: #999999;
+   color: #cccccc;
+   textSelectedColor: #000000;
+}
