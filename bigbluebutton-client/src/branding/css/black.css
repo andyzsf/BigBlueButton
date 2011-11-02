@@ -1,0 +1,55 @@
+Application {
+	themeColor: #000000;
+	backgroundGradientAlphas: 1, 1;  
+	backgroundGradientColors: #000000, #000000;/* top and bottom layers */
+	color: #000000; /* text color */
+}
+
+ApplicationControlBar {
+	borderStyle: none;
+}
+
+MDICanvas {
+	backgroundColor: #000000;
+}
+
+/*.mdiWindowBtnNone {
+	height: 0;
+	visible: false;
+	visibility: hidden;
+}*/
+
+/*.VideoDockWindowStyle {
+	borderColor: #FF0000;
+	height: 0;
+}*/
+
+.mdiWindowFocus {
+	borderStyle: none;
+	backgroundColor: #000000;
+	borderColor: #000000;
+    headerHeight: 0;
+/*   borderThicknessLeft: 0;
+   borderThicknessTop: 0;
+   borderThicknessBottom: 0;
+   borderThicknessRight: 0;*/
+/*	controlBarStyleName: mdiWindowBtnNone;
+	closeBtnStyleName: mdiWindowBtnNone;
+	minimizeBtnStyleName: mdiWindowBtnNone;
+	maximizeBtnStyleName: mdiWindowBtnNone;*/
+}
+
+.mdiWindowNoFocus {
+	borderStyle: none;
+	backgroundColor: #000000; 
+	borderColor: #000000;
+    headerHeight: 0;
+/*   borderThicknessLeft: 0;
+   borderThicknessTop: 0;
+   borderThicknessBottom: 0;
+   borderThicknessRight: 0;*/
+/*	controlBarStyleName: mdiWindowBtnNone;
+	closeBtnStyleName: mdiWindowBtnNone;
+	minimizeBtnStyleName: mdiWindowBtnNone;
+	maximizeBtnStyleName: mdiWindowBtnNone;*/
+}

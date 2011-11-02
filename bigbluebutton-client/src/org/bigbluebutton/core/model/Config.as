@@ -62,6 +62,8 @@ package org.bigbluebutton.core.model
 			a.showToolbar = ((config.layout.@showToolbar).toUpperCase() == "TRUE") ? true : false;
 			a.showLogoutWindow = ((config.layout.@showLogoutWindow).toUpperCase() == "TRUE") ? true : false;
 			a.showHelpButton = ((config.layout.@showHelpButton).toUpperCase() == "TRUE") ? true : false;
+			a.showTopToolbar = ((config.layout.@showTopToolbar).toUpperCase() == "TRUE") ? true : false;
+			a.showBottomToolbar = ((config.layout.@showBottomToolbar).toUpperCase() == "TRUE") ? true : false;
 			return a
 		}
 			

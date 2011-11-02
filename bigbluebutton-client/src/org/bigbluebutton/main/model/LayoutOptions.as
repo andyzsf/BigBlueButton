@@ -20,5 +20,11 @@ package org.bigbluebutton.main.model
 		[Bindable]
 		public var showLogoutWindow:Boolean = true;
 		
+		[Bindable]
+		public var showTopToolbar:Boolean = true;
+		
+		[Bindable]
+		public var showBottomToolbar:Boolean = true;
+		
 	}
 }
