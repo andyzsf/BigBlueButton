@@ -28,6 +28,7 @@ package org.bigbluebutton.main.model.users
 	import org.bigbluebutton.main.model.ConferenceParameters;
 	import org.bigbluebutton.main.model.users.events.ConnectionFailedEvent;
 	import org.bigbluebutton.main.model.users.events.UsersConnectionEvent;
+	import org.bigbluebutton.main.api.ConnAPI;
 		
 	public class NetConnectionDelegate
 	{
@@ -193,7 +194,9 @@ package org.bigbluebutton.main.model.users
 			switch (statusCode) {
 				case "NetConnection.Connect.Success":
 					LogUtil.debug(NAME + ":Connection to viewers application succeeded.");
-          
+          			
+          			ConnAPI.connected();
+					
 					startMonitoringBandwidth();
           
 					_netConnection.call(
@@ -214,6 +217,8 @@ package org.bigbluebutton.main.model.users
 							)//new Responder
 					); //_netConnection.call
 			
+					
+					
 					break;
 			
 				case "NetConnection.Connect.Failed":					
