@@ -221,7 +221,10 @@ package org.bigbluebutton.main.model.users
 					
 					break;
 			
-				case "NetConnection.Connect.Failed":					
+				case "NetConnection.Connect.Failed":	
+				
+					ConnAPI.connectFailed();
+									
 					if (tried_tunneling) {
 						LogUtil.debug(NAME + ":Connection to viewers application failed...even when tunneling");
 						sendConnectionFailedEvent(ConnectionFailedEvent.CONNECTION_FAILED);
@@ -235,7 +238,10 @@ package org.bigbluebutton.main.model.users
 					break;
 					
 				case "NetConnection.Connect.Closed":	
-					LogUtil.debug(NAME + ":Connection to viewers application closed");		
+					LogUtil.debug(NAME + ":Connection to viewers application closed");	
+					
+					ConnAPI.disconnected();
+						
 //          if (logoutOnUserCommand) {
             sendConnectionFailedEvent(ConnectionFailedEvent.CONNECTION_CLOSED);		
 //          } else {
