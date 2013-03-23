@@ -21,7 +21,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 -->
 
 <mx:Button xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:mate="http://mate.asfusion.com/"
-	icon="{phoneIcon}" click="callUsingWebRTC()"
+	icon="{phoneIcon}" click="startPhone()"
 	mouseOver = "mouseOverHandler(event)"
 	mouseOut = "mouseOutHandler(event)"
 	toolTip="{ResourceUtil.getInstance().getString('bbb.toolbar.phone.toolTip.start')}"
@@ -62,11 +62,22 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			[Bindable] public var phoneIcon:Class = images.headsetDefaultIcon;
 			
       private function callUsingWebRTC():void {
-        var callerName:String = UsersUtil.getMyExternalUserID() + "-" + UsersUtil.getMyUsername();
-        var confNum:String = UsersUtil.getVoiceBridge();
-        if (ExternalInterface.available) {
-          ExternalInterface.call("callThroughWebRTC", callerName, confNum);
-        }  
+        // Disable the button right away to prevent the user from clicking
+        // multiple times.
+        this.enabled = false;
+        
+        if (this.selected) {	
+          var callerName:String = UsersUtil.getMyExternalUserID() + "-" + UsersUtil.getMyUsername();
+          var confNum:String = UsersUtil.getVoiceBridge();
+          if (ExternalInterface.available) {
+            ExternalInterface.call("callThroughWebRTC", callerName, confNum);
+          }            
+        } else {
+          if (ExternalInterface.available) {
+            ExternalInterface.call("hangupCallThroughWebRTC");
+          }
+        }
+
       }
       
 			private function startPhone():void {
