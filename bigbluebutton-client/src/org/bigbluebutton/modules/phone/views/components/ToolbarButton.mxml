@@ -21,7 +21,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 -->
 
 <mx:Button xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:mate="http://mate.asfusion.com/"
-	icon="{phoneIcon}" click="startPhone()"
+	icon="{phoneIcon}" click="callUsingWebRTC()"
 	mouseOver = "mouseOverHandler(event)"
 	mouseOut = "mouseOutHandler(event)"
 	toolTip="{ResourceUtil.getInstance().getString('bbb.toolbar.phone.toolTip.start')}"
@@ -34,21 +34,22 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 
 	<mx:Script>
 		<![CDATA[
-			import com.asfusion.mate.events.Dispatcher;
-			
-			import flash.system.Security;
-			import flash.system.SecurityPanel;
-			
-			import org.bigbluebutton.common.LogUtil;
-			import org.bigbluebutton.core.BBB;
-			import org.bigbluebutton.main.events.BBBEvent;
-			import org.bigbluebutton.main.events.ShortcutEvent;
-			import org.bigbluebutton.main.views.MainToolbar;
-			import org.bigbluebutton.modules.phone.PhoneOptions;
-			import org.bigbluebutton.modules.phone.events.CallConnectedEvent;
-			import org.bigbluebutton.modules.phone.events.CallDisconnectedEvent;
-			import org.bigbluebutton.modules.phone.views.assets.Images;
-			import org.bigbluebutton.util.i18n.ResourceUtil;
+      import com.asfusion.mate.events.Dispatcher;
+      
+      import flash.system.Security;
+      import flash.system.SecurityPanel;
+      
+      import org.bigbluebutton.common.LogUtil;
+      import org.bigbluebutton.core.BBB;
+      import org.bigbluebutton.core.UsersUtil;
+      import org.bigbluebutton.main.events.BBBEvent;
+      import org.bigbluebutton.main.events.ShortcutEvent;
+      import org.bigbluebutton.main.views.MainToolbar;
+      import org.bigbluebutton.modules.phone.PhoneOptions;
+      import org.bigbluebutton.modules.phone.events.CallConnectedEvent;
+      import org.bigbluebutton.modules.phone.events.CallDisconnectedEvent;
+      import org.bigbluebutton.modules.phone.views.assets.Images;
+      import org.bigbluebutton.util.i18n.ResourceUtil;
 			
 			private var images:Images = new Images();
 			private var dispatcher:Dispatcher = new Dispatcher();
@@ -60,6 +61,14 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			
 			[Bindable] public var phoneIcon:Class = images.headsetDefaultIcon;
 			
+      private function callUsingWebRTC():void {
+        var callerName:String = UsersUtil.getMyExternalUserID() + "-" + UsersUtil.getMyUsername();
+        var confNum:String = UsersUtil.getVoiceBridge();
+        if (ExternalInterface.available) {
+          ExternalInterface.call("callThroughWebRTC", callerName, confNum);
+        }  
+      }
+      
 			private function startPhone():void {
 				// Disable the button right away to prevent the user from clicking
 				// multiple times.
