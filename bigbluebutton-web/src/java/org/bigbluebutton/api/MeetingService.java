@@ -41,7 +41,7 @@ public class MeetingService {
 	
 	private final ConcurrentMap<String, Meeting> meetings;	
 	private final ConcurrentMap<String, UserSession> sessions;
-	
+	private final ConcurrentMap<String, HashMap<String,String>> pins;
 	
 	private int defaultMeetingExpireDuration = 1;	
 	private int defaultMeetingCreateJoinDuration = 5;
@@ -53,7 +53,7 @@ public class MeetingService {
 	public MeetingService() {
 		meetings = new ConcurrentHashMap<String, Meeting>();	
 		sessions = new ConcurrentHashMap<String, UserSession>();
-		
+		pins = new ConcurrentHashMap<String, HashMap<String,String>>();
 	}
 	
 	public void addUserSession(String token, UserSession user) {
@@ -67,6 +67,31 @@ public class MeetingService {
 	public UserSession removeUserSession(String token) {
 		return sessions.remove(token);
 	}
+	
+	/*
+	 * Pin methods
+	 * */
+	public void addPinInfo(String pin, String externalUserID, String internalMeetingID){
+		HashMap<String,String> info = new HashMap<String, String>();
+		info.put("pinNumber", pin);
+		info.put("externalUserID", externalUserID);
+		info.put("internalMeetingID", internalMeetingID);
+		
+		pins.put(pin, info);
+	}
+	
+	public HashMap<String,String> getPinInfo(String pin){
+		return pins.get(pin);
+	}
+	
+	public HashMap<String,String> removePinInfo(String pin){
+		return pins.remove(pin);
+	}
+	
+	public boolean pinExists(String pin){
+		return pins.containsKey(pin);
+	}
+	
 		
 	/**
 	 * Remove the meetings that have ended from the list of

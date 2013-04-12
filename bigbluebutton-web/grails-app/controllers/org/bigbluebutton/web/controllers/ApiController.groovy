@@ -293,7 +293,13 @@ class ApiController {
 	String webVoice = StringUtils.isEmpty(params.webVoiceConf) ? meeting.getTelVoice() : params.webVoiceConf
 
     boolean redirectImm = parseBoolean(params.redirectImmediately)
-    
+	
+	//pin number by user
+	String personalPinNumber = StringUtils.isEmpty(params.pinNumber) ? paramsProcessorUtil.generatePinNumber() : params.pinNumber
+	while(meetingService.pinExists(personalPinNumber)){
+		personalPinNumber = meeting.generatePinNumber();
+	}
+	
 	String internalUserID = RandomStringUtils.randomAlphanumeric(12).toLowerCase()
 	
     String externUserID = params.userID
@@ -345,6 +351,7 @@ class ApiController {
     us.conference = meeting.getInternalId()
     us.room = meeting.getInternalId()
     us.voicebridge = meeting.getTelVoice()
+	us.pinNumber = personalPinNumber;
     us.webvoiceconf = meeting.getWebVoice()
     us.mode = "LIVE"
     us.record = meeting.isRecord()
@@ -369,6 +376,9 @@ class ApiController {
 	session['logout-url'] = us.logoutUrl
 	
 	meetingService.addUserSession(session['user-token'], us);
+	
+	//store pin number
+	meetingService.addPinInfo(personalPinNumber,externUserID,meeting.getInternalId());
 	
 	log.info("Session user token for " + us.fullname + " [" + session['user-token'] + "]")	
     session.setMaxInactiveInterval(SESSION_TIMEOUT);
@@ -932,6 +942,51 @@ class ApiController {
   }
   
   /***********************************************
+  * FS DIAL PLAN
+  ***********************************************/
+  def pinDialPlan = {
+	  println "Getting FS Dial Plan"
+	  
+	  if (StringUtils.isEmpty(params.pinNumber)) {
+		  invalid("pinNumber", "You did not pass a pinNumber")
+		  return
+	  }
+	  
+	  HashMap<String,String> info = meetingService.getPinInfo(params.pinNumber);
+	  if(info == null){
+		  invalid("pinNumber", "Pin Number doesn't exists!")
+		  return
+	  }
+	  
+	  response.addHeader("Cache-Control", "no-cache")
+	  withFormat {
+		xml {
+		  render(contentType:"text/xml") {
+			response() {
+			  document(type:"freeswitch/xml"){
+				section(name:"dialplan",description:"Put User into Conference"){
+					context(name:"bbb-in"){
+						extension(name:"bbb_valid_conf"){
+							condition(field:"destination_number",expression:info.get("pinNumber")){
+								action(application:"transfer",data:"bbb-"+info.get("internalMeetingID")+" XML public")
+							}
+						}
+						extension(name="join_conf"){
+							condition(field:"destination_number",expression:"bbb-"+info.get("internalMeetingID")){
+								action(application:"conference",data:info.get("internalMeetingID")+"@wideband")
+							}
+						}
+					}
+				}  
+			  }
+			}
+		  }
+		}
+	  }
+	  
+  }
+  
+  /***********************************************
    * ENTER API
    ***********************************************/
   def enter = {	    
@@ -991,6 +1046,7 @@ class ApiController {
               conference(us.conference)
               room(us.room)
               voicebridge(us.voicebridge)
+			  pinNumber(us.pinNumber)
 			  dialnumber(meeting.getDialNumber())
               webvoiceconf(us.webvoiceconf)
               mode(us.mode)

@@ -30,6 +30,7 @@ public class UserSession {
     String conference = null;
     String room = null;
     String voicebridge = null;
+    String pinNumber = null;
     String webvoiceconf = null;
     String mode = null;
     String record = null;

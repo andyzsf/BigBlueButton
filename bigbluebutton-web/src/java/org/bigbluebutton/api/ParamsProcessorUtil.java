@@ -396,6 +396,11 @@ public class ParamsProcessorUtil {
 	public String processTelVoice(String telNum) {
 		return StringUtils.isEmpty(telNum) ? RandomStringUtils.randomNumeric(defaultNumDigitsForTelVoice) : telNum;
 	}
+	
+	public String generatePinNumber(){
+		//This will be replaced with a better solution... probably using redis...
+		return RandomStringUtils.randomNumeric(defaultNumDigitsForTelVoice);
+	}
 		
 	public String processDialNumber(String dial) {
 		return StringUtils.isEmpty(dial) ? defaultDialAccessNumber : dial;	
