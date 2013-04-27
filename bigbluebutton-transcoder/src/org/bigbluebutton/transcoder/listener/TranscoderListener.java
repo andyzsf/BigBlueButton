@@ -37,7 +37,7 @@ public class TranscoderListener {
 		
 		while( (newSocket = _socketServer.accept()) != null) {
 			Thread socketThread = new Thread(new BTPWorker(newSocket));
-			socketThread.run();
+			socketThread.start();
 		}
 	}
 

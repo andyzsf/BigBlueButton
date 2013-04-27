@@ -7,6 +7,6 @@ package org.bigbluebutton.transcoder.protocol;
  * */
 public class BTP {
 	static public String COMMAND_SEPARATOR = "\n";
-	static public String HANDSHAKE = "HELLO";
-	static public String COMMAND_EXIT = "EXIT";
+	static public String HANDSHAKE = "HI";
+	static public String COMMAND_EXIT = "BYE";
 }

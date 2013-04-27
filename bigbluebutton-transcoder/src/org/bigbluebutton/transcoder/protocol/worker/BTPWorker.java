@@ -71,12 +71,17 @@ public class BTPWorker implements Runnable {
 					processCommand(receivedLine);
 				}
 			}
+			
 		} catch (IOException e) {
 			if(!_disconnectionExpected) {
-				System.err.println("Client unexpectedly disconnected: " + e.getMessage());
+				System.err.println("Unexpected error: " + e.getMessage());
 			}
-			_socket = null;
 		}
+		
+		if(!_disconnectionExpected) {
+			System.err.println("Client unexpectedly disconnected.");
+		}
+		_socket = null;
 	}
 
 	private void processCommand(String receivedLine) {
