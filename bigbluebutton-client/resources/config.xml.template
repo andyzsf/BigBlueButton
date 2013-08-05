@@ -1,5 +1,9 @@
 <?xml version="1.0" ?>
 <config>
+		<welcome>
+			&lt;br&gt;Welcome to &lt;b&gt;%%CONFNAME%%&lt;/b&gt;!&lt;br&gt;&lt;br&gt;For help on using BigBlueButton see these (short) &lt;a href=&quot;event:http://www.bigbluebutton.org/content/videos&quot;&gt;&lt;u&gt;tutorial videos&lt;/u&gt;&lt;/a&gt;.&lt;br&gt;&lt;br&gt;To join the audio bridge click the headset icon (upper-left hand corner).  Use a headset to avoid causing background noise for others.&lt;br&gt;
+This server is running a &lt;a href=&quot;https://code.google.com/p/bigbluebutton/wiki/081Overview&quot; target=&quot;_blank&quot;&gt;&lt;u&gt;BigBlueButton 0.81-beta-2&lt;/u&gt;&lt;/a&gt;.
+		</welcome>
     <localeversion suppressWarning="false">0.8</localeversion>
     <version>VERSION</version>
     <help url="http://HOST/help.html"/>

@@ -62,13 +62,14 @@ public class ParamsProcessorUtil {
 	private String defaultConfigURL;
 	private int defaultMeetingDuration;
 	private boolean disableRecordingDefault;
-	
+
+	private static final String DIAL_NUM = "%%DIALNUM%%";
+	private static final String CONF_NUM = "%%CONFNUM%%";
+	private static final String CONF_NAME = "%%CONFNAME%%"; 
+
 	private String substituteKeywords(String message, String dialNumber, String telVoice, String meetingName) {
 	    String welcomeMessage = message;
 	    
-	    String DIAL_NUM = "%%DIALNUM%%";
-	    String CONF_NUM = "%%CONFNUM%%";
-	    String CONF_NAME = "%%CONFNAME%%"; 
 	    ArrayList<String> keywordList = new ArrayList<String>();
 	    keywordList.add(DIAL_NUM);keywordList.add(CONF_NUM);keywordList.add(CONF_NAME);
 
@@ -86,6 +87,30 @@ public class ParamsProcessorUtil {
 	    return  welcomeMessage;		
 	}
 
+	private String substituteKeyword(String configXML, String keyword, String value) {
+		return configXML.replaceAll(keyword, value);
+	}
+
+	public String substituteKeywordsOnConfigXML(String configXML, String dialNumber, String telVoice, String meetingName) {
+		ArrayList<String> keywordList = new ArrayList<String>();
+	  keywordList.add(DIAL_NUM);
+	  keywordList.add(CONF_NUM);
+	  keywordList.add(CONF_NAME);
+
+
+	  Iterator<String> itr = keywordList.iterator();
+	  while(itr.hasNext()) {
+	  	String keyword = (String) itr.next();
+	   	if (keyword.equals(DIAL_NUM)) {
+	        configXML = configXML.replaceAll(DIAL_NUM, dialNumber);
+	   	} else if (keyword.equals(CONF_NUM)) {
+	          configXML = configXML.replaceAll(CONF_NUM, telVoice);
+	    	} else if (keyword.equals(CONF_NAME)) {
+	          configXML = configXML.replaceAll(CONF_NAME, meetingName);
+	    	}     
+	    }	
+	    return  configXML;			
+	}
 	
 	public void processRequiredCreateParams(Map<String, String> params, ApiErrors errors) {
 	    // Do we have a checksum? If not, complain.
@@ -261,9 +286,11 @@ public class ParamsProcessorUtil {
 	
 	public Meeting processCreateParams(Map<String, String> params) {
 	    String meetingName = params.get("name");
+
 	    if(meetingName == null){
 	    	meetingName = "";
 	    }
+
 	    String externalMeetingId = params.get("meetingID");
 	    
 	    String viewerPass = processPassword(params.get("attendeePW"));
@@ -306,7 +333,7 @@ public class ParamsProcessorUtil {
 			    	log.debug("Got metadata {} = {}", key, params.get(key));
 			    	meetingInfo.put(meta[1].toLowerCase(), params.get(key));
 			    }
-			}   
+				}   
 	    }
 	    	    
 	    // Create a unique internal id by appending the current time. This way, the 3rd-party

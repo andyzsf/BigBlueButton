@@ -87,7 +87,7 @@ package org.bigbluebutton.modules.chat.services
     private static const SPACE:String = " ";
     
     public function sendWelcomeMessage():void {
-      var welcome:String = BBB.initUserConfigManager().getWelcomeMessage();
+      var welcome:String = BBB.initConfigManager().getWelcomeMessage();
       if (welcome != "") {              
         var msg:ChatMessageVO = new ChatMessageVO();
         msg.chatType = ChatConstants.PUBLIC_CHAT;

@@ -29,6 +29,10 @@ package org.bigbluebutton.core.model
 			this.config = config;
 		}
 
+		public function get welcomeMessage():String {
+			return config.welcome;
+		}
+		
 		public function get help():Object {
 			var help:Object = new Object();
 			help.url = config.help.@url;

@@ -46,6 +46,10 @@ package org.bigbluebutton.core.managers
 			urlLoader.load(new URLRequest(localeReqURL));			
 		}		
 		
+		public function getWelcomeMessage():String {
+			return config.welcomeMessage;
+		}
+		
     private function buildRequestURL():String {
       var swfURL:String = FlexGlobals.topLevelApplication.url;
       var protocol:String = URLUtil.getProtocol(swfURL);
