@@ -15,15 +15,13 @@
 	<property name="PROD_RESOURCES_DIR" value="${RESOURCES_DIR}/prod" />	
 	<property name="SRC_DIR" value="${BASE_DIR}/src" />
 		
-	<property name="OUTPUT_DIR" value="${BASE_DIR}/bin" />
+	<property name="OUTPUT_DIR" value="${BASE_DIR}/client" />
 	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
 
 	<!-- Declare module names here -->
 	<property name="BBB_MAIN" value="BigBlueButton" />
 	<property name="BROADCAST" value="BroadcastModule" />
 	<property name="CHAT" value="ChatModule" />
-	<property name="VIEWERS" value="ViewersModule" />
-	<property name="LISTENERS" value="ListenersModule" />
 	<property name="PRESENT" value="PresentModule" />
 	<property name="DESKSHARE" value="DeskShareModule" />
 	<property name="DESKSHARE_SA" value="DeskshareStandalone" />
@@ -157,6 +155,7 @@
 				  http://forums.adobe.com/thread/758619
 				  ralam - sept 20, 2011
 				-->
+				<include-resource-bundles>SharedResources</include-resource-bundles>
 				<include-resource-bundles>bbbResources</include-resource-bundles>
 				<include-resource-bundles>collections</include-resource-bundles> 
 				<include-resource-bundles>containers</include-resource-bundles> 
@@ -197,14 +196,6 @@
 	
 	<target name="build-polling" description="Compile Polling Module">
 		<build-module src="${SRC_DIR}" target="${POLLING}" />
-	</target>
-
-	<target name="build-viewers" description="Compile Viewers Module">
-		<build-module src="${SRC_DIR}" target="${VIEWERS}" />
-	</target>
-	
-	<target name="build-listeners" description="Compile Listeners Module">
-		<build-module src="${SRC_DIR}" target="${LISTENERS}" />
 	</target>
 	
 	<target name="build-present" description="Compile Present Module">
@@ -249,6 +240,7 @@
 	<target name="build-deskshare" description="Compile Deskshare Module">
 		<build-module src="${SRC_DIR}" target="${DESKSHARE}" />
 		<echo message="Copying deskshare applet for Deskshare Module" />
+		<copy file="${PROD_RESOURCES_DIR}/bbb-deskshare-applet-unsigned-0.8.1.jar" todir="${OUTPUT_DIR}"/>		
 		<copy file="${PROD_RESOURCES_DIR}/bbb-deskshare-applet-0.8.1.jar" todir="${OUTPUT_DIR}"/>		
 	</target>
 	
@@ -282,14 +274,14 @@
 	</target>
 	
 	<!-- just a grouping of modules to compile -->
-	<target name="build-main-chat-viewers-listeners-present" 
-			depends="build-bbb-main, build-chat, build-viewers, build-listeners, build-present, build-layout, build-broadcast, build-users"
-			description="Compile main, chat, viewers, listeners, present modules">
+	<target name="build-main-chat-present" 
+			depends="build-bbb-main, build-chat, build-present, build-layout, build-broadcast, build-users"
+			description="Compile main, chat, present modules">
 	</target>
 	
 	<!-- just a grouping of modules to compile -->
 	<target name="build-deskshare-phone-video-whiteboard-dyn" 
-			depends="build-deskshare, build-phone, build-video, build-videodock, build-whiteboard, build-notes"
+			depends="build-deskshare, build-phone, build-video, build-videodock, build-whiteboard, build-notes, build-polling"
 			description="Compile deskshare, phone, video, whiteboard modules">
 	</target>
 	
@@ -391,7 +383,7 @@
 			<echo message="Deskshare standalone built without optimization." />
 	</target>
 		
-	<target name="compile-bbb" depends="build-main-chat-viewers-listeners-present, build-deskshare-phone-video-whiteboard-dyn, copy-resource-files"
+	<target name="compile-bbb" depends="build-main-chat-present, build-deskshare-phone-video-whiteboard-dyn, copy-resource-files"
 			description="Compiling the BBB without copying config.xml">	
 	</target>
 
@@ -437,8 +429,6 @@
 			<then>
 				<echo message="Copying config.xml for development environment"/>
 				<copy file="${BASE_DIR}/src/conf/config.xml" todir="${OUTPUT_DIR}/conf" /> 
-				<echo message="Copying join-mock.xml for development environment"/>
-				<copy file="${BASE_DIR}/src/conf/join-mock.xml" todir="${OUTPUT_DIR}/conf" /> 
 				<!-- echo message="Copying layout.xml for development environment"/>
 				<copy file="${BASE_DIR}/src/conf/layout.xml" todir="${OUTPUT_DIR}/conf" /--> 
 			</then>
@@ -489,17 +479,28 @@
 		<echo message="Done Generating ASDocs" />
 	</target>
 
-	<target name="clean">
-		<delete>
-			<fileset dir="${OUTPUT_DIR}" >
-		  		<exclude name="locale/*.swf"/>
-		  		<exclude name=".gitignore"/>
-			</fileset>
-			<dirset dir="${OUTPUT_DIR}">
-		  		<include name="**/*"/>
-		  		<exclude name="locale"/>
-			</dirset>
-  		</delete>
+	<target name="clean" depends="init-ant-contrib">
+		<available file="${OUTPUT_DIR}" type="dir" property="client.dir.present"/>
+                <if>
+                <equals arg1="${client.dir.present}" arg2="true"/>
+                <then>
+			<echo message="Locale output dir exists. Deleting contents of ${OUTPUT_DIR}/locale"/>
+			<delete>
+				<fileset dir="${OUTPUT_DIR}" >
+		  			<exclude name="locale/*.swf"/>
+		  			<exclude name=".gitignore"/>
+				</fileset>
+				<dirset dir="${OUTPUT_DIR}">
+		  			<include name="**/*"/>
+		  			<exclude name="locale"/>
+				</dirset>
+			</delete>
+                </then>
+                <else>
+			<echo message="Output dir does not exists. Creating [${OUTPUT_DIR}] dir."/>
+			<mkdir dir="${OUTPUT_DIR}"/>
+                </else>
+        	</if>
 	</target>
 
 	<!-- NOTE: compile-deskshare-standalone MUST come first before compile-bbb as we need the deskshare-standalone
@@ -507,7 +508,7 @@
 	<target name="clean-build-bbb" depends="clean, init-ant-contrib, generate-html-wrapper, compile-deskshare-standalone, 
 	                                        build-webcam-preview-standalone, build-webcam-view-standalone, compile-bbb" 
 			description="Build BBB client skipping compiling of locales"/>	
-	<target name="clean-build-all" depends="clean, init-ant-contrib, generate-html-wrapper, compile-deskshare-standalone, build-polling, build-mic-check,
+	<target name="clean-build-all" depends="clean, init-ant-contrib, generate-html-wrapper, compile-deskshare-standalone, build-mic-check,
 	                                         build-cam-check, build-conn-check, build-webcam-preview-standalone, build-webcam-view-standalone, 
 	                                         compile-bbb, branding, branding-black" 
 			description="Build BBB client including locales"/>

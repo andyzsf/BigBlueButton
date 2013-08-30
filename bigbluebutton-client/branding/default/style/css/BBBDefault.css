@@ -40,7 +40,14 @@ Panel {
   paddingRight: 3;
 }
 
-Button, .logoutButtonStyle, .chatSendButtonStyle, .helpLinkButtonStyle {
+.meetingNameLabelStyle {
+  fontWeight: bold;
+  fontSize: 15;
+  fontFamily: Arial;
+  color: #e1e2e5;
+}
+
+Button, .logoutButtonStyle, .chatSendButtonStyle, .helpLinkButtonStyle, .cameraDisplaySettingsWindowChangeResolutionCombo, .languageSelectorStyle {
   textIndent: 0;
   paddingLeft: 10;
   paddingRight: 10;
@@ -58,13 +65,35 @@ Button, .logoutButtonStyle, .chatSendButtonStyle, .helpLinkButtonStyle {
   fontSize: 12;
 }
 
-
-.helpLinkButtonStyle {
+.quickWindowLinkStyle {
+  paddingLeft: 0;
+  paddingRight: 0;
+  textDecoration: underline;
   rollOverColor: #cccccc;
   selectionColor: #999999;
   color: #ffffff;
   textRollOverColor: #504f3d;
   textSelectedColor: #504f3d;
+}
+
+.helpLinkButtonStyle {
+  paddingLeft: 4;
+  paddingRight: 4;
+  paddingTop: 2;
+  paddingBottom: 2;
+  fontSize: 16;
+  rollOverColor: #cccccc;
+  selectionColor: #999999;
+  color: #ffffff;
+  textRollOverColor: #504f3d;
+  textSelectedColor: #504f3d;
+  fontWeight: bold;
+}
+
+.logoutButtonStyle {
+  paddingLeft: 0;
+  paddingRight: 0;
+  icon: Embed('assets/images/logout.png');
 }
 
 DataGrid {
@@ -145,7 +174,7 @@ DataGrid {
   icon: Embed('assets/images/triangle.png');    
 }
 
-.presentationUploadButtonStyle, .presentationBackButtonStyle, .presentationForwardButtonStyle,
+.presentationUploadButtonStyle, .presentationBackButtonStyle, .presentationBackButtonDisabledStyle, .presentationForwardButtonStyle, .presentationForwardButtonDisabledStyle,
 .presentationFitToWidthButtonStyle, .presentationFitToPageButtonStyle 
 {
   textIndent: 0;
@@ -173,8 +202,16 @@ DataGrid {
   icon:   Embed('assets/images/left-arrow.png'); 
 }
 
+.presentationBackButtonDisabledStyle {
+	icon:   Embed('assets/images/left-arrow-disabled.png'); 
+}
+
 .presentationForwardButtonStyle {
   icon:   Embed('assets/images/right-arrow.png'); 
+}
+
+.presentationForwardButtonDisabledStyle {
+	icon:   Embed('assets/images/right-arrow-disabled.png'); 
 }
 
 .presentationFitToWidthButtonStyle {
@@ -329,6 +366,24 @@ DataGrid {
   
 }
 
+.cameraDisplaySettingsWindowStyle {
+  borderColor: #b9babc;
+  borderAlpha: 1;
+  borderThicknessLeft: 10;
+  borderThicknessTop: 0;
+  borderThicknessBottom: 10;
+  borderThicknessRight: 10;
+  roundedBottomCorners: true;
+  cornerRadius: 5;
+  headerHeight: 20;
+  backgroundAlpha: 1;
+  headerColors: #b9babc, #b9babc;
+  footerColors: #b9babc, #b9babc;
+  backgroundColor: #EFEFEF;
+  dropShadowEnabled: true;
+  titleStyleName: "webcamSettingsWindowTitleStyle";
+}
+
 .micSettingsWindowStyle {
   borderColor: #b9babc;
   borderAlpha: 1;
@@ -347,7 +402,7 @@ DataGrid {
   titleStyleName: "micSettingsWindowTitleStyle";
 }
 
-.micSettingsWindowTitleStyle {
+.webcamSettingsWindowTitleStyle, .micSettingsWindowTitleStyle {
   fontFamily: Arial;
   fontSize: 20;  
   fontWeight: bold;
@@ -617,5 +672,14 @@ MDIWindow { /*None of the following properties are overridden by the MDIWindow c
 
 .cameraDisplaySettingsWindowStartBtn
 {
-  icon:   Embed('assets/images/play-blue.png');
+  icon:   Embed('assets/images/webcam.png');
+}
+
+Alert {
+	borderColor: #DFDFDF;
+	backgroundColor: #EFEFEF;
+	borderAlpha: 1;
+	shadowDistance: 1;
+	dropShadowColor: #FFFFFF;
+	color: #000000;
 }
