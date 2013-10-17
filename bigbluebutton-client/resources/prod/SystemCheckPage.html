@@ -112,7 +112,7 @@
       bbbCheckJavaVersion('1.6+', function(installedVersions, meetsRequirement) {
         if (installedVersions == '') {
           // Give a special notice for people running Chrome on Max OS X
-          if (navigator.userAgent.indexOf('Macintosh') != -1 && nagivator.userAgent.indexOf('Chrome') != -1) {
+          if (navigator.userAgent.indexOf('Macintosh') != -1 && navigator.userAgent.indexOf('Chrome') != -1) {
             addSyscheckNotice('warning', 'Java plugin is not supported in this browser',
               '<p>Your appear to be using Google Chrome on Mac OS X. The Java plugin is not supported on this combination, ' +
               'so you will be unable to share your desktop in BigBlueButton.</p>' +
