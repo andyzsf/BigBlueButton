@@ -1,3 +1,19 @@
+function addSyscheckNotice(priority, title, message) {
+  var notice = '<div class="syscheck-callout syscheck-callout-' + priority + '">';
+  if (title) {
+    notice += '<h4>' + title + '</h4>';
+  }
+  notice += message + '</div>';
+
+  var container = document.getElementById('syscheck-' + priority + '-container');
+  container.insertAdjacentHTML('beforeend', notice);
+
+  var header = container.firstElementChild;
+  if (header && header.tagName == 'H3') {
+    header.style.display = 'block';
+  }
+}
+
 var registerListeners = function() {
   console.log("Listening for events.");
   BBBCheck.listen("MicCheckAppReadyEvent", function() {
@@ -8,22 +24,16 @@ var registerListeners = function() {
   });
 }
 
-
-var bbbCheckFlashVersion = function() {
+function bbbCheckFlashVersion(minVersion, callback) {
   var playerVersion = BBBCheck.getFlashPlayerVersion();
-  console.log("You have Flash player " + playerVersion.major + "." + playerVersion.minor + "." + playerVersion.release + " installed");
+  var meetsRequirement = BBBCheck.hasMinFlashPlayerVersion(minVersion);
+  callback(playerVersion.major + '.' + playerVersion.minor + '.' + playerVersion.release, meetsRequirement);
 }
 
-var bbbHasMinFlashVersion = function(version) {
-  console.log("Q: Do I have Flash player 9.0.18 or higher installed?\nA: " + BBBCheck.hasMinFlashPlayerVersion(version));
-}
-
-var bbbGetBrowser = function() {
-  console.log("Browser = " + BBBCheck.getBrowser());
-}
-
-var bbbGetJREs = function() {
-  console.log("JREs = " + BBBCheck.getJREs());
+function bbbCheckJavaVersion(versionPattern, callback) {
+  var installedVersions = BBBCheck.getJREs().join(', ');
+  var meetsRequirement = BBBCheck.JREVersionCheck(versionPattern);
+  callback(installedVersions, meetsRequirement);
 }
 
 var bbbCheckShowMicSettings = function() {

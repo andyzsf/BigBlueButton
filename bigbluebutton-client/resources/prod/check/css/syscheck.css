@@ -1,0 +1,27 @@
+.syscheck-callout {
+	margin: 20px 0;
+	padding: 15px 30px 15px 15px;
+	border-left: 5px solid rgb(238,238,238);
+}
+.syscheck-callout > :first-child {
+	margin-top: 0;
+}
+.syscheck-callout > :last-child {
+	margin-bottom: 0;
+}
+.syscheck-callout-danger {
+	background-color: #fcf2f2;
+	border-color: #dfb5b4;
+}
+.syscheck-callout-warning {
+	background-color: #fefbed;
+	border-color: #f1e7bc;
+}
+.syscheck-callout-info {
+	background-color: rgb(240,247,253);
+	border-color: rgb(208,227,240);
+}
+.syscheck-callout-success {
+	background-color: rgb(247,253,240);
+	border-color: rgb(227,240,208);
+}

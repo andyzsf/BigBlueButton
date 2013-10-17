@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
   <head>
-    <title>BigBlueButton</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>BigBlueButton System Check</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" type="text/css" href="check/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="check/css/syscheck.css">
     <style type="text/css" media="screen">
-      html, body, #content    { height:100%; }
-      body                                    { margin:0; padding:0; overflow:hidden; }
       #altContent                             { /* style alt content */ }
       .visually-hidden {
         position: absolute !important;
@@ -35,7 +35,7 @@
       attributes.name = "BigBlueButton";
       attributes.align = "middle";
       attributes.tabIndex = 0;
-      swfobject.embedSWF("BigBlueButton.swf?v=VERSION", "altFlash", "600", "400", "11.0.0", "expressInstall.swf", flashvars, params, attributes);
+      swfobject.embedSWF("BigBlueButton.swf?v=VERSION", "altFlash", "100%", "100%", "11.0.0", "expressInstall.swf", flashvars, params, attributes);
     </script>
     <script src="lib/jquery-1.5.1.min.js" language="javascript"></script>
     <script src="lib/bigbluebutton.js" language="javascript"></script>
@@ -47,11 +47,6 @@
     <script type="text/javascript" src="check/lib/bbb_check.js" language="javascript"></script>
     <script type="text/javascript" src="check/lib/pre_flight_check.js" language="javascript"></script>
     <script>
-      var testJava = function() {
-         window.open("http://www.java.com/en/download/testjava.jsp")
-      }
-    </script>
-    <script>
       window.chatLinkClicked = function(url) {
         window.open(url, '_blank');
         window.focus();
@@ -59,51 +54,94 @@
     </script>
   </head>
   <body>
-    <div id="instructions">
-      <p>Welcome to the BigBlueButton System Test page.</p>
-      <p>Please make sure that you have left the voice conference.</p>
-    </div>
-    <div id="test_flash">
-      <button type="button" onclick="bbbCheckFlashVersion()">Check Flash Version</button>
-      <button type="button" onclick="bbbHasMinFlashVersion('11')">Min Version</button>
-    </div>
-    <div id="determine_browser">
-      <button type="button" onclick="bbbGetBrowser()">Get browser</button>
-    </div>
-    <div id="test_java">
-      <button type="button" onclick="bbbGetJREs()">Get JREs</button>
-      <button type="button" onclick="testJava()">test Java</button>
-    </div>
-    <div id="content" style="background-color:#FFD700;width:600px;height:400px;float:left;">
-      <div id="altFlash">
-        <a href="http://www.adobe.com/go/getflashplayer">
-          <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
-        </a>
+    <div class="container">
+      <h1>BigBlueButton System Check</h1>
+
+      <h2>Automatic Check Results:</h2>
+      <div id="syscheck-danger-container">
+        <h3 style="display:none">Errors were found that will prevent BigBlueButton from working.</h3>
+        <noscript>
+          <div class="syscheck-callout syscheck-callout-danger">
+            <h4>Javascript is disabled in your web browser</h4>
+            <p>Support for Javascript is required to use BigBlueButton. Please read <a href="#">instructions on how to enable Javascript in your web browser</a>.</p>
+          </div>
+        </noscript>
+      </div>
+      <div id="syscheck-success-container">
+      </div>
+      <div id="syscheck-warning-container">
+      </div>
+      <div id="syscheck-info-container">
+        <div class="syscheck-callout syscheck-callout-info">
+          <p>To make sure your sound and video quality is good, please <a href="http://www.speedtest.net/">check the speed of your internet connection</a>. We recommend that you have a minimum download speed of 1Mbps, and a minimum upload speed of 0.5Mbps (500Kbps) for best results.</p>
+        </div>
+      </div>
+
+      <div id="audio-check" style="display:none">
+        <h2>Check your Audio:</h2>
+        <p>Please ensure that you have left the audio conference in your BigBlueButton session before continuing.</p>
+
+        <div id="content" style="background-color:#FFD700;height:400px;min-width:600px">
+          <div id="altFlash">
+            <a href="http://www.adobe.com/go/getflashplayer">
+              <img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
+            </a>
+          </div>
+        </div>
       </div>
     </div>
-    <div id="speedtest">
-      To test your bandwidth, visit <a href="http://www.speedtest.net" target="blank">Speedtest </a>.
-    </div>  
-  <script type="text/javascript">
-    // Work around pixel alignment bug with Chrome 21 on Mac.
-    // See: http://code.google.com/p/bigbluebutton/issues/detail?id=1294
-    var objs = $('object');
-    objs.each(function(i, o) {
-            var o = $(o);
-            var top = o.offset().top;
-            var left = o.offset().left;
-            var roundtop = Math.round(top);
-            var roundleft = Math.round(left);
-            o.css("position", "relative");
-            if (roundtop === top) {
-            } else {
-                    o.css("top", roundtop - top);
-            }
-            if (roundleft === left) {
-            } else {
-                    o.css("left", roundleft - left);
-            }
-    });
-  </script>
+    <script type="application/javascript">
+      bbbCheckFlashVersion('11.2', function(playerVersion, meetsRequirement) {
+        if (playerVersion == '0.0.0') {
+          addSyscheckNotice('danger', 'Flash plugin is not installed',
+            'BigBlueButton requires that you have the Adobe Flash plugin installed. ' +
+            'Please <a href="http://www.adobe.com/go/getflashplayer">Install the latest Flash plugin release</a>.');
+        } else {
+          if (meetsRequirement) {
+            addSyscheckNotice('success', null, 'Flash plugin (version ' + playerVersion + ') is installed and supported.');
+            var audioCheck = document.getElementById('audio-check');
+            audioCheck.style.display = 'block';
+          } else{
+            addSyscheckNotice('danger', 'Flash plugin version does not meet requirements',
+              'You have the Flash plugin version ' + playerVersion + ' installed, but it is not new enough ' +
+              'to work correctly with BigBlueButton. ' +
+              'Please <a href="http://www.adobe.com/go/getflashplayer">upgrade to the latest Flash plugin release</a>.');
+          }
+        }
+      });
+      bbbCheckJavaVersion('1.6+', function(installedVersions, meetsRequirement) {
+        if (installedVersions == '') {
+          // Give a special notice for people running Chrome on Max OS X
+          if (navigator.userAgent.indexOf('Macintosh') != -1 && nagivator.userAgent.indexOf('Chrome') != -1) {
+            addSyscheckNotice('warning', 'Java plugin is not supported in this browser',
+              '<p>Your appear to be using Google Chrome on Mac OS X. The Java plugin is not supported on this combination, ' +
+              'so you will be unable to share your desktop in BigBlueButton.</p>' +
+              '<p>We recommend switching to a different browser, such as Mozilla Firefox or Safari if you would like to share ' +
+              'your desktop. If you think we’ve made a mistake detecting your browser, you can also try ' +
+              '<a href="http://www.java.com/download">installing the latest Java plugin release</a>.</p>' +
+              '<p>You do not need to have Java installed to view someone else’s desktop.</p>');
+          } else {
+            addSyscheckNotice('warning', 'Java plugin is not installed',
+              '<p>In order to share your desktop in BigBlueButton, Java is required. If you would like to share your ' +
+              'desktop, please <a href="http://www.java.com/download">install the latest Java plugin release</a>.</p>' +
+              '<p>You do not need to have Java installed to view someone else’s desktop.</p>');
+          }
+        } else {
+          if (meetsRequirement) {
+            addSyscheckNotice('info', null,
+              '<p>The Java plugin version ' + installedVersions + ' is installed and supported, but you should double-check ' +
+              'that it operates correctly if you would like to share your desktop in BigBlueButton. Please ' +
+              '<a href="http://www.java.com/verify">visit this test page to verify your Java installation</a>.</p>' +
+              '<p>You do not need to have Java installed to view someone else’s desktop.</p>');
+          } else {
+            addSyscheckNotice('warning', 'Java plugin does not meet requirements',
+              '<p>You have the Java plugin version ' + installedVersions + ' installed, but it is not new enough to support ' +
+              'sharing your desktop in BigBlueButton. Please ' +
+              '<a href="http://www.java.com/download">upgrade to the latest Java plugin release</a>.</p>' +
+              '<p>You do not need to have Java installed to view someone else’s desktop.</p>');
+          }
+        }
+      });
+    </script>
   </body>
 </html>

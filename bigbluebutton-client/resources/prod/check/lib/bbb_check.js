@@ -31,6 +31,10 @@
   BBBCheck.getJREs = function() {
     return deployJava.getJREs();
   }
+
+  BBBCheck.JREVersionCheck = function(versionPattern) {
+    return deployJava.versionCheck(versionPattern);
+  }
   
   BBBCheck.installJRE = function(version) {
     deployJava.installJRE(version);
