@@ -63,7 +63,7 @@
         <noscript>
           <div class="syscheck-callout syscheck-callout-danger">
             <h4>Javascript is disabled in your web browser</h4>
-            <p>Support for Javascript is required to use BigBlueButton. Please read <a href="http://www.enable-javascript.com/">instructions on how to enable Javascript in your web browser</a>.</p>
+            <p>Support for Javascript is required to use BigBlueButton. Please read <a target="_blank" href="http://www.enable-javascript.com/">instructions on how to enable Javascript in your web browser</a>.</p>
           </div>
         </noscript>
       </div>
@@ -73,7 +73,7 @@
       </div>
       <div id="syscheck-info-container">
         <div class="syscheck-callout syscheck-callout-info">
-          <p>To make sure your sound and video quality is good, please <a href="http://www.speedtest.net/">check the speed of your internet connection</a>. We recommend that you have a minimum download speed of 1Mbps, and a minimum upload speed of 0.5Mbps (500Kbps) for best results.</p>
+          <p>To make sure your sound and video quality is good, please <a target="_blank" href="http://www.speedtest.net/">check the speed of your internet connection</a>. We recommend that you have a minimum download speed of 1Mbps, and a minimum upload speed of 0.5Mbps (500Kbps) for best results.</p>
         </div>
       </div>
 
@@ -95,7 +95,7 @@
         if (playerVersion == '0.0.0') {
           addSyscheckNotice('danger', 'Flash plugin is not installed',
             'BigBlueButton requires that you have the Adobe Flash plugin installed. ' +
-            'Please <a href="http://www.adobe.com/go/getflashplayer">Install the latest Flash plugin release</a>.');
+            'Please <a target="_blank" href="http://www.adobe.com/go/getflashplayer">Install the latest Flash plugin release</a>.');
         } else {
           if (meetsRequirement) {
             addSyscheckNotice('success', null, 'Flash plugin (version ' + playerVersion + ') is installed and supported.');
@@ -105,7 +105,7 @@
             addSyscheckNotice('danger', 'Flash plugin version does not meet requirements',
               'You have the Flash plugin version ' + playerVersion + ' installed, but it is not new enough ' +
               'to work correctly with BigBlueButton. ' +
-              'Please <a href="http://www.adobe.com/go/getflashplayer">upgrade to the latest Flash plugin release</a>.');
+              'Please <a target="_blank" href="http://www.adobe.com/go/getflashplayer">upgrade to the latest Flash plugin release</a>.');
           }
         }
       });
@@ -118,12 +118,12 @@
               'so you will be unable to share your desktop in BigBlueButton.</p>' +
               '<p>We recommend switching to a different browser, such as Mozilla Firefox or Safari if you would like to share ' +
               'your desktop. If you think we’ve made a mistake detecting your browser, you can also try ' +
-              '<a href="http://www.java.com/download">installing the latest Java plugin release</a>.</p>' +
+              '<a target="_blank" href="http://www.java.com/download">installing the latest Java plugin release</a>.</p>' +
               '<p>You do not need to have Java installed to view someone else’s desktop.</p>');
           } else {
             addSyscheckNotice('warning', 'Java plugin is not installed',
               '<p>In order to share your desktop in BigBlueButton, Java is required. If you would like to share your ' +
-              'desktop, please <a href="http://www.java.com/download">install the latest Java plugin release</a>.</p>' +
+              'desktop, please <a target="_blank" href="http://www.java.com/download">install the latest Java plugin release</a>.</p>' +
               '<p>You do not need to have Java installed to view someone else’s desktop.</p>');
           }
         } else {
@@ -131,13 +131,13 @@
             addSyscheckNotice('info', null,
               '<p>The Java plugin version ' + installedVersions + ' is installed and supported, but you should double-check ' +
               'that it operates correctly if you would like to share your desktop in BigBlueButton. Please ' +
-              '<a href="http://www.java.com/verify">visit this test page to verify your Java installation</a>.</p>' +
+              '<a target="_blank" href="http://www.java.com/verify">visit this test page to verify your Java installation</a>.</p>' +
               '<p>You do not need to have Java installed to view someone else’s desktop.</p>');
           } else {
             addSyscheckNotice('warning', 'Java plugin does not meet requirements',
               '<p>You have the Java plugin version ' + installedVersions + ' installed, but it is not new enough to support ' +
               'sharing your desktop in BigBlueButton. Please ' +
-              '<a href="http://www.java.com/download">upgrade to the latest Java plugin release</a>.</p>' +
+              '<a target="_blank" href="http://www.java.com/download">upgrade to the latest Java plugin release</a>.</p>' +
               '<p>You do not need to have Java installed to view someone else’s desktop.</p>');
           }
         }
