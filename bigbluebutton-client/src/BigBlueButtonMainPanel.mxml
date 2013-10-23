@@ -33,10 +33,13 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
   
   <mx:Script>
     <![CDATA[
-      import com.asfusion.mate.events.Dispatcher;    
-      import flash.events.Event;      
+      import com.asfusion.mate.events.Dispatcher;
+      
+      import flash.events.Event;
+      
       import mx.managers.HistoryManager;
-      import mx.utils.URLUtil;      
+      import mx.utils.URLUtil;
+      
       import org.bigbluebutton.common.LogUtil;
       import org.bigbluebutton.common.events.AddUIComponentToMainCanvas;
       import org.bigbluebutton.core.BBB;
@@ -45,6 +48,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
       import org.bigbluebutton.main.api.ExternalApiCallbacks;
       import org.bigbluebutton.main.events.BBBEvent;
       import org.bigbluebutton.main.events.ShortcutEvent;
+      import org.bigbluebutton.main.events.StartAppEvent;
       import org.bigbluebutton.main.model.ShortcutOptions;
       import org.bigbluebutton.main.views.MainApplicationShell;
       import org.bigbluebutton.util.i18n.ResourceUtil;
@@ -69,6 +73,8 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
         EventBroadcaster.getInstance().addEventListener("configLoadedEvent", configLoadedEventHandler);
         BBB.initConfigManager();
         globalModifier = ExternalInterface.call("determineGlobalModifier");
+        
+        dispatchEvent(new StartAppEvent());
       }
       
       private function configLoadedEventHandler(e:Event):void {

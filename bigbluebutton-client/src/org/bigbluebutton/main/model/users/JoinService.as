@@ -46,7 +46,7 @@ package org.bigbluebutton.main.model.users
 		{
 			var date:Date = new Date();
 //			url += "?a=" + date.time
-			LogUtil.debug("JoinService:load(...) " + url);
+			trace("JoinService:load(...) " + url);
             request = new URLRequest(url);
             request.method = URLRequestMethod.GET;		
             

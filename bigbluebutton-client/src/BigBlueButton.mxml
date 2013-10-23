@@ -24,7 +24,33 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
                 pageTitle="BigBlueButton" 
                 layout="absolute" 
                 preloader="org.bigbluebutton.main.model.BigBlueButtonPreloader">
-   
-  <views:BigBlueButtonMainPanel id="bbbShell"/>
+
  
+  <mx:Script>
+    <![CDATA[
+      private function displayClient():void {
+        setCurrentState("displayBBBClient");
+      }
+    ]]>
+  </mx:Script>
+ 
+  <mx:VBox id="main" width="100%" height="100%">
+    <mx:HBox id="joinContainer" width="100%" height="30">
+      <mx:Button id="joinBtn" label="Join" click="displayClient()"/>
+      <mx:TextInput id="joinURL" width="90%"/>
+    </mx:HBox>
+  </mx:VBox>
+  
+  <mx:states>	    
+    <mx:State name="displayBBBClient">   
+      <mx:AddChild position="after" relativeTo="joinContainer">
+        <views:BigBlueButtonMainPanel id="bbbShell" width="100%" height="100%"/>
+      </mx:AddChild>
+    </mx:State>
+  </mx:states>
+
+<!--
+  <views:BigBlueButtonMainPanel id="bbbShell"/>
+-->
+  
 </mx:Application>
