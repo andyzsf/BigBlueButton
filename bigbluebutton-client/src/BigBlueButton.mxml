@@ -28,15 +28,58 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
  
   <mx:Script>
     <![CDATA[
+      
+      private var request:URLRequest = new URLRequest();
+      private var vars:URLVariables = new URLVariables();
+      private var urlLoader:URLLoader;
+      
+      private function joinMeeting():void {
+        trace("JOIN URL = " + joinURL.text);
+        load(joinURL.text);  
+      }
+      
       private function displayClient():void {
         setCurrentState("displayBBBClient");
       }
+      
+      private function load(url:String) : void
+      {
+        var date:Date = new Date();
+        trace("BBBMain:load(...) " + url);
+        request = new URLRequest(url);
+        request.method = URLRequestMethod.GET;
+        
+        urlLoader = new URLLoader();
+        urlLoader.addEventListener(Event.COMPLETE, handleComplete);
+        urlLoader.addEventListener(HTTPStatusEvent.HTTP_STATUS, httpStatusHandler);
+        urlLoader.addEventListener(IOErrorEvent.IO_ERROR, ioErrorHandler);
+        urlLoader.load(request);	
+      }
+      
+      private function httpStatusHandler(event:HTTPStatusEvent):void {
+        trace("httpStatusHandler: " + event);
+      }
+      
+      private function ioErrorHandler(event:IOErrorEvent):void {
+        trace("ioErrorHandler: " + event);
+      }
+      
+      private function handleComplete(e:Event):void {			
+        var xml:XML = new XML(e.target.data)
+        
+        var returncode:String = xml.returncode;
+        
+        if (returncode == 'SUCCESS') {
+          displayClient();
+        }
+      }
+      
     ]]>
   </mx:Script>
  
   <mx:VBox id="main" width="100%" height="100%">
     <mx:HBox id="joinContainer" width="100%" height="30">
-      <mx:Button id="joinBtn" label="Join" click="displayClient()"/>
+      <mx:Button id="joinBtn" label="Join" click="joinMeeting()"/>
       <mx:TextInput id="joinURL" width="90%"/>
     </mx:HBox>
   </mx:VBox>
