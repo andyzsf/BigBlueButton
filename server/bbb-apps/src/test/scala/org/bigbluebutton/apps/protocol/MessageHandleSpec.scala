@@ -1,9 +1,29 @@
 package org.bigbluebutton.apps.protocol
 
 import org.specs2.mutable.Specification
+import org.parboiled.errors.ParsingException
+import spray.json.JsObject
+import spray.json.JsValue
+import org.bigbluebutton.apps.protocol.Message._
 
 class MessageHandleSpec extends Specification {
-  val message = """
+  val invalidJSON = """{ "invalid"  "Missing a colon" }"""
+    
+  val validJSON = """{ "valid" : "Valid JSON" }"""
+  
+  val invalidMessage = """ 
+			{
+			  "header": {
+			    "name": "PrivateChatMessageEvent",
+			    "timestamp": 123456
+			  },
+			  "payload1" : {
+			    { "valid" : "Valid JSON" }
+			  }
+			}    
+    
+    """
+  val validMessage = """
 			{
 			  "header": {
 			    "name": "PrivateChatMessageEvent",
@@ -15,52 +35,38 @@ class MessageHandleSpec extends Specification {
 			    }
 			  },
 			  "payload" : {
-			    "chat": {
-			        "id": "msg1",
-			        "from": {
-			            "id": "user1",
-			            "name": "Richard"
-			        },
-			        "to": {
-			            "id": "user2",
-			            "name": "Guga"
-			        },
-			        "message": {
-			          "lang": "en_US",
-			          "text": "Hello world!"
-			        },
-			        
-			        "font": {
-			            "color": "red",
-			            "size": "14",
-			            "type": "Arial"
-			        },
-			        
-			        "translations": [
-			            {
-			                "lang": "es_LA",
-			                "text": "Hola Mundo!"
-			            },
-			            {
-			                "lang": "fi_PH",
-			                "text": "Kumusta!"
-			            }
-			        ]
-			    }
+			    { "valid" : "Valid JSON" }
 			  }
 			}  
   """
     
     "The Message Handler" should {
-      "be able to extract the header" in {
-        MessageHandler.processMessage(message)
-        "Hello world" must have size(11)
+      "returns None when passed an invalid JSON" in {
+        MessageHandler.processMessage(invalidJSON) must beNone
       }
-      "start with 'Hello'" in {
-        "Hello world" must startWith("Hello")
+      "returns a Some(JsObject) when able to parse a valid JSON" in {
+        MessageHandler.processMessage(validJSON) must beSome
       }
-      "end with 'world'" in {
-        "Hello world" must endWith("world")
+      "returns a Some(MessageHeader) when able to get the message header" in {
+        MessageHandler.processMessage(validMessage) foreach { msg => 
+          MessageHandler.extractMessageHeader(msg) must beSome 
+        }
       }
+      "returns a None when unable to get the message header" in {
+        MessageHandler.processMessage(invalidMessage) foreach { msg => 
+          MessageHandler.extractMessageHeader(msg) must beNone 
+        } 
+      }
+      "returns a Some(JsValue) when able to get the payload from the message" in {
+        MessageHandler.processMessage(validMessage) foreach { msg => 
+          MessageHandler.extractPayload(msg) must beSome 
+        }
+      }
+      "returns a None when unable to get the payload from the message" in {
+        MessageHandler.processMessage(invalidMessage) foreach { msg => 
+          MessageHandler.extractPayload(msg) must beNone 
+        }
+      }
+      
     }
 }
