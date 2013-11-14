@@ -33,6 +33,7 @@ libraryDependencies ++=
 	  "io.spray"            %   "spray-testkit"   % "1.2-M8" % "test",
 	  "io.spray"            %%  "spray-json"      % "1.2.5",
 	  "com.typesafe.akka"   %%  "akka-actor"      % "2.2.0-RC1",
+	  "com.typesafe.akka"   %%  "akka-camel"      % "2.2.0-RC1",
 	  "com.typesafe.akka"   %%  "akka-testkit"    % "2.2.0-RC1" % "test",
 	  "org.specs2"          %%  "specs2"          % "1.14" % "test",
 	  "org.json4s"          %%  "json4s-native"   % "3.2.4",
