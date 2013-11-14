@@ -6,9 +6,7 @@ import spray.json.JsObject
 import spray.json.JsonParser
 import Message._
 
-
 import org.parboiled.errors.ParsingException
-
 
 object Message {
    case class Meeting(id: String, name: String, session: String)
