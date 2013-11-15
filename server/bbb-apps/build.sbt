@@ -11,7 +11,7 @@ scalacOptions ++= Seq(
   "-Xlint",
   "-Ywarn-dead-code",
   "-language:_",
-  "-target:jvm-1.6",
+  "-target:jvm-1.7",
   "-encoding", "UTF-8"
 )
 
@@ -28,16 +28,17 @@ testOptions in Test += Tests.Argument("html", "console", "junitxml")
 
 libraryDependencies ++= 
   Seq(
-	  "io.spray"            %   "spray-can"       % "1.2-RC3",
-	  "io.spray"            %   "spray-routing"   % "1.2-RC3",
-	  "io.spray"            %   "spray-testkit"   % "1.2-RC3" % "test",
+	  "io.spray"            %   "spray-can"       % "1.2-M8",
+	  "io.spray"            %   "spray-routing"   % "1.2-M8",
+	  "io.spray"            %   "spray-testkit"   % "1.2-M8" % "test",
 	  "io.spray"            %%  "spray-json"      % "1.2.5",
-	  "com.typesafe.akka"   %%  "akka-actor"      % "2.3-M1",
-	  "com.typesafe.akka"   %%  "akka-camel"      % "2.3-M1",
-	  "com.typesafe.akka"   %%  "akka-testkit"    % "2.3-M1" % "test",
+	  "com.typesafe.akka"   %%  "akka-camel"      % "2.2.0-RC1",
+	  "com.typesafe.akka"   %%  "akka-actor"      % "2.2.0-RC1",
+	  "com.typesafe.akka"   %%  "akka-testkit"    % "2.2.0-RC1" % "test",
 	  "org.specs2"          %%  "specs2"          % "1.14" % "test",
 	  "org.json4s"          %%  "json4s-native"   % "3.2.4",
-	  "com.typesafe.akka" 	%%  "akka-slf4j"      % "2.3-M1",
+	  "org.mongodb"         %%  "casbah"          % "2.6.2",
+	  "com.typesafe.akka" 	%%  "akka-slf4j"      % "2.2.0-RC1",
 	  "ch.qos.logback"    	%   "logback-classic"   % "1.0.3",
 	  "org.pegdown" 		% 	"pegdown" 			% "1.4.0",
 	  "junit" 				% 	"junit" 			% "4.11"

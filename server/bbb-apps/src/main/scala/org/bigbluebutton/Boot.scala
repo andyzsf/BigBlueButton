@@ -6,6 +6,7 @@ import akka.util.Timeout
 import spray.can.Http
 import akka.camel.CamelExtension
 import scala.concurrent.duration._
+import org.bigbluebutton.apps.protocol.MessageHandlerActor
 
 object Boot extends App with SystemConfiguration {
 
@@ -15,11 +16,12 @@ object Boot extends App with SystemConfiguration {
   
 //  val activated = camelExtention.activationFutureFor(consumer) (timeout = 10 seconds, executor = system.dispatcher)
   
+  val msgHandler = system.actorOf(Props(classOf[MessageHandlerActor]), "message-handler")
+  
   // create and start our service actor
-  val service = system.actorOf(Props[RestEndpointServiceActor], "rest-service")
+  val service = system.actorOf(Props(classOf[RestEndpointServiceActor], msgHandler), "rest-service")
 
   // start a new HTTP server on port 8080 with our service actor as the handler
-//  IO(Http) ! Http.Bind(service, interface = serviceHost, port = servicePort)
+  IO(Http) ! Http.Bind(service, interface = serviceHost, port = servicePort)
   
-  IO(Http) ! Http.Bind(service, interface = "192.168.0.150", port = 8989)
 }
