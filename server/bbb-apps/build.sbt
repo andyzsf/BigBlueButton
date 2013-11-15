@@ -16,8 +16,10 @@ scalacOptions ++= Seq(
 )
 
 resolvers ++= Seq(
-  "spray repo" at "http://repo.spray.io/"
+  "spray repo" at "http://repo.spray.io/",
+  "rediscala" at "https://github.com/etaty/rediscala-mvn/raw/master/releases/"
 )
+
 
 // We want to have our jar files in lib_managed dir.
 // This way we'll have the right path when we import
@@ -41,7 +43,8 @@ libraryDependencies ++=
 	  "com.typesafe.akka" 	%%  "akka-slf4j"      % "2.2.0-RC1",
 	  "ch.qos.logback"    	%   "logback-classic"   % "1.0.3",
 	  "org.pegdown" 		% 	"pegdown" 			% "1.4.0",
-	  "junit" 				% 	"junit" 			% "4.11"
+	  "junit" 				% 	"junit" 			% "4.11",
+	  "com.etaty.rediscala" %% "rediscala"        % "1.3"
 	)
 
 

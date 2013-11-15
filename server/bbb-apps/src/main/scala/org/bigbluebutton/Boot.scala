@@ -7,6 +7,9 @@ import spray.can.Http
 import akka.camel.CamelExtension
 import scala.concurrent.duration._
 import org.bigbluebutton.apps.protocol.MessageHandlerActor
+import redis.RedisClient
+import scala.concurrent.{Future, Await}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 object Boot extends App with SystemConfiguration {
 
@@ -15,6 +18,15 @@ object Boot extends App with SystemConfiguration {
 //  val camelExtention = CamelExtension(system)
   
 //  val activated = camelExtention.activationFutureFor(consumer) (timeout = 10 seconds, executor = system.dispatcher)
+  
+    val redis = RedisClient()
+
+  val futurePong = redis.ping()
+  println("Ping sent!")
+  futurePong.map(pong => {
+    println(s"Redis replied with a $pong")
+  })
+  Await.result(futurePong, 5 seconds)
   
   val msgHandler = system.actorOf(Props(classOf[MessageHandlerActor]), "message-handler")
   

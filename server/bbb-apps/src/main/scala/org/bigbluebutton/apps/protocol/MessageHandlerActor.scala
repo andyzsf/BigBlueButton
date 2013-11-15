@@ -45,6 +45,7 @@ class MessageHandlerActor extends Actor with ActorLogging {
         //forwardMessage(header get, payload get)
       }
     }
+    case headerAndPayload: HeaderAndPayload => println(headerAndPayload.toString)
     case unknownMessage => log.warning("Unable to handle message: [\n {} \n]", unknownMessage)
   }
 }
