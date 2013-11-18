@@ -3,15 +3,14 @@ package org.bigbluebutton.apps.models
 import org.specs2.mutable.Specification
 
 class UsersAppSpec extends Specification {
-    "The 'Hello world' string" should {
-      "contain 11 characters" in {
-        "Hello world" must have size(11)
-      }
-      "start with 'Hello'" in {
-        "Hello world" must startWith("Hello")
-      }
-      "end with 'world'" in {
-        "Hello world" must endWith("world")
+    "The UsersTrait" should {
+      "returns the right number of registered users" in {
+        val us = new Users {}
+        var ruser = new RegisteredUser("abc", "Richard")
+        var guser = new RegisteredUser("abc2", "Guga")
+        us.register(ruser)
+        us.register(guser)
+        us.registered must have size(2)
       }
     }
 }
