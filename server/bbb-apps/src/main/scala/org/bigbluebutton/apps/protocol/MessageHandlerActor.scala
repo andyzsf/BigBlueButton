@@ -7,10 +7,6 @@ import spray.json.DefaultJsonProtocol
 import akka.actor.ActorLogging
 
 object HeaderJsonProtocol extends DefaultJsonProtocol {
-  implicit val timestampFormat = jsonFormat1(Timestamp)
-  implicit val eventNameFormat = jsonFormat1(EventName)
-  implicit val eventSourceFormat = jsonFormat1(EventSource)
-  implicit val correlationFormat = jsonFormat1(Correlation)
   implicit val headerFormat = jsonFormat4(Header)
 }
 

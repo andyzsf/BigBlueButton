@@ -47,7 +47,7 @@ class MessageHandleSpec extends Specification {
       "returns a Some(JsObject) when able to parse a valid JSON" in {
         MessageHandler.processMessage(validJSON) must beSome
       }
-      "returns a Some(MessageHeader) when able to get the message header" in {
+/*      "returns a Some(MessageHeader) when able to get the message header" in {
         MessageHandler.processMessage(validMessage) foreach { msg => 
           MessageHandler.extractMessageHeader(msg) must beSome 
         }
@@ -67,6 +67,6 @@ class MessageHandleSpec extends Specification {
           MessageHandler.extractPayload(msg) must beNone 
         }
       }
-      
+*/      
     }
 }
