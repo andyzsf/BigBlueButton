@@ -4,7 +4,6 @@ import akka.actor.{ ActorSystem, Props }
 import akka.io.IO
 import akka.util.Timeout
 import spray.can.Http
-import akka.camel.CamelExtension
 import scala.concurrent.duration._
 import org.bigbluebutton.apps.protocol.MessageHandlerActor
 import redis.RedisClient
@@ -27,6 +26,8 @@ object Boot extends App with SystemConfiguration {
     println(s"Redis replied with a $pong")
   })
   Await.result(futurePong, 5 seconds)
+  
+  val redisActor = new RedisPubSubActor
   
   val msgHandler = system.actorOf(Props(classOf[MessageHandlerActor]), "message-handler")
   
