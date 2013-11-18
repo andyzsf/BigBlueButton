@@ -2,6 +2,7 @@ package org.bigbluebutton.apps.models
 
 import org.specs2.mutable.Specification
 
+
 class UsersAppSpec extends Specification {
     "The UsersTrait" should {
       "returns the right number of registered users" in {
