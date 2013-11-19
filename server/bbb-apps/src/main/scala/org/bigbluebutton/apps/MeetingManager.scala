@@ -38,7 +38,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
    * Handle the CreateMeetingRequest message.
    */
   def handleCreateMeetingRequest(msg: CreateMeetingRequest) = {
-    val mConfig = msg.payload.meeting
+    val mConfig = msg.payload
     val externalMeetingId = mConfig.externalId
     val name = mConfig.name
     
@@ -51,12 +51,12 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
       val sessionId = getValidSession(internalMeetingId)      
       val session = MeetingSession(name, externalMeetingId, sessionId)
       
-      val meetingRef = context.actorOf(MeetingActor.props(pubsub, session, mConfig), name)
+      val meetingRef = context.actorOf(MeetingActor.props(pubsub, session, mConfig), sessionId)
       meetings += (sessionId -> meetingRef)
       
- //     sender ! CreateMeetingRequestReply(session, msg.payload)
+      sender ! CreateMeetingRequestReply(session, msg.payload)
       
- //     pubsub ! MeetingCreated(session, msg.payload)      
+      pubsub ! MeetingCreated(session, msg.payload)      
     }     
   }
 }

@@ -16,8 +16,13 @@ import akka.actor.Props
 import org.bigbluebutton.apps.protocol.Header
 import org.bigbluebutton.apps.protocol.HeaderAndPayload
 import org.bigbluebutton.apps.protocol.HeaderAndPayload
+import spray.json.JsString
+import org.bigbluebutton.apps.protocol.MessageTransformer
+import org.bigbluebutton.apps.protocol.HeaderAndPayload
+import akka.event.LoggingAdapter
+import akka.actor.ActorLogging
 
-class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with RestEndpointService {
+class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with RestEndpointService with ActorLogging {
 
   def actorRefFactory = context
 
@@ -29,9 +34,9 @@ object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSup
   implicit val headerAndPayloadFormats = jsonFormat2(HeaderAndPayload)
 }
 
-trait RestEndpointService extends HttpService {
+trait RestEndpointService extends HttpService with MessageTransformer {
   import HeaderAndPayloadJsonSupport._
-  
+//  val log: LoggingAdapter
   val msgReceiver: ActorRef
   
   val restApiRoute =
@@ -50,9 +55,13 @@ trait RestEndpointService extends HttpService {
     } ~
     path("meeting") {
       post {
-        entity(as[HeaderAndPayload]) { someObject =>
-          println(someObject)
-          complete("Got it!")
+        entity(as[HeaderAndPayload]) { hp =>
+          println(hp)
+          val msg = processMessage(hp.header, hp.payload.asJsObject)
+          if (msg != None) {
+            msgReceiver ! msg.get
+          }
+          complete(msg.get.toString())
         }
       }
     }

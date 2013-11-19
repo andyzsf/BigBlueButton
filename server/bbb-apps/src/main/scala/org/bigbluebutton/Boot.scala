@@ -9,6 +9,7 @@ import org.bigbluebutton.apps.protocol.MessageHandlerActor
 import redis.RedisClient
 import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
+import org.bigbluebutton.apps.MeetingManager
 
 object Boot extends App with SystemConfiguration {
 
@@ -16,13 +17,14 @@ object Boot extends App with SystemConfiguration {
  
 
   val redisPublisherActor = system.actorOf(
-                            AppsRedisPublisherActor.props(system), "redis-publisher")
+                            AppsRedisPublisherActor.props(system), 
+                            "redis-publisher")
                                 
   
-  val msgHandler = system.actorOf(Props(classOf[MessageHandlerActor]), "message-handler")
+  val meetingManager = system.actorOf(Props(classOf[MeetingManager], redisPublisherActor), "message-handler")
   
   // create and start our service actor
-  val service = system.actorOf(Props(classOf[RestEndpointServiceActor], msgHandler), "rest-service")
+  val service = system.actorOf(Props(classOf[RestEndpointServiceActor], meetingManager), "rest-service")
 
   // start a new HTTP server on port 8080 with our service actor as the handler
   IO(Http) ! Http.Bind(service, interface = serviceHost, port = servicePort)

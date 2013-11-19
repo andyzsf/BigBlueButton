@@ -15,11 +15,11 @@ object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
   implicit val voiceConfDefFormat = jsonFormat2(VoiceConfig)
   implicit val phoneNumberDefFormat = jsonFormat2(PhoneNumberConfig)
   implicit val meetingDefFormat = jsonFormat11(MeetingConfig)
-  implicit val createMeetingFormat = jsonFormat1(CreateMeetingRequestPayload)
+//  implicit val createMeetingFormat = jsonFormat1(CreateMeetingRequestPayload)
 }
 
 case class CreateMeetingRequestPayload(meeting: MeetingConfig)
-case class CreateMeetingRequest(header: Header, payload: CreateMeetingRequestPayload) extends InMessage
+case class CreateMeetingRequest(header: Header, payload: MeetingConfig) extends InMessage
 
 import CreateMeetingRequestJsonProtocol1._
 
@@ -29,10 +29,15 @@ trait MeetingMessageHandler {
     val meeting = payload.fields.get("meeting")
     if (meeting != None) {
       try {
-        val m = meeting.get.convertTo[CreateMeetingRequestPayload]
+        val m = meeting.get.convertTo[MeetingConfig]
+        println("Managed to decode create meeting request")
         Some(CreateMeetingRequest(header, m))
       } catch {
-        case e: DeserializationException => None
+        case e: DeserializationException => {
+          println(e)
+          println("Cannot decode create meeting request")
+          None
+        }
       }
     } else {
       None

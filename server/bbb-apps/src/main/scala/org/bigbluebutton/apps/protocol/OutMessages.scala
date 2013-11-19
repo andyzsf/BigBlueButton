@@ -5,9 +5,10 @@ import org.bigbluebutton.apps.models.UserIdAndName
 import org.bigbluebutton.apps.models.RegisteredUser
 import org.bigbluebutton.apps.models.MeetingSession
 import org.bigbluebutton.apps.models.MeetingSpec
+import org.bigbluebutton.apps.models.MeetingConfig
 
-case class CreateMeetingRequestReply(session: MeetingSession, meeting: MeetingSpec)
-case class MeetingCreated(session: MeetingSession, meeting: MeetingSpec)
+case class CreateMeetingRequestReply(session: MeetingSession, meeting: MeetingConfig)
+case class MeetingCreated(session: MeetingSession, meeting: MeetingConfig)
 
 case class MeetingHeader(name: String, externalId: String, session: String)
 

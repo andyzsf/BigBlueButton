@@ -38,7 +38,7 @@ class AppsRedisPublisherActor(val system: ActorSystem,
   }
   
   def receive = {
-    case _ => None
+    case rxMsg => println("PUBLISH TO REDIS " + rxMsg)
   }
 
 }

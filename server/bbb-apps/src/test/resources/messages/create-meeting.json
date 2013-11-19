@@ -1,6 +1,6 @@
 {
     "header": {
-        "name": "CreateMeeting",
+        "name": "CreateMeetingRequest",
         "timestamp": 123456,
         "correlation": "123abc",
         "source": "web-api"

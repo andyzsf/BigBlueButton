@@ -6,12 +6,15 @@ import spray.json.DefaultJsonProtocol
 import spray.json.JsonParser
 import org.parboiled.errors.ParsingException
 import InMessageNameContants._
+import akka.event.LoggingAdapter
 
 object ExtractMessageHeaderJsonProtocol extends DefaultJsonProtocol {
   implicit val headerFormat = jsonFormat4(Header)
 }
 
-trait MessageTransformer extends MeetingMessageHandler{
+trait MessageTransformer extends MeetingMessageHandler {
+//  val log: LoggingAdapter
+  
   import ExtractMessageHeaderJsonProtocol._
   
   def extractMessageHeader(msg: JsObject): Option[Header] = {
@@ -29,11 +32,16 @@ trait MessageTransformer extends MeetingMessageHandler{
   }
   
   def jsonMessageToObject(msg: String): Option[JsObject] = {
+//    log.debug("Converting to json : {}", msg)
+    
     try {
       val msgObject = JsonParser(msg).asJsObject
       Some(msgObject)
     } catch {
-      case e: ParsingException => None
+      case e: ParsingException => {
+//        log.error("Cannot parse message: {}", msg)
+        None
+      }
     }
   }
     
@@ -47,9 +55,13 @@ trait MessageTransformer extends MeetingMessageHandler{
       if (header != None && payload != None) {
         processMessage(header get, (payload get).asJsObject)
       } else {
+        println("Cannot header or payload from : " + jsonMsg)
+//        log.error("Cannot header or payload from : {}", jsonMsg)
         None
       }
     } else {
+      println("Cannot convert json message: " + jsonMsg)
+//      log.error("Cannot convert json message: {}", jsonMsg)
       None
     }
   }
@@ -59,7 +71,11 @@ trait MessageTransformer extends MeetingMessageHandler{
         case CreateMeetingRequestMessage  => {
           handleCreateMeetingRequest(header, payload)
         }
-        case _ => None
+        case _ => {
+          println("Cannot handle message : [{}]" + header.name)
+//          log.error("Cannot handle message : [{}]", header.name)
+          None
+        }
     }
   }
 }
