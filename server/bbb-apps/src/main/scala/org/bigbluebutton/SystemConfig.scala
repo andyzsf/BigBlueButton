@@ -11,4 +11,7 @@ trait SystemConfiguration {
 
   lazy val servicePort = Try(config.getInt("service.port")).getOrElse(8080)
 
+  lazy val redisHost = Try(config.getString("redis.host")).getOrElse("127.0.0.1")
+  
+  lazy val redisPort = Try(config.getInt("redis.port")).getOrElse(6379)
 }

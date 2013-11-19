@@ -8,17 +8,17 @@ object Role extends Enumeration {
 
 import Role._
   
-case class MeetingSpec(name: String, externalId: String, 
+case class MeetingConfig(name: String, externalId: String, 
                        record: Boolean, welcomeMessage: String, 
                        logoutUrl: String, avatarUrl: String,
-                       users: UsersSpec, duration: DurationSpec, 
-                       voiceConf: VoiceConfSpec, phoneNumbers: Seq[PhoneNumberSpec], 
+                       users: UsersConfig, duration: DurationConfig, 
+                       voiceConf: VoiceConfig, phoneNumbers: Seq[PhoneNumberConfig], 
                        metadata: Map[String, String])
   
-case class UsersSpec(max: Int, hardLimit: Boolean)
-case class DurationSpec(length: Int, allowExtend: Boolean, warnBefore: Int)
-case class VoiceConfSpec(pin: Int, number: Int)
-case class PhoneNumberSpec(number: String, description: String)  
+case class UsersConfig(max: Int, hardLimit: Boolean)
+case class DurationConfig(length: Int, allowExtend: Boolean, warnBefore: Int)
+case class VoiceConfig(pin: Int, number: Int)
+case class PhoneNumberConfig(number: String, description: String)  
   
 case class WebIdentity(name: String)
 case class CallerId(name: String, number: String)

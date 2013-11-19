@@ -12,22 +12,12 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object Boot extends App with SystemConfiguration {
 
-  implicit val system = ActorSystem("bigbluebutton-apps")
+  implicit val system = ActorSystem("bigbluebutton-apps-system")
+ 
 
-//  val camelExtention = CamelExtension(system)
-  
-//  val activated = camelExtention.activationFutureFor(consumer) (timeout = 10 seconds, executor = system.dispatcher)
-  
-    val redis = RedisClient()
-
-  val futurePong = redis.ping()
-  println("Ping sent!")
-  futurePong.map(pong => {
-    println(s"Redis replied with a $pong")
-  })
-  Await.result(futurePong, 5 seconds)
-  
-  val redisActor = new RedisPubSubActor
+  val redisPublisherActor = system.actorOf(
+                            AppsRedisPublisherActor.props(system), "redis-publisher")
+                                
   
   val msgHandler = system.actorOf(Props(classOf[MessageHandlerActor]), "message-handler")
   

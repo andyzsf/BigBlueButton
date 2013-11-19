@@ -8,8 +8,8 @@ import akka.event.LoggingAdapter
 /**
  * Users app for meeting
  */
-trait Users {  
-  val pubSub: ActorRef
+trait UsersApp {  
+  val pubsub: ActorRef
   val log: LoggingAdapter
   
   private val usersModel = new UsersModel  
@@ -32,7 +32,6 @@ trait Users {
     val token = getValidToken    
     val user = registeredUser.copy(authToken = token)
     usersModel.add(user)
-    pubSub ! UserRegistered()
   }
   
   def join(user: JoinedUser) = {

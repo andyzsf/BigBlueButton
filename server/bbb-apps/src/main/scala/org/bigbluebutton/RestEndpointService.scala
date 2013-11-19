@@ -51,7 +51,7 @@ trait RestEndpointService extends HttpService {
     path("meeting") {
       post {
         entity(as[HeaderAndPayload]) { someObject =>
-          msgReceiver ! someObject
+          println(someObject)
           complete("Got it!")
         }
       }
