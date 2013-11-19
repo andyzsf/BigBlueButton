@@ -2,29 +2,43 @@ package org.bigbluebutton.apps.models
 
 import akka.actor.ActorRef
 import org.bigbluebutton.apps.utils.RandomStringGenerator
+import org.bigbluebutton.apps.protocol.UserRegistered
+import akka.event.LoggingAdapter
 
 /**
  * Users app for meeting
  */
 trait Users {  
   val pubSub: ActorRef
+  val log: LoggingAdapter
   
-  private val usersModel = new UsersModel
-  
+  private val usersModel = new UsersModel  
   private var presenterAssignedBy = SystemUser
+  
+  def registered:Array[RegisteredUser] = usersModel.registered
+  def joined:Array[JoinedUser] = usersModel.joined
   
   def getValidToken: String = {
     val token = RandomStringGenerator.randomAlphanumericString(12)
     if (! usersModel.isRegistered(token)) token else getValidToken
   }
   
-  def register(user: RegisteredUser) = {
-    val token = getValidToken
-    
-    usersModel.add(user)
+  def getValidUserId: String = {
+    val userId = RandomStringGenerator.randomAlphanumericString(6)
+    if (! usersModel.exist(userId)) userId else getValidUserId
   }
   
-//  def join(user: JoinedUser) = joinedUsers += (user.id -> user)
+  def register(registeredUser: RegisteredUser) = {
+    val token = getValidToken    
+    val user = registeredUser.copy(authToken = token)
+    usersModel.add(user)
+    pubSub ! UserRegistered()
+  }
+  
+  def join(user: JoinedUser) = {
+    val userId = getValidUserId
+    usersModel.add(user.copy(id = userId))
+  }
   
 
 //  def left(id: String):Option[JoinedUser] = {
