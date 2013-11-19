@@ -40,10 +40,11 @@ libraryDependencies ++= {
 	  "com.typesafe.akka"   %%  "akka-actor"      % akkaVersion,
 	  "com.typesafe.akka"   %%  "akka-testkit"    % akkaVersion % "test",
 	  "org.specs2"          %%  "specs2"          % "2.2.3" % "test",
+	  "org.scalatest"       %   "scalatest_2.10"  % "2.0" % "test",
 	  "com.typesafe.akka" 	%%  "akka-slf4j"      % akkaVersion,
-	  "ch.qos.logback"    	%   "logback-classic"   % "1.0.3",
-	  "org.pegdown" 		% 	"pegdown" 			% "1.4.0",
-	  "junit" 				% 	"junit" 			% "4.11",
+	  "ch.qos.logback"    	%   "logback-classic" % "1.0.3",
+	  "org.pegdown" 		    % 	"pegdown" 			  % "1.4.0",
+	  "junit" 				      %   "junit"           % "4.11",
 	  "com.etaty.rediscala" %% "rediscala"        % "1.3",
 	  "commons-codec"       %   "commons-codec"   % "1.8"
 	)}
