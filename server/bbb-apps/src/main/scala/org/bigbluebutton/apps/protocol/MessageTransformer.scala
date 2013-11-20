@@ -13,7 +13,7 @@ object ExtractMessageHeaderJsonProtocol extends DefaultJsonProtocol {
 }
 
 trait MessageTransformer extends MeetingMessageHandler {
-//  val log: LoggingAdapter
+  val log: LoggingAdapter
   
   import ExtractMessageHeaderJsonProtocol._
   
@@ -32,14 +32,14 @@ trait MessageTransformer extends MeetingMessageHandler {
   }
   
   def jsonMessageToObject(msg: String): Option[JsObject] = {
-//    log.debug("Converting to json : {}", msg)
+    log.debug("Converting to json : {}", msg)
     
     try {
       val msgObject = JsonParser(msg).asJsObject
       Some(msgObject)
     } catch {
       case e: ParsingException => {
-//        log.error("Cannot parse message: {}", msg)
+        log.error("Cannot parse message: {}", msg)
         None
       }
     }
@@ -56,12 +56,12 @@ trait MessageTransformer extends MeetingMessageHandler {
         processMessage(header get, (payload get).asJsObject)
       } else {
         println("Cannot header or payload from : " + jsonMsg)
-//        log.error("Cannot header or payload from : {}", jsonMsg)
+        log.error("Cannot header or payload from : {}", jsonMsg)
         None
       }
     } else {
       println("Cannot convert json message: " + jsonMsg)
-//      log.error("Cannot convert json message: {}", jsonMsg)
+      log.error("Cannot convert json message: {}", jsonMsg)
       None
     }
   }
@@ -73,7 +73,7 @@ trait MessageTransformer extends MeetingMessageHandler {
         }
         case _ => {
           println("Cannot handle message : [{}]" + header.name)
-//          log.error("Cannot handle message : [{}]", header.name)
+          log.error("Cannot handle message : [{}]", header.name)
           None
         }
     }

@@ -4,7 +4,6 @@ import org.bigbluebutton.apps.models.JoinedUser
 import org.bigbluebutton.apps.models.UserIdAndName
 import org.bigbluebutton.apps.models.RegisteredUser
 import org.bigbluebutton.apps.models.MeetingSession
-import org.bigbluebutton.apps.models.MeetingSpec
 import org.bigbluebutton.apps.models.MeetingConfig
 
 case class CreateMeetingRequestReply(session: MeetingSession, meeting: MeetingConfig)

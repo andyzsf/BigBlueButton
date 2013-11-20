@@ -15,7 +15,6 @@ object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
   implicit val voiceConfDefFormat = jsonFormat2(VoiceConfig)
   implicit val phoneNumberDefFormat = jsonFormat2(PhoneNumberConfig)
   implicit val meetingDefFormat = jsonFormat11(MeetingConfig)
-//  implicit val createMeetingFormat = jsonFormat1(CreateMeetingRequestPayload)
 }
 
 case class CreateMeetingRequestPayload(meeting: MeetingConfig)
