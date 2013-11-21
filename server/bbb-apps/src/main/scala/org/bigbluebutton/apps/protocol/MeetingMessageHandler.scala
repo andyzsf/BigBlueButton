@@ -8,6 +8,7 @@ import org.bigbluebutton.apps.models.PhoneNumberConfig
 import org.bigbluebutton.apps.models.VoiceConfig
 import org.bigbluebutton.apps.models.DurationConfig
 import org.bigbluebutton.apps.models.UsersConfig
+import akka.event.LoggingAdapter
 
 object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
   implicit val usersDefFormat = jsonFormat2(UsersConfig)
@@ -20,16 +21,18 @@ object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
 case class CreateMeetingRequestPayload(meeting: MeetingConfig)
 case class CreateMeetingRequest(header: Header, payload: MeetingConfig) extends InMessage
 
-import CreateMeetingRequestJsonProtocol1._
-
 trait MeetingMessageHandler {
+  import CreateMeetingRequestJsonProtocol1._
+
+  val log: LoggingAdapter
+  
   def handleCreateMeetingRequest(header: Header, 
                                  payload: JsObject):Option[InMessage] = {
     val meeting = payload.fields.get("meeting")
     if (meeting != None) {
       try {
         val m = meeting.get.convertTo[MeetingConfig]
-        println("Managed to decode create meeting request")
+        log.debug("Managed to decode create meeting request")
         Some(CreateMeetingRequest(header, m))
       } catch {
         case e: DeserializationException => {
