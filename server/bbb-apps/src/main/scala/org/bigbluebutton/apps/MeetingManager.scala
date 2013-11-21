@@ -7,6 +7,7 @@ import akka.actor.ActorLogging
 import org.bigbluebutton.apps.models.MeetingSession
 import org.bigbluebutton.apps.protocol.MeetingCreated
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
+import org.bigbluebutton.apps.protocol.Ok
 
 class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
@@ -54,9 +55,20 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
       val meetingRef = context.actorOf(MeetingActor.props(pubsub, session, mConfig), sessionId)
       meetings += (sessionId -> meetingRef)
       
-      sender ! CreateMeetingRequestReply(session, msg.payload)
+      log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
       
+      /**
+       * TODO: Send a reply that the meeting has been creted successfully.
+       */
+      sender ! CreateMeetingRequestReply(session, msg.payload)
+//      sender ! Ok(util.Random.nextInt(10000))
+
       pubsub ! MeetingCreated(session, msg.payload)      
-    }     
-  }
+    }   else {
+      log.info("Meeting [{}] : [{}] is already running.", externalMeetingId, name) 
+      /**
+       * TODO: Send a reply that a meeting with that id is already running.
+       */
+    }  
+  } 
 }

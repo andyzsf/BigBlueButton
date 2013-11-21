@@ -21,6 +21,12 @@ import org.bigbluebutton.apps.protocol.MessageTransformer
 import org.bigbluebutton.apps.protocol.HeaderAndPayload
 import akka.event.LoggingAdapter
 import akka.actor.ActorLogging
+import akka.pattern.{ask, pipe}
+import akka.util.Timeout
+import scala.concurrent.duration._
+import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
+import org.bigbluebutton.apps.protocol.Ok
+import scala.util.{Success, Failure}
 
 class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with RestEndpointService with ActorLogging {
 
@@ -37,8 +43,12 @@ object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSup
 trait RestEndpointService extends HttpService {
   import MessageTransformer._
   import HeaderAndPayloadJsonSupport._
-//  val log: LoggingAdapter
+
   val msgReceiver: ActorRef
+  implicit def executionContext = actorRefFactory.dispatcher
+  implicit val timeout = Timeout(5 seconds)
+  
+  val supportedContentTypes = List[ContentType](`application/json`, `text/plain`)
   
   val restApiRoute =
     path("") {
@@ -56,13 +66,31 @@ trait RestEndpointService extends HttpService {
     } ~
     path("meeting") {
       post {
-        entity(as[HeaderAndPayload]) { hp =>
-          println(hp)
-          val msg = processMessage(hp.header, hp.payload.asJsObject)
-          if (msg != None) {
-            msgReceiver ! msg.get
-          }
-          complete(msg.get.toString())
+        respondWithMediaType(`application/json`) {
+	        entity(as[HeaderAndPayload]) { hp =>
+	          val msg = processMessage(hp.header, hp.payload.asJsObject)
+	          if (msg != None) {
+	            /**
+	             * TODO: Use Future to handle response if meeting has been created or
+	             *       if it is already running.
+	             */
+	            val response = (msgReceiver ? msg.get).mapTo[CreateMeetingRequestReply]
+				response onComplete {
+				   case Success(result) => {
+				     println("RESULT: " + result)
+				    // result match {
+				   //    case ok:Ok => println(ok)
+				    //   case 
+				    // }
+				   }
+				   case Failure(failure) =>  println("FAIL: " + failure)
+				  } 
+	            complete("{OK}")
+	          } else {
+	            complete("{Failed to process message.}")
+	          }
+	          
+	        }
         }
       }
     }

@@ -12,3 +12,7 @@ object InMessageNameContants {
 
 case class RegisterUserRequest(header: Header, payload: String)
 case class AssignPresenter(header: Header, payload: String)
+
+
+
+case class Ok(id: Int)
