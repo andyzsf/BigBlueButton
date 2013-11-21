@@ -7,13 +7,13 @@ import spray.json.JsonParser
 import org.parboiled.errors.ParsingException
 import InMessageNameContants._
 import akka.event.LoggingAdapter
+import akka.event.slf4j.SLF4JLogging
 
 object ExtractMessageHeaderJsonProtocol extends DefaultJsonProtocol {
   implicit val headerFormat = jsonFormat4(Header)
 }
 
-trait MessageTransformer extends MeetingMessageHandler {
-  val log: LoggingAdapter
+object MessageTransformer extends MeetingMessageHandler with SLF4JLogging {
   
   import ExtractMessageHeaderJsonProtocol._
   

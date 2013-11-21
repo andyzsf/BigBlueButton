@@ -34,7 +34,8 @@ object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSup
   implicit val headerAndPayloadFormats = jsonFormat2(HeaderAndPayload)
 }
 
-trait RestEndpointService extends HttpService with MessageTransformer {
+trait RestEndpointService extends HttpService {
+  import MessageTransformer._
   import HeaderAndPayloadJsonSupport._
 //  val log: LoggingAdapter
   val msgReceiver: ActorRef

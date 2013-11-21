@@ -25,7 +25,7 @@ class AppsRedisSubscriberActor(bbbAppsActor: ActorRef, redisHost: String, redisP
                  channels: Seq[String] = Nil, patterns: Seq[String] = Nil)
                  extends RedisSubscriberActor(
                       new InetSocketAddress(redisHost, redisPort), 
-                      channels, patterns) with MessageTransformer {
+                      channels, patterns) {
 
   def onMessage(message: Message) {
     println(s"message received: $message")
@@ -36,7 +36,7 @@ class AppsRedisSubscriberActor(bbbAppsActor: ActorRef, redisHost: String, redisP
   }
   
   def handleMessage(msg: String) {
-    val transformedMessage = transformMessage(msg)
+    val transformedMessage = MessageTransformer.transformMessage(msg)
     
     /**
      * TODO: Inspect the message and determine if we should expect a reply

@@ -9,6 +9,7 @@ import org.bigbluebutton.apps.models.VoiceConfig
 import org.bigbluebutton.apps.models.DurationConfig
 import org.bigbluebutton.apps.models.UsersConfig
 import akka.event.LoggingAdapter
+import akka.event.slf4j.SLF4JLogging
 
 object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
   implicit val usersDefFormat = jsonFormat2(UsersConfig)
@@ -21,10 +22,8 @@ object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
 case class CreateMeetingRequestPayload(meeting: MeetingConfig)
 case class CreateMeetingRequest(header: Header, payload: MeetingConfig) extends InMessage
 
-trait MeetingMessageHandler {
+trait MeetingMessageHandler extends SLF4JLogging {
   import CreateMeetingRequestJsonProtocol1._
-
-  val log: LoggingAdapter
   
   def handleCreateMeetingRequest(header: Header, 
                                  payload: JsObject):Option[InMessage] = {

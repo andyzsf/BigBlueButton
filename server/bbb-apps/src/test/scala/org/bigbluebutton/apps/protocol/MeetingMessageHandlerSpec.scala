@@ -106,8 +106,8 @@ class MeetingMessageHandlerSpec extends Specification {
       val jsonObj = jsonAst.asJsObject
       val payloadObj = jsonObj.fields.get("payload").get.asJsObject
       val handler = new MeetingMessageHandler {}
-      val transformer = new MessageTransformer {}
-      val header = transformer.extractMessageHeader(jsonObj).get
+
+      val header = MessageTransformer.extractMessageHeader(jsonObj).get
       handler.handleCreateMeetingRequest(header, payloadObj) must beSome
     }
     
