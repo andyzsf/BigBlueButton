@@ -9,6 +9,7 @@ import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 import akka.actor.ActorRef
 import org.bigbluebutton.apps.protocol.MessageTransformer
+import akka.event.slf4j.SLF4JLogging
 
 object AppsRedisSubscriberActor extends SystemConfiguration {
 
@@ -21,18 +22,19 @@ object AppsRedisSubscriberActor extends SystemConfiguration {
 	      withDispatcher("rediscala.rediscala-client-worker-dispatcher")
 }
 
-class AppsRedisSubscriberActor(bbbAppsActor: ActorRef, redisHost: String, redisPort: Int, 
+class AppsRedisSubscriberActor(bbbAppsActor: ActorRef, redisHost: String, 
+                 redisPort: Int, 
                  channels: Seq[String] = Nil, patterns: Seq[String] = Nil)
                  extends RedisSubscriberActor(
                       new InetSocketAddress(redisHost, redisPort), 
                       channels, patterns) {
 
   def onMessage(message: Message) {
-    println(s"message received: $message")
+    log.debug(s"message received: $message")
   }
 
   def onPMessage(pmessage: PMessage) {
-    println(s"pattern message received: $pmessage")
+    log.debug(s"pattern message received: $pmessage")
   }
   
   def handleMessage(msg: String) {
