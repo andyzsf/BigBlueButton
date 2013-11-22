@@ -61,7 +61,6 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
        * TODO: Send a reply that the meeting has been creted successfully.
        */
       sender ! CreateMeetingRequestReply(session, msg.payload)
-//      sender ! Ok(util.Random.nextInt(10000))
 
       pubsub ! MeetingCreated(session, msg.payload)      
     }   else {

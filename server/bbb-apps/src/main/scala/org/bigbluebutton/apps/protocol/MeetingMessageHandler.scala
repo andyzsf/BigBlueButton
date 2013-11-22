@@ -36,7 +36,6 @@ trait MeetingMessageHandler extends SLF4JLogging {
       } catch {
         case e: DeserializationException => {
           println(e)
-          println("Cannot decode create meeting request")
           None
         }
       }

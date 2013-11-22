@@ -10,10 +10,7 @@ class MeetingMessageHandlerSpec extends Specification {
         "name": "CreateMeeting",
         "timestamp": 123456,
         "source": "web-api",
-        "replyTo" : {
-           "correlation": "123abc",
-           "channel" : "my-request-channel"
-        }
+        "correlation": "123abc"
     },
     "payload": {
         "meeting": {
