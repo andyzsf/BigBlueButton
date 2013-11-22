@@ -8,6 +8,7 @@ import org.bigbluebutton.apps.models.MeetingSession
 import org.bigbluebutton.apps.protocol.MeetingCreated
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.protocol.Ok
+import org.bigbluebutton.apps.models.MeetingConfig
 
 class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
@@ -36,6 +37,12 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
     internalMeetingId + "-" + System.currentTimeMillis()
   }
   
+  def createMeeting(session: MeetingSession, config: MeetingConfig):ActorRef = {
+      val meetingRef = context.actorOf(MeetingActor.props(pubsub, session, config), session.session)
+      meetings += (session.session -> meetingRef)    
+      meetingRef
+  }
+  
   /**
    * Handle the CreateMeetingRequest message.
    */
@@ -53,13 +60,12 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
       val sessionId = getValidSession(internalMeetingId)      
       val session = MeetingSession(name, externalMeetingId, sessionId)
       
-      val meetingRef = context.actorOf(MeetingActor.props(pubsub, session, mConfig), sessionId)
-      meetings += (sessionId -> meetingRef)
+      val meetingRef = createMeeting(session, mConfig)
       
       log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
       
       /**
-       * TODO: Send a reply that the meeting has been creted successfully.
+       * TODO: Send a reply that the meeting has been created successfully.
        */
       sender ! CreateMeetingRequestReply(session, msg.payload)
 

@@ -56,6 +56,7 @@ class UsersModel {
    */
   def moderators:Array[JoinedUser] = 
         joinedUsers.values filter(p => p.role == Role.MODERATOR) toArray  
+        
   /**
    * Returns the viewers in the meeting.
    */
