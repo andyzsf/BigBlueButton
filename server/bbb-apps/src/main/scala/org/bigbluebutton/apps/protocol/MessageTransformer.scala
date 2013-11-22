@@ -8,6 +8,8 @@ import org.parboiled.errors.ParsingException
 import InMessageNameContants._
 import akka.event.LoggingAdapter
 import akka.event.slf4j.SLF4JLogging
+import scala.util.Try
+import org.bigbluebutton.apps.protocol.MessageProcessException
 
 object ExtractMessageHeaderJsonProtocol extends DefaultJsonProtocol {
   implicit val headerFormat = jsonFormat4(Header)
@@ -17,64 +19,55 @@ object MessageTransformer extends MeetingMessageHandler with SLF4JLogging {
   
   import ExtractMessageHeaderJsonProtocol._
   
-  def extractMessageHeader(msg: JsObject): Option[Header] = {
+  def extractMessageHeader(msg: JsObject):Header = {
     msg.fields.get("header") match {
       case Some(header) => {
-        val h = header.convertTo[Header]
-        Some(h)
+        header.convertTo[Header]
       }
-      case None => None
+      case None => throw MessageProcessException("Cannot get header information")
     }
   }
  
-  def extractPayload(msg: JsObject): Option[JsValue] = {
-    msg.fields.get("payload")  
+  def extractPayload(msg: JsObject): JsValue = {
+    msg.fields.get("payload") match {
+      case Some(payload) => payload
+      case None => throw MessageProcessException("Cannot get payload information")
+    } 
   }
   
-  def jsonMessageToObject(msg: String): Option[JsObject] = {
+  def jsonMessageToObject(msg: String): JsObject = {
     log.debug("Converting to json : {}", msg)
     
     try {
-      Some(JsonParser(msg).asJsObject)
+      JsonParser(msg).asJsObject
     } catch {
       case e: ParsingException => {
         log.error("Cannot parse message: {}", msg)
-        None
+        throw MessageProcessException("Cannot parse JSON message: " + msg)
       }
     }
   }
     
-  def transformMessage(jsonMsg: String):Option[InMessage] = {
-    val jsonObj = jsonMessageToObject(jsonMsg)
-    if (jsonObj != None) {
-      val msgObj = jsonObj get
-      val header = extractMessageHeader(msgObj)
-      val payload = extractPayload(msgObj)
-      
-      if (header != None && payload != None) {
-        processMessage(header get, (payload get).asJsObject)
-      } else {
-        println("Cannot header or payload from : " + jsonMsg)
-        log.error("Cannot header or payload from : {}", jsonMsg)
-        None
+  def transformMessage(jsonMsg: String):Try[InMessage] = {
+    val result = Try({
+	    val jsonObj = jsonMessageToObject(jsonMsg)
+	    val header = extractMessageHeader(jsonObj)
+	    val payload = extractPayload(jsonObj)	  
+	    Try(processMessage(header, payload.asJsObject))
       }
-    } else {
-      println("Cannot convert json message: " + jsonMsg)
-      log.error("Cannot convert json message: {}", jsonMsg)
-      None
-    }
+    )
+    
+    result.flatMap(f)
   }
   
-  def processMessage(header: Header, payload:JsObject):Option[InMessage] = {
-    header.name match {
-        case CreateMeetingRequestMessage  => {
-          handleCreateMeetingRequest(header, payload)
-        }
-        case _ => {
-          println("Cannot handle message : [{}]" + header.name)
-          log.error("Cannot handle message : [{}]", header.name)
-          None
-        }
-    }
+  def processMessage(header: Header, payload:JsObject):Try[InMessage] = {
+    Try(header.name match {
+	        case CreateMeetingRequestMessage  => {
+	          handleCreateMeetingRequest(header, payload)
+	        }
+	        case _ => {
+	          throw MessageProcessException("Unknown message name : " + header.name)
+	        }
+	    })
   }
 }

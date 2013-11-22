@@ -26,21 +26,20 @@ trait MeetingMessageHandler extends SLF4JLogging {
   import CreateMeetingRequestJsonProtocol1._
   
   def handleCreateMeetingRequest(header: Header, 
-                                 payload: JsObject):Option[InMessage] = {
-    val meeting = payload.fields.get("meeting")
-    if (meeting != None) {
-      try {
-        val m = meeting.get.convertTo[MeetingConfig]
-        log.debug("Managed to decode create meeting request")
-        Some(CreateMeetingRequest(header, m))
-      } catch {
-        case e: DeserializationException => {
-          println(e)
-          None
-        }
+                                 payload: JsObject):InMessage = {
+    payload.fields.get("meeting") match {
+      case Some(meeting) => {
+	      try {
+	        val m = meeting.convertTo[MeetingConfig]
+	        log.debug("Managed to decode create meeting request")
+	        CreateMeetingRequest(header, m)
+	      } catch {
+	        case e: DeserializationException => {
+	          throw MessageProcessException("Failed to deserialize create meeting message")
+	        }
+	      }        
       }
-    } else {
-      None
-    }    
+      case None => throw MessageProcessException("Malformed message")
+    }   
   }
 }
