@@ -32,8 +32,8 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
    * Creates an internal id out of the external id. 
    */
-  def getValidSession(externalMeetingId: String): String = { 
-    externalMeetingId + "-" + System.currentTimeMillis()
+  def getValidSession(internalMeetingId: String): String = { 
+    internalMeetingId + "-" + System.currentTimeMillis()
   }
   
   /**

@@ -22,6 +22,10 @@ class MeetingManagerSpec extends
   val pubsub = TestProbe()
   val meetingMgrRef = system.actorOf(Props(classOf[MeetingManager], pubsub.ref))
   
+  override def afterAll {
+    shutdown(system)
+  }
+  
   "An MeetingManagerActor" should {
     "Respond with the same message it receives" in {
       within(500 millis) {
