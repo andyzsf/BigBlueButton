@@ -35,8 +35,7 @@ object MessageTransformer extends MeetingMessageHandler with SLF4JLogging {
     log.debug("Converting to json : {}", msg)
     
     try {
-      val msgObject = JsonParser(msg).asJsObject
-      Some(msgObject)
+      Some(JsonParser(msg).asJsObject)
     } catch {
       case e: ParsingException => {
         log.error("Cannot parse message: {}", msg)

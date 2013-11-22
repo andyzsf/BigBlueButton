@@ -5,6 +5,8 @@ import spray.json.JsValue
 case class Header(name: String, timestamp: Long, correlation: String, source: String)
 case class HeaderAndPayload(header: Header, payload: JsValue)
 
+case class MessageProcessException(message: String) extends Exception(message)
+
 object InMessageNameContants {
   val CreateMeetingRequestMessage = "CreateMeetingRequest"
 }

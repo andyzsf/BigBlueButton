@@ -14,7 +14,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
    * Holds our currently running meetings.
    */
-  var meetings = new collection.immutable.HashMap[String, ActorRef]
+  private var meetings = new collection.immutable.HashMap[String, ActorRef]
   
   def receive = {
     case createMeetingRequest: CreateMeetingRequest => 
@@ -38,9 +38,27 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   }
   
   def createMeeting(session: MeetingSession, config: MeetingConfig):ActorRef = {
-      val meetingRef = context.actorOf(MeetingActor.props(pubsub, session, config), session.session)
-      meetings += (session.session -> meetingRef)    
-      meetingRef
+    context.actorOf(MeetingActor.props(pubsub, session, config), session.session)
+  }
+  
+  def storeMeeting(session: String, meetingRef: ActorRef) = {
+    meetings += (session -> meetingRef) 
+  }
+  
+  def getSessionFor(internalId: String):Option[String] = {
+	 meetings.keys find {key => key.startsWith(internalId)}
+  }
+  
+  def getMeeting(internalMeetingId: String):Option[ActorRef] = {
+    getSessionFor(internalMeetingId) match {
+      case Some(session) => meetings.get(session)
+      case None => None
+    }
+  }
+  
+  def createSession(name: String, externalId: String, internalId: String):MeetingSession = {
+	 val sessionId = getValidSession(internalId)      
+	 MeetingSession(name, externalId, sessionId)    
   }
   
   /**
@@ -54,27 +72,25 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
     log.debug("Received create meeting request for [{}] : [{}]", externalMeetingId, name)
     
     val internalMeetingId = Util.toInternalMeetingId(externalMeetingId)
-    if (! meetingExist(internalMeetingId)) {
-      log.info("Creating meeting [{}] : [{}]", externalMeetingId, name)
-      
-      val sessionId = getValidSession(internalMeetingId)      
-      val session = MeetingSession(name, externalMeetingId, sessionId)
-      
-      val meetingRef = createMeeting(session, mConfig)
-      
-      log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
-      
-      /**
-       * TODO: Send a reply that the meeting has been created successfully.
-       */
-      sender ! CreateMeetingRequestReply(session, msg.payload)
-
-      pubsub ! MeetingCreated(session, msg.payload)      
-    }   else {
-      log.info("Meeting [{}] : [{}] is already running.", externalMeetingId, name) 
-      /**
-       * TODO: Send a reply that a meeting with that id is already running.
-       */
-    }  
+    getMeeting(internalMeetingId) match {
+      case Some(meetingActor) => {
+	      log.info("Meeting [{}] : [{}] is already running.", externalMeetingId, name) 
+	      /**
+	       * TODO: Send a reply that a meeting with that id is already running.
+	       */         
+      }
+      case None => {
+	      log.info("Creating meeting [{}] : [{}]", externalMeetingId, name)
+	      
+	      val session = createSession(name, externalMeetingId, internalMeetingId)
+	      val meetingRef = createMeeting(session, mConfig)	      
+	      storeMeeting(session.session, meetingRef)
+	      
+	      log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
+	      
+	      sender ! CreateMeetingRequestReply(session, msg.payload)	
+	      pubsub ! MeetingCreated(session, msg.payload)         
+      }
+    } 
   } 
 }
