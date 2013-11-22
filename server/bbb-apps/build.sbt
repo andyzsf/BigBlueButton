@@ -26,7 +26,9 @@ resolvers ++= Seq(
 // into eclipse.
 retrieveManaged := true
 
-testOptions in Test += Tests.Argument("html", "console", "junitxml")
+testOptions in Test += Tests.Argument(TestFrameworks.Specs2, "html", "console", "junitxml")
+
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-h", "target/scalatest-reports")
 
 libraryDependencies ++= {
   val akkaVersion  = "2.2.3"
