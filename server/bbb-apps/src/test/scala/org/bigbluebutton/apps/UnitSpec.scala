@@ -3,8 +3,6 @@ package org.bigbluebutton.apps
 import org.scalatest.WordSpec
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.WordSpec
-import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.Matchers
 
-
-
-class UnitSpec extends WordSpec with ShouldMatchers with BeforeAndAfterAll
+class UnitSpec extends WordSpec with Matchers with BeforeAndAfterAll

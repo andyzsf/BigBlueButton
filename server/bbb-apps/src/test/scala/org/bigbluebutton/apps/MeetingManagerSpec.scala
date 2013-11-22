@@ -1,21 +1,35 @@
 package org.bigbluebutton.apps
 
-import org.scalatest.FlatSpec
+import akka.testkit.DefaultTimeout
+import akka.testkit.ImplicitSender
+import akka.testkit.TestKit
+import scala.concurrent.duration._
+import scala.collection.immutable
+import org.scalatest.matchers.ShouldMatchers
+import org.scalatest.WordSpecLike
+import org.scalatest.BeforeAndAfterAll
+import org.scalatest.Matchers
+import akka.actor.ActorSystem
 import collection.mutable.Stack
+import akka.actor.Props
+import akka.testkit.TestProbe
 
-class MeetingManagerSpec extends FlatSpec {
-  "MeetingManager" should "pop values in last-in-first-out order" in {
-    val stack = new Stack[Int]
-    stack.push(1)
-    stack.push(2)
-    assert(stack.pop() === 2)
-    assert(stack.pop() === 1)
-  }
-
-  it should "throw NoSuchElementException if an empty stack is popped" in {
-    val emptyStack = new Stack[String]
-    intercept[NoSuchElementException] {
-      emptyStack.pop()
+class MeetingManagerSpec extends 
+  TestKit(ActorSystem("MeetingManagerSpec"))
+  with DefaultTimeout with ImplicitSender with WordSpecLike 
+  with Matchers with BeforeAndAfterAll {
+  
+  val pubsub = TestProbe()
+  val meetingMgrRef = system.actorOf(Props(classOf[MeetingManager], pubsub.ref))
+  
+  "An MeetingManagerActor" should {
+    "Respond with the same message it receives" in {
+      within(500 millis) {
+        meetingMgrRef ! "test"
+        expectMsg("test")
+        pubsub.expectMsg(500 millis, "test")
+      }
     }
   }
+
 }

@@ -18,6 +18,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   def receive = {
     case createMeetingRequest: CreateMeetingRequest => 
            handleCreateMeetingRequest(createMeetingRequest)
+    case "test" => {sender ! "test"; pubsub ! "test"}
     case _ => None
   }
   
