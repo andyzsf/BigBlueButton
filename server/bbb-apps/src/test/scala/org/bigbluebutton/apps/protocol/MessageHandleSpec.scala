@@ -24,28 +24,59 @@ class MessageHandleSpec extends Specification {
     
     """
   val validMessage = """
-			{
-			  "header": {
-			    "name": "PrivateChatMessageEvent",
-			    "timestamp": 123456,
-			    "meeting": {
-			        "id": "english_101",
-			        "name": "English 101",
-			        "session": "183f0bf3a0982a127bdb8161e0c44eb696b3e75c-1383210136298"
-			    }
-			  },
-			  "payload" : {
-			    { "valid" : "Valid JSON" }
-			  }
-			}  
+{
+    "header": {
+        "name": "CreateMeetingRequest",
+        "timestamp": 123456,
+        "correlation": "123abc",
+        "source": "web-api"
+    },
+    "payload": {
+        "meeting": {
+            "name": "English 101",
+            "externalId": "english_101",
+            "record": true,
+            "welcomeMessage": "Welcome to English 101",
+            "logoutUrl": "http://www.bigbluebutton.org",
+            "avatarUrl": "http://www.gravatar.com/bigbluebutton",
+            "users": {
+                "max": 20,
+                "hardLimit": false
+            },
+            "duration": {
+                "length": 120,
+                "allowExtend": false,
+                "warnBefore": 30
+            },
+            "voiceConf": {
+                "pin": 123456,
+                "number": 85115
+            },
+            "phoneNumbers": [
+                {
+                    "number": "613-520-7600",
+                    "description": "Ottawa"
+                },
+                {
+                    "number": "1-888-555-7890",
+                    "description": "NA Toll-Free"
+                }
+            ],
+            "metadata": {
+                "customerId": "acme-customer",
+                "customerName": "ACME"
+            }
+        }
+    }
+}   
   """
     
     "The Message Handler" should {
       "returns None when passed an invalid JSON" in {
-        MessageHandler.processMessage(invalidJSON) must beNone
+        MessageTransformer.transformMessage(invalidJSON) must beFailedTry
       }
       "returns a Some(JsObject) when able to parse a valid JSON" in {
-        MessageHandler.processMessage(validJSON) must beSome
+        MessageTransformer.transformMessage(validMessage) must beSuccessfulTry
       }
 /*      "returns a Some(MessageHeader) when able to get the message header" in {
         MessageHandler.processMessage(validMessage) foreach { msg => 

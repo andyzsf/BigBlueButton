@@ -23,7 +23,7 @@ object MessageTransformer extends MeetingMessageHandler with SLF4JLogging {
       case Some(header) => {
         header.convertTo[Header]
       }
-      case None => throw MessageProcessException("Cannot get header information")
+      case None => throw MessageProcessException("Cannot get header information: " + msg)
     }
   }
  
