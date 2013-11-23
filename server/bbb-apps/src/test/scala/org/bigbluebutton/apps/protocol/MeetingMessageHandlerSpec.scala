@@ -107,8 +107,8 @@ class MeetingMessageHandlerSpec extends Specification {
       val payloadObj = jsonObj.fields.get("payload").get.asJsObject
       val handler = new MeetingMessageHandler {}
 
-      val header = MessageTransformer.extractMessageHeader(jsonObj).get
-      handler.handleCreateMeetingRequest(header, payloadObj) must beSome
+      val header = MessageTransformer.extractMessageHeader(jsonObj)
+      handler.handleCreateMeetingRequest(header, payloadObj) must haveClass[CreateMeetingRequest]
     }
     
     "returns None when passed an invalid request" in {

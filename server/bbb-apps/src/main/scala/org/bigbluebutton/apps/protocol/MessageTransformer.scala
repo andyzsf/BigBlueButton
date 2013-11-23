@@ -9,7 +9,6 @@ import InMessageNameContants._
 import akka.event.LoggingAdapter
 import akka.event.slf4j.SLF4JLogging
 import scala.util.Try
-import org.bigbluebutton.apps.protocol.MessageProcessException
 
 object ExtractMessageHeaderJsonProtocol extends DefaultJsonProtocol {
   implicit val headerFormat = jsonFormat4(Header)
@@ -49,15 +48,12 @@ object MessageTransformer extends MeetingMessageHandler with SLF4JLogging {
   }
     
   def transformMessage(jsonMsg: String):Try[InMessage] = {
-    val result = Try({
-	    val jsonObj = jsonMessageToObject(jsonMsg)
-	    val header = extractMessageHeader(jsonObj)
-	    val payload = extractPayload(jsonObj)	  
-	    Try(processMessage(header, payload.asJsObject))
-      }
-    )
-    
-    result.flatMap(f)
+    for {
+      jsonObj <- Try(jsonMessageToObject(jsonMsg))
+      header <- Try(extractMessageHeader(jsonObj))
+      payload <- Try(extractPayload(jsonObj))
+      message <- processMessage(header, payload.asJsObject)
+    } yield message
   }
   
   def processMessage(header: Header, payload:JsObject):Try[InMessage] = {
