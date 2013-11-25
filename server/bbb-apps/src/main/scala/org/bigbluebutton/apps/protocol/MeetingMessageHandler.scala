@@ -31,7 +31,6 @@ trait MeetingMessageHandler extends SLF4JLogging {
       case Some(meeting) => {
 	      try {
 	        val m = meeting.convertTo[MeetingConfig]
-	        log.debug("Managed to decode create meeting request")
 	        CreateMeetingRequest(header, m)
 	      } catch {
 	        case e: DeserializationException => {
