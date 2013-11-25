@@ -27,9 +27,7 @@ class MeetingManagerUnitSpec extends
   it should "return true when a meeting exist" in {
     val internalId = "testMeetingId"
     val sessionId = actor.getValidSession("testMeetingId")
-    val session = actor.createSession(meetingConfig.name, meetingConfig.externalId, sessionId)
-    val meeting = actor.createMeeting(session, meetingConfig)
-    actor.storeMeeting(session.session, meeting)
+    val meeting = actor.createMeeting(meetingConfig, internalId)
     assert(actor.meetingExist(internalId) === true)
     val m = actor.getMeeting(internalId)
     

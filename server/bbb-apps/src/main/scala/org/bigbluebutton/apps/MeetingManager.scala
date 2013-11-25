@@ -37,8 +37,12 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
     internalMeetingId + "-" + System.currentTimeMillis()
   }
   
-  def createMeeting(session: MeetingSession, config: MeetingConfig):Meeting = {   
-    new Meeting(session, pubsub, config, context)
+  def createMeeting(config: MeetingConfig, internalMeetingId: String):Meeting = {  
+	val sessionId = getValidSession(internalMeetingId)
+	val session = createSession(config.name, config.externalId, sessionId)
+	val meetingRef = new Meeting(session, pubsub, config, context)	      
+	storeMeeting(session.session, meetingRef)
+    meetingRef
   }
   
   def storeMeeting(session: String, meeting: Meeting) = {
@@ -75,19 +79,16 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
     getMeeting(internalMeetingId) match {
       case Some(meetingActor) => {
 	      log.info("Meeting [{}] : [{}] is already running.", externalMeetingId, name) 
-//	      sender ! CreateMeetingRequestReply(true, "Meeting has been created.", session)         
+	      sender ! CreateMeetingRequestReply(false, "Meeting already exist.", meetingActor.session)         
       }
       case None => {
 	      log.info("Creating meeting [{}] : [{}]", externalMeetingId, name)
-	      val sessionId = getValidSession(internalMeetingId)
-	      val session = createSession(name, externalMeetingId, sessionId)
-	      val meetingRef = createMeeting(session, mConfig)	      
-	      storeMeeting(session.session, meetingRef)
-	      
+	      val meetingRef = createMeeting(mConfig, internalMeetingId)	      
+	      	      
 	      log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
 	      
-	      sender ! CreateMeetingRequestReply(true, "Meeting has been created.", session)	
-	      pubsub ! MeetingCreated(session, msg.payload)         
+	      sender ! CreateMeetingRequestReply(true, "Meeting has been created.", meetingRef.session)	
+	      pubsub ! MeetingCreated(meetingRef.session, msg.payload)         
       }
     } 
   } 
