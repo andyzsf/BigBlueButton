@@ -12,17 +12,21 @@ import org.bigbluebutton.apps.models.VoiceConfig
 import org.bigbluebutton.apps.models.PhoneNumberConfig
 import org.bigbluebutton.apps.models.MeetingConfig
 
-    object MyJsonProtocol extends DefaultJsonProtocol {
-      implicit val sessionFormat = jsonFormat3(MeetingSession)
-      implicit val usersDefFormat = jsonFormat2(UsersConfig)
-      implicit val durationDefFormat = jsonFormat3(DurationConfig)
-      implicit val voiceConfDefFormat = jsonFormat2(VoiceConfig)
-      implicit val phoneNumberDefFormat = jsonFormat2(PhoneNumberConfig)
-      implicit val meetingDefFormat = jsonFormat11(MeetingConfig)
-      implicit val createMeetingRequestReplyFormat = jsonFormat2(CreateMeetingRequestReply)
-    }
+object MyJsonProtocol extends DefaultJsonProtocol {
+  implicit val sessionFormat = jsonFormat3(MeetingSession)
+  implicit val usersDefFormat = jsonFormat2(UsersConfig)
+  implicit val durationDefFormat = jsonFormat3(DurationConfig)
+  implicit val voiceConfDefFormat = jsonFormat2(VoiceConfig)
+  implicit val phoneNumberDefFormat = jsonFormat2(PhoneNumberConfig)
+  implicit val meetingDefFormat = jsonFormat11(MeetingConfig)
+}
 
-case class CreateMeetingRequestReply(session: MeetingSession, meeting: MeetingConfig)
+object CreateMeetingRequestReplyJsonProtocol extends DefaultJsonProtocol {
+  implicit val sessionFormat = jsonFormat3(MeetingSession)
+  implicit val createMeetingRequestReplyFormat = jsonFormat3(CreateMeetingRequestReply)
+}
+
+case class CreateMeetingRequestReply(created: Boolean, message: String, session: MeetingSession)
 case class MeetingCreated(session: MeetingSession, meeting: MeetingConfig)
 
 case class MeetingHeader(name: String, externalId: String, session: String)

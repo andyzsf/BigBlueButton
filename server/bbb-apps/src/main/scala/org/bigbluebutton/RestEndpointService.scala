@@ -43,7 +43,8 @@ object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSup
 trait RestEndpointService extends HttpService {
   import MessageTransformer._
   import HeaderAndPayloadJsonSupport._
-
+  import org.bigbluebutton.apps.protocol.CreateMeetingRequestReplyJsonProtocol._
+  
   val msgReceiver: ActorRef
   implicit def executionContext = actorRefFactory.dispatcher
   implicit val timeout = Timeout(5 seconds)
@@ -68,31 +69,26 @@ trait RestEndpointService extends HttpService {
       post {
         respondWithMediaType(`application/json`) {
 	        entity(as[HeaderAndPayload]) { hp =>
-	          val msg = processMessage(hp.header, hp.payload.asJsObject)
-	          if (msg != None) {
-	            /**
-	             * TODO: Use Future to handle response if meeting has been created or
-	             *       if it is already running.
-	             */
-	            val response = (msgReceiver ? msg.get).mapTo[CreateMeetingRequestReply]
-				response onComplete {
-				   case Success(result) => {
-				     println("RESULT: " + result)
-				    // result match {
-				   //    case ok:Ok => println(ok)
-				    //   case 
-				    // }
-				   }
-				   case Failure(failure) =>  println("FAIL: " + failure)
-				  } 
-	            complete("{OK}")
-	          } else {
-	            complete("{Failed to process message.}")
-	          }
-	          
+              val response = sendCreateMeetingMessage(hp)
+              complete("{OK}")
 	        }
         }
       }
+    }
+    
+    def sendCreateMeetingMessage(hp: HeaderAndPayload):Boolean = {
+	  processMessage(hp.header, hp.payload.asJsObject) match {
+	    case Success(message) => {
+	       val response = (msgReceiver ? message)
+	                      .mapTo[CreateMeetingRequestReply]
+	                      .map(result => {
+	                        println("**** "+ result + " ****")
+	                        result})
+	                      
+           true
+	    }
+	    case Failure(_) => false
+	  }      
     }
 }
 

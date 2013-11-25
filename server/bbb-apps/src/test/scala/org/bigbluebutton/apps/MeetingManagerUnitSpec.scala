@@ -20,6 +20,6 @@ class MeetingManagerUnitSpec extends
   val actor = actorRef.underlyingActor
   
   "The MeetingManager" should "return false when a meeting doesn't exist" in {
-    assert(actor.meetingExist("foo") === false)
+      assert(actor.meetingExist("foo") === false)
   }
 }

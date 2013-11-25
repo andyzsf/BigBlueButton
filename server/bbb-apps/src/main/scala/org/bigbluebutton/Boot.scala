@@ -5,7 +5,6 @@ import akka.io.IO
 import akka.util.Timeout
 import spray.can.Http
 import scala.concurrent.duration._
-import org.bigbluebutton.apps.protocol.MessageHandlerActor
 import redis.RedisClient
 import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global

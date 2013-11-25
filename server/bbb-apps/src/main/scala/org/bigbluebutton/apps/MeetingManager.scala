@@ -88,7 +88,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
 	      
 	      log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
 	      
-	      sender ! CreateMeetingRequestReply(session, msg.payload)	
+	      sender ! CreateMeetingRequestReply(true, "Meeting has been created.", session)	
 	      pubsub ! MeetingCreated(session, msg.payload)         
       }
     } 
