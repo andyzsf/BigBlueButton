@@ -9,6 +9,9 @@ import org.bigbluebutton.apps.protocol.MeetingCreated
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.protocol.Ok
 import org.bigbluebutton.apps.models.MeetingConfig
+import org.bigbluebutton.apps.protocol.RegisterUserRequest
+import org.bigbluebutton.apps.protocol.RegisterUserRequest
+import org.bigbluebutton.apps.protocol.Header
 
 class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
@@ -19,6 +22,8 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   def receive = {
     case createMeetingRequest: CreateMeetingRequest => 
            handleCreateMeetingRequest(createMeetingRequest)
+    case registerUser : RegisterUserRequest =>
+           handleRegisterUser(registerUser)
     case "test" => {sender ! "test"; pubsub ! "test"}
     case _ => None
   }
@@ -53,15 +58,32 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
 	 meetings.keys find {key => key.startsWith(internalId)}
   }
   
-  def getMeeting(internalMeetingId: String):Option[Meeting] = {
+  def getMeeting(internalId: String):Option[Meeting] = {
     for {
-      session <- getSessionFor(internalMeetingId)
+      session <- getSessionFor(internalId)
       meeting <- meetings.get(session)
     } yield meeting
   }
   
   def createSession(name: String, externalId: String, sessionId: String):MeetingSession = {   
 	 MeetingSession(name, externalId, sessionId)    
+  }
+  
+  def getMeetingUsingSessionId(sessionId: String):Option[Meeting] = {
+    for { meeting <- meetings.get(sessionId) } yield meeting    
+  }
+  
+  def getSessionIdFromHeader(header: Header):Option[String] = {
+    for { sessionId <- header.meeting.sessionId } yield sessionId
+  }
+  
+  def handleRegisterUser(msg: RegisterUserRequest) = {
+    val meeting = for {
+      sessionId <- getSessionIdFromHeader(msg.header)
+      meeting <- getMeetingUsingSessionId(sessionId)
+    } yield meeting
+    
+    meeting.map {m => m.actorRef forward msg}
   }
   
   /**
@@ -74,16 +96,16 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
     
     log.debug("Received create meeting request for [{}] : [{}]", externalMeetingId, name)
     
-    val internalMeetingId = Util.toInternalMeetingId(externalMeetingId)
+    val internalId = Util.toInternalMeetingId(externalMeetingId)
     
-    getMeeting(internalMeetingId) match {
+    getMeeting(internalId) match {
       case Some(meetingActor) => {
 	      log.info("Meeting [{}] : [{}] is already running.", externalMeetingId, name) 
 	      sender ! CreateMeetingRequestReply(false, "Meeting already exist.", meetingActor.session)         
       }
       case None => {
 	      log.info("Creating meeting [{}] : [{}]", externalMeetingId, name)
-	      val meetingRef = createMeeting(mConfig, internalMeetingId)	      
+	      val meetingRef = createMeeting(mConfig, internalId)	      
 	      	      
 	      log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
 	      

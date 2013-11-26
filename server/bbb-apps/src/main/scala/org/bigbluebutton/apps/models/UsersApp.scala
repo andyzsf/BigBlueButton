@@ -4,6 +4,7 @@ import akka.actor.ActorRef
 import org.bigbluebutton.apps.utils.RandomStringGenerator
 import org.bigbluebutton.apps.protocol.UserRegistered
 import akka.event.LoggingAdapter
+import org.bigbluebutton.apps.protocol.RegisterUserRequest
 
 /**
  * Users app for meeting
@@ -39,6 +40,7 @@ trait UsersApp {
     usersModel.add(user.copy(id = userId))
   }
   
+
 
 //  def left(id: String):Option[JoinedUser] = {
 //    val u = joinedUsers.get(id)

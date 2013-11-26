@@ -11,6 +11,7 @@ import org.bigbluebutton.apps.models.MeetingSession
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.protocol.MeetingCreated
 import org.bigbluebutton.apps.models.MeetingConfig
+import org.bigbluebutton.apps.models.RegisteredUser
 
 object MeetingActor {
 	def props(pubsub: ActorRef, session: MeetingSession, 
@@ -23,8 +24,15 @@ class MeetingActor (val pubsub: ActorRef, val session: MeetingSession,
                     extends Actor with UsersApp with ActorLogging  {
   
   def receive = {                       
-    case registerUserRequest: RegisterUserRequest =>
+    case rur: RegisterUserRequest => handleRegisterUser(rur)
     case _ => None
   }
-  
+ 
+  def handleRegisterUser(msg: RegisterUserRequest) = {
+    val token = getValidToken
+    val internalId = getValidUserId    
+    val ruser = msg.payload
+    val ru = RegisteredUser(token, internalId, ruser)
+    
+  }
 }

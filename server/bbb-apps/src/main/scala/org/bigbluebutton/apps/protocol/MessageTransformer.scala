@@ -10,14 +10,12 @@ import akka.event.LoggingAdapter
 import akka.event.slf4j.SLF4JLogging
 import scala.util.Try
 import spray.json.DeserializationException
+import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
 
-object ExtractMessageHeaderJsonProtocol extends DefaultJsonProtocol {
-  implicit val headerFormat = jsonFormat4(Header)
-}
+object MessageTransformer extends MeetingMessageHandler 
+                          with UsersAppMessageHandler
+                          with SLF4JLogging {  
 
-object MessageTransformer extends MeetingMessageHandler with SLF4JLogging {  
-  import ExtractMessageHeaderJsonProtocol._
-  
   /**
    * Extract the header from the message.
    * 
@@ -84,11 +82,13 @@ object MessageTransformer extends MeetingMessageHandler with SLF4JLogging {
    * @returns an instance of the message received.
    */
   def determineMessage(header: Header, payload:JsObject):InMessage = {
-    header.name match {
+    header.event.name match {
       case CreateMeetingRequestMessage  => 
         handleCreateMeetingRequest(header, payload)
+      case RegisterUserRequestMessage =>
+        handleRegisterUserRequest(header, payload)
 	  case _ => 
-	    throw MessageProcessException("Unknown message name : " + header.name)
+	    throw MessageProcessException("Unknown message name : " + header.event.name)
 	}
   }
   

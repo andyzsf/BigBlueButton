@@ -14,11 +14,11 @@ import spray.httpx.SprayJsonSupport
 import spray.json.JsValue
 import akka.actor.Props
 import org.bigbluebutton.apps.protocol.Header
-import org.bigbluebutton.apps.protocol.HeaderAndPayload
+import org.bigbluebutton.apps.protocol.HeaderEvent
+import org.bigbluebutton.apps.protocol.HeaderMeeting
 import org.bigbluebutton.apps.protocol.HeaderAndPayload
 import spray.json.JsString
 import org.bigbluebutton.apps.protocol.MessageTransformer
-import org.bigbluebutton.apps.protocol.HeaderAndPayload
 import akka.event.LoggingAdapter
 import akka.actor.ActorLogging
 import akka.pattern.{ask, pipe}
@@ -28,6 +28,7 @@ import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.protocol.Ok
 import scala.util.{Success, Failure}
 
+
 class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with RestEndpointService with ActorLogging {
 
   def actorRefFactory = context
@@ -35,15 +36,11 @@ class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with Res
   def receive = runRoute(restApiRoute)
 }
 
-object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {  
-  implicit val headerFormat = jsonFormat4(Header)
-  implicit val headerAndPayloadFormats = jsonFormat2(HeaderAndPayload)
-}
 
 trait RestEndpointService extends HttpService {
   import MessageTransformer._
-  import HeaderAndPayloadJsonSupport._
   import org.bigbluebutton.apps.protocol.CreateMeetingRequestReplyJsonProtocol._
+  import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
   
   val msgReceiver: ActorRef
   implicit def executionContext = actorRefFactory.dispatcher

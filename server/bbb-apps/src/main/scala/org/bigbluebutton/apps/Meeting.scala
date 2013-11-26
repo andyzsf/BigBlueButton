@@ -11,4 +11,5 @@ class Meeting(val session: MeetingSession,
   
   val actorRef = context.actorOf(MeetingActor.props(pubsub, session, config), session.session)
   
+  val configs = new collection.immutable.HashMap[String, String]()
 }

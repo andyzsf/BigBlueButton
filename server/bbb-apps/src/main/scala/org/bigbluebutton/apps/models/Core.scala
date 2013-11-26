@@ -26,12 +26,15 @@ case class VoiceIdentity(name: String, callerId: CallerId)
 
 case class MeetingSession(name: String, externalId: String, session: String)
 	
-case class JoinedUser(id: String, role: Role, isPresenter: Boolean = false, 
+case class JoinedUser(id: String, role: String, isPresenter: Boolean = false, 
                       webIdent: Option[WebIdentity] = None, 
                       voiceIdent: Option[VoiceIdentity] = None)
 	
-case class RegisteredUser(authToken: String, name: String)
-
+case class RegisteredUser(authToken: String, internalId: String, user: User)
+case class User(externalId: String, name: String, 
+                role: String, pin: Int, welcomeMessage: String,
+                logoutUrl: String, avatarUrl: String)
+                
 case class UserIdAndName(id: String, name: String)
   
 object SystemUser extends UserIdAndName(id = "system", name = "System")
