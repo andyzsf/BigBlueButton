@@ -7,7 +7,6 @@ import akka.actor.ActorLogging
 import org.bigbluebutton.apps.models.MeetingSession
 import org.bigbluebutton.apps.protocol.MeetingCreated
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
-import org.bigbluebutton.apps.protocol.Ok
 import org.bigbluebutton.apps.models.MeetingConfig
 import org.bigbluebutton.apps.protocol.RegisterUserRequest
 import org.bigbluebutton.apps.protocol.RegisterUserRequest
@@ -38,12 +37,12 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
    * Creates an internal id out of the external id. 
    */
-  def getValidSession(internalMeetingId: String): String = { 
-    internalMeetingId + "-" + System.currentTimeMillis()
+  def getValidSession(internalId: String): String = { 
+    internalId + "-" + System.currentTimeMillis()
   }
   
-  def createMeeting(config: MeetingConfig, internalMeetingId: String):Meeting = {  
-	val sessionId = getValidSession(internalMeetingId)
+  def createMeeting(config: MeetingConfig, internalId: String):Meeting = {  
+	val sessionId = getValidSession(internalId)
 	val session = createSession(config.name, config.externalId, sessionId)
 	val meetingRef = new Meeting(session, pubsub, config, context)	      
 	storeMeeting(session.session, meetingRef)

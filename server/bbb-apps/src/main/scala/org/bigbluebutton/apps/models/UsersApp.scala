@@ -5,11 +5,14 @@ import org.bigbluebutton.apps.utils.RandomStringGenerator
 import org.bigbluebutton.apps.protocol.UserRegistered
 import akka.event.LoggingAdapter
 import org.bigbluebutton.apps.protocol.RegisterUserRequest
+import org.bigbluebutton.apps.MeetingActor
 
 /**
  * Users app for meeting
  */
 trait UsersApp {  
+  this : MeetingActor =>
+  
   val pubsub: ActorRef
   val log: LoggingAdapter
   
@@ -38,6 +41,8 @@ trait UsersApp {
   def join(user: JoinedUser) = {
     val userId = getValidUserId
     usersModel.add(user.copy(id = userId))
+    
+    sender 
   }
   
 

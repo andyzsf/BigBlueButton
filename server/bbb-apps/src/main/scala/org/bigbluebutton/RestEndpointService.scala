@@ -25,7 +25,6 @@ import akka.pattern.{ask, pipe}
 import akka.util.Timeout
 import scala.concurrent.duration._
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
-import org.bigbluebutton.apps.protocol.Ok
 import scala.util.{Success, Failure}
 
 
@@ -74,7 +73,7 @@ trait RestEndpointService extends HttpService {
     }
     
     def sendCreateMeetingMessage(hp: HeaderAndPayload):Boolean = {
-	  processMessage(hp.header, hp.payload.asJsObject) match {
+	  MessageTransformer.processMessage(hp.header, hp.payload.asJsObject) match {
 	    case Success(message) => {
 	       val response = (msgReceiver ? message)
 	                      .mapTo[CreateMeetingRequestReply]

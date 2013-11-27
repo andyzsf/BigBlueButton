@@ -38,6 +38,7 @@ libraryDependencies ++= {
 	  "io.spray"            %   "spray-routing"   % sprayVersion,
 	  "io.spray"            %   "spray-testkit"   % sprayVersion % "test",
 	  "io.spray"            %%  "spray-json"      % "1.2.5",
+      "com.github.sstone"   %%  "amqp-client"     % "1.3-ML1", 
 	  "com.typesafe.akka"   %%  "akka-camel"      % akkaVersion,
 	  "com.typesafe.akka"   %%  "akka-actor"      % akkaVersion,
 	  "com.typesafe.akka"   %%  "akka-testkit"    % akkaVersion % "test",

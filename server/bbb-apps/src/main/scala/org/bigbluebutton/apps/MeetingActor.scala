@@ -34,5 +34,6 @@ class MeetingActor (val pubsub: ActorRef, val session: MeetingSession,
     val ruser = msg.payload
     val ru = RegisteredUser(token, internalId, ruser)
     
+    
   }
 }
