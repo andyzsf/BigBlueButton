@@ -71,13 +71,7 @@ case class VoiceStartedRecordingMessage(meetingID: String, voiceConfId: String, 
 // Need these extra classes since InMessage needs meetingID as parameter and
 // our messages from FreeSWITCH doesn't have it.
 trait VoiceMessage
-case class VoiceUserJoined(
-    user: String, 
-    voiceConfId: String, 
-    callerIdNum: String, 
-    callerIdName: String, 
-    muted: Boolean, 
-    speaking: Boolean) extends VoiceMessage
+case class VoiceUserJoined(user: String, voiceConfId: String, callerIdNum: String, callerIdName: String, muted: Boolean, speaking: Boolean) extends VoiceMessage
     
 case class VoiceUserLeft(user: String, voiceConfId: String) extends VoiceMessage
 case class VoiceUserMuted(user: String, voiceConfId: String, muted: Boolean) extends VoiceMessage
