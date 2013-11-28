@@ -29,12 +29,5 @@ class MeetingActor (val pubsub: ActorRef, val session: MeetingSession,
     case _ => None
   }
  
-  def handleRegisterUser(msg: RegisterUserRequest) = {
-    val token = getValidToken
-    val internalId = getValidUserId    
-    val ruser = msg.payload
-    val ru = RegisteredUser(token, internalId, ruser)
-    
-    
-  }
+
 }

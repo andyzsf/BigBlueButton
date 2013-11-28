@@ -42,10 +42,16 @@ trait UsersApp {
     val userId = getValidUserId
     usersModel.add(user.copy(id = userId))
     
-    sender 
   }
   
-
+  def handleRegisterUser(msg: RegisterUserRequest) = {
+    val token = getValidToken
+    val internalId = getValidUserId    
+    val ruser = msg.payload
+    val ru = RegisteredUser(token, internalId, ruser)
+    
+    
+  }
 
 //  def left(id: String):Option[JoinedUser] = {
 //    val u = joinedUsers.get(id)
