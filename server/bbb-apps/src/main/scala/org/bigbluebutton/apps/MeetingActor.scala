@@ -25,6 +25,7 @@ class MeetingActor (val pubsub: ActorRef, val session: MeetingSession,
   
   def receive = {                       
     case rur: RegisterUserRequest => handleRegisterUser(rur)
+    
     case _ => None
   }
  

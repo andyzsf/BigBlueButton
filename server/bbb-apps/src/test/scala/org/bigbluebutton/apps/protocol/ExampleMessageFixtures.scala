@@ -23,7 +23,7 @@ trait ExampleMessageFixtures {
 	        "event": {
 	            "name": "CreateMeetingRequest",
 	            "timestamp": 123456,
-	            "correlation": "123abc",
+	            "reply": {"to": "replyChannel", "correlationId" : "abc123"},
 	            "source": "web-api"
 	        },
 	        "meeting": {
@@ -77,7 +77,7 @@ trait ExampleMessageFixtures {
 	        "event": {
 	            "name": "CreateMeetingRequest",
 	            "timestamp": 123456,
-	            "correlation": "123abc",
+	            "reply": {"to": "replyChannel", "correlationId" : "abc123"},
 	            "source": "web-api"
 	        },
 	        "meeting": {
