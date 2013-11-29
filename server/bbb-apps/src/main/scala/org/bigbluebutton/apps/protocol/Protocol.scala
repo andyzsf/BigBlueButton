@@ -20,7 +20,6 @@ object InMessageNameContants {
 }
 
 case class RegisterUserRequest(header: Header, payload: User) extends InMessage
-case class AssignPresenter(header: Header, payload: String)
 
 object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {  
   implicit val replyHeaderFormat = jsonFormat2(ReplyHeader)

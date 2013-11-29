@@ -1,10 +1,13 @@
 package org.bigbluebutton.apps.protocol
 
+import org.bigbluebutton.apps.models.UserIdAndName
+
 trait InMessage
 
+
+
 case class GetChatHistoryRequest(meetingID: String, requesterID: String) extends InMessage
-case class SendPublicMessageRequest(meetingID: String, requesterID: String, message: Map[String, String]) extends InMessage
-case class SendPrivateMessageRequest(meetingID: String, requesterID: String, message: Map[String, String]) extends InMessage
+case class SendChatMessageRequest(header: Header, message: ChatMessage) extends InMessage
 
 case class GetCurrentLayoutRequest(meetingID: String, requesterID: String) extends InMessage
 case class SetLayoutRequest(meetingID: String, requesterID: String, layoutID: String) extends InMessage
