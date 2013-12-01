@@ -1,7 +1,7 @@
 package org.bigbluebutton.apps.protocol
 
 import spray.json.DefaultJsonProtocol
-import org.bigbluebutton.apps.models.Chat._
+import org.bigbluebutton.apps.models.ChatApp._
 import spray.json.JsValue
 import spray.json.JsObject
    

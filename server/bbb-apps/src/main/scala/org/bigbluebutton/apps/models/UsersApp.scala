@@ -1,20 +1,36 @@
 package org.bigbluebutton.apps.models
 
-import akka.actor.ActorRef
 import org.bigbluebutton.apps.utils.RandomStringGenerator
-import org.bigbluebutton.apps.protocol.UserRegistered
-import akka.event.LoggingAdapter
-import org.bigbluebutton.apps.protocol.RegisterUserRequest
-import org.bigbluebutton.apps.MeetingActor
 
-/**
- * Users app for meeting
- */
-trait UsersApp {  
-  this : MeetingActor =>
+object UsersApp {
+  case class WebIdentity(name: String)
+  case class CallerId(name: String, number: String)
+  case class VoiceIdentity(name: String, callerId: CallerId)
+
+  case class JoinedUser(id: String, role: String, isPresenter: Boolean = false, 
+                      webIdent: Option[WebIdentity] = None, 
+                      voiceIdent: Option[VoiceIdentity] = None)
+	
+  case class RegisteredUser(authToken: String, internalId: String, user: User)
+  case class User(externalId: String, name: String, 
+                  role: String, pin: Int, welcomeMessage: String,
+                  logoutUrl: String, avatarUrl: String)
+                
+  case class UserIdAndName(id: String, name: String)
   
-  val pubsub: ActorRef
-  val log: LoggingAdapter
+  object SystemUser extends UserIdAndName(id = "system", name = "System")
+  
+  case class UserJoining(meetingID: String, userID: String, name: String, role: String, extUserID: String)
+  case class UserLeaving(meetingID: String, userID: String) 
+  case class GetUsers(meetingID: String, requesterID: String) 
+  case class ChangeUserStatus(meetingID: String, userID: String, status: String, value: Object) 
+  case class AssignPresenter(meetingID: String, newPresenterID: String, newPresenterName: String, assignedBy: String)  
+  
+  
+}
+
+class UsersApp {
+  import UsersApp._
   
   private val usersModel = new UsersModel  
   private var presenterAssignedBy = SystemUser
@@ -44,14 +60,7 @@ trait UsersApp {
     
   }
   
-  def handleRegisterUser(msg: RegisterUserRequest) = {
-    val token = getValidToken
-    val internalId = getValidUserId    
-    val ruser = msg.payload
-    val ru = RegisteredUser(token, internalId, ruser)
-    
-    
-  }
+
 
 //  def left(id: String):Option[JoinedUser] = {
 //    val u = joinedUsers.get(id)

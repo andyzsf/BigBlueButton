@@ -2,7 +2,7 @@ package org.bigbluebutton.apps.protocol
 
 import spray.json.DefaultJsonProtocol
 import spray.json.JsObject
-import org.bigbluebutton.apps.models.User
+import org.bigbluebutton.apps.models.UsersApp._
 import org.bigbluebutton.apps.models.Role._
 import spray.json.DeserializationException
 

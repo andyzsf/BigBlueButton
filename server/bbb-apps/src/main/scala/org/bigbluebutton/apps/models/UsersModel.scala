@@ -1,5 +1,7 @@
 package org.bigbluebutton.apps.models
 
+import org.bigbluebutton.apps.models.UsersApp._
+
 class UsersModel {
   private var registeredUsers = new collection.immutable.HashMap[String, RegisteredUser]
   private var joinedUsers = new collection.immutable.HashMap[String, JoinedUser]

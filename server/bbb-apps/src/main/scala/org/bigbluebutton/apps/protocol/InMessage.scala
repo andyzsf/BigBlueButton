@@ -1,6 +1,7 @@
 package org.bigbluebutton.apps.protocol
 
-import org.bigbluebutton.apps.models.UserIdAndName
+import org.bigbluebutton.apps.models.UsersApp.UserIdAndName
+import org.bigbluebutton.apps.models.ChatApp._
 
 trait InMessage
 
@@ -39,11 +40,11 @@ case class ResponderVO(responseID: String, user: Responder)
 case class Responder(val userID: String, name: String)
 
 // Users
-case class UserJoining(meetingID: String, userID: String, name: String, role: String, extUserID: String) extends InMessage
-case class UserLeaving(meetingID: String, userID: String) extends InMessage
-case class GetUsers(meetingID: String, requesterID: String) extends InMessage
-case class ChangeUserStatus(meetingID: String, userID: String, status: String, value: Object) extends InMessage
-case class AssignPresenter(meetingID: String, newPresenterID: String, newPresenterName: String, assignedBy: String) extends InMessage
+	case class UserJoining(meetingID: String, userID: String, name: String, role: String, extUserID: String) extends InMessage
+	case class UserLeaving(meetingID: String, userID: String) extends InMessage
+	case class GetUsers(meetingID: String, requesterID: String) extends InMessage
+	case class ChangeUserStatus(meetingID: String, userID: String, status: String, value: Object) extends InMessage
+	case class AssignPresenter(meetingID: String, newPresenterID: String, newPresenterName: String, assignedBy: String) extends InMessage  
 
 // Presentation
 case class ClearPresentation(meetingID: String) extends InMessage

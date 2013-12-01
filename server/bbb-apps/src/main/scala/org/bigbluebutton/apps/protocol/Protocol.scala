@@ -1,7 +1,7 @@
 package org.bigbluebutton.apps.protocol
 
 import spray.json.JsValue
-import org.bigbluebutton.apps.models.User
+import org.bigbluebutton.apps.models.UsersApp.User
 import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport
 
