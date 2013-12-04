@@ -13,7 +13,7 @@ object UsersApp {
 	
   case class RegisteredUser(authToken: String, internalId: String, user: User)
   case class User(externalId: String, name: String, 
-                  role: String, pin: Int, welcomeMessage: String,
+                  role: Role.RoleType, pin: Int, welcomeMessage: String,
                   logoutUrl: String, avatarUrl: String)
                 
   case class UserIdAndName(id: String, name: String)

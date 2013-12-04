@@ -6,8 +6,8 @@ import org.bigbluebutton.apps.models.MeetingConfig
 
 class Meeting(val session: MeetingSession, 
               val pubsub: ActorRef,
-              val config: MeetingConfig,
-              implicit val context: ActorContext) {
+              val config: MeetingConfig)
+              (implicit val context: ActorContext) {
   
   val actorRef = context.actorOf(MeetingActor.props(pubsub, session, config), session.session)
   

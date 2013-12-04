@@ -201,5 +201,47 @@ trait ExampleMessageFixtures {
 	    }
 	} 
   """  
-    
+  
+  val exampleChatMessage = """
+	{
+	    "header": {
+	        "event": {
+	            "name": "ChatMessage",
+	            "timestamp": 123456,
+	            "correlation": "123abc",
+	            "source": "web-api"
+	        },
+	        "meeting": {
+	            "name": "English 101",
+	            "externalId": "english_101",
+	            "sessionId": "english_101-12345"
+	        }
+	    },
+	    "payload": {
+	        "chat": {
+	            "id": "msg1",
+	            "sentOn": 1383210123456,
+	            "from": {
+	                "id": "user1",
+	                "name": "Richard"
+	            },
+	            "message": {
+	                "text": "Hello world!",
+	                "lang": "en_US"
+	            },
+	            "font": {
+	                "color": 16711680,
+	                "size": 14,
+	                "type": "Arial"
+	            },
+	            "translations": [
+	                {
+	                    "lang": "es_LA",
+	                    "text": "Hola Mundo!"
+	                }
+	            ]
+	        }
+	    }
+	}    
+  """
 }

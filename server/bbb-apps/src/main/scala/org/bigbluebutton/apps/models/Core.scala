@@ -1,12 +1,13 @@
 package org.bigbluebutton.apps.models
 
+
+
 object Role extends Enumeration {
-	type Role = Value
+	type RoleType = Value
 	val MODERATOR = Value("MODERATOR")
 	val VIEWER = Value("VIEWER")
 }
 
-import Role._
   
 case class MeetingConfig(name: String, externalId: String, 
                        record: Boolean, welcomeMessage: String, 

@@ -3,10 +3,21 @@ package org.bigbluebutton.apps.protocol
 import spray.json.DefaultJsonProtocol
 import spray.json.JsObject
 import org.bigbluebutton.apps.models.UsersApp._
-import org.bigbluebutton.apps.models.Role._
 import spray.json.DeserializationException
+import org.bigbluebutton.apps.models.Role
+import spray.json.JsonFormat
+import spray.json.JsString
+import spray.json.JsValue
 
 object RegisterUserRequestProtocol extends DefaultJsonProtocol {
+	implicit object RoleJsonFormat extends JsonFormat[Role.RoleType] {
+	    def write(obj: Role.RoleType): JsValue = JsString(obj.toString)
+	
+	    def read(json: JsValue): Role.RoleType = json match {
+	      case JsString(str) => Role.withName(str)
+	      case _ => throw new DeserializationException("Enum string expected")
+	    }
+	  }
   implicit val userFormat = jsonFormat7(User)
 }
 
