@@ -6,19 +6,21 @@ object UsersApp {
   case class WebIdentity(name: String)
   case class CallerId(name: String, number: String)
   case class VoiceIdentity(name: String, callerId: CallerId)
-
-  case class JoinedUser(id: String, role: String, isPresenter: Boolean = false, 
-                      webIdent: Option[WebIdentity] = None, 
-                      voiceIdent: Option[VoiceIdentity] = None)
+  case class UserIdAndName(id: String, name: String)
+  object SystemUser extends UserIdAndName(id = "system", name = "System")
+  
+  case class JoinedUser(id: String, token: String, 
+		  				isPresenter: Boolean = false, 
+		  				user: User,
+		  				webIdent: Option[WebIdentity] = None, 
+		  				voiceIdent: Option[VoiceIdentity] = None)
 	
-  case class RegisteredUser(authToken: String, internalId: String, user: User)
+  case class RegisteredUser(token: String, user: User)
+  
   case class User(externalId: String, name: String, 
                   role: Role.RoleType, pin: Int, welcomeMessage: String,
                   logoutUrl: String, avatarUrl: String)
                 
-  case class UserIdAndName(id: String, name: String)
-  
-  object SystemUser extends UserIdAndName(id = "system", name = "System")
   
   case class UserJoining(meetingID: String, userID: String, name: String, role: String, extUserID: String)
   case class UserLeaving(meetingID: String, userID: String) 
@@ -50,7 +52,7 @@ class UsersApp {
   
   def register(registeredUser: RegisteredUser) = {
     val token = getValidToken    
-    val user = registeredUser.copy(authToken = token)
+    val user = registeredUser.copy(token = token)
     usersModel.add(user)
   }
   

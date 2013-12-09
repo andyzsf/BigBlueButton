@@ -19,7 +19,7 @@ class UsersModel {
    * Registers a user in the meeting.
    * 
    */
-  def add(user: RegisteredUser) = registeredUsers += user.authToken -> user
+  def add(user: RegisteredUser) = registeredUsers += user.token -> user
   
   /**
    * Joins a user in the meeting.

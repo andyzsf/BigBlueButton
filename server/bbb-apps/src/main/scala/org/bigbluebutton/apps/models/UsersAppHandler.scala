@@ -22,7 +22,7 @@ trait UsersAppHandler {
     val token = usersApp.getValidToken
     val internalId = usersApp.getValidUserId    
     val ruser = msg.payload
-    val ru = RegisteredUser(token, internalId, ruser)
+ //   val ru = RegisteredUser(token, internalId, ruser)
     
     
   }
