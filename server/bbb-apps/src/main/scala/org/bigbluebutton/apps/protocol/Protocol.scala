@@ -12,6 +12,7 @@ case class HeaderEvent(name: String, timestamp: Long,
 case class ReplyHeader(to: String, correlationId: String)                       
 case class HeaderMeeting(name: String, externalId: String, sessionId: Option[String] = None)
 case class HeaderAndPayload(header: Header, payload: JsValue)
+case class ReplyStatus(status: String, message: String, error: Option[Int])
 
 case class MessageProcessException(message: String) extends Exception(message)
 
@@ -20,9 +21,7 @@ object InMessageNameContants {
   val RegisterUserRequestMessage = "RegisterUserRequest"
 }
 
-case class RegisterUserRequest(header: Header, payload: User) extends InMessage
-case class JoinUserRequest(header: Header, token: String) extends InMessage
-case class JoinUserReply(header: Header, success: Boolean, msg: String, user: Option[JoinedUser])
+
 
 object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {  
   implicit val replyHeaderFormat = jsonFormat2(ReplyHeader)
@@ -31,3 +30,4 @@ object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSup
   implicit val headerFormat = jsonFormat2(Header)  
   implicit val headerAndPayloadFormat = jsonFormat2(HeaderAndPayload)
 }
+

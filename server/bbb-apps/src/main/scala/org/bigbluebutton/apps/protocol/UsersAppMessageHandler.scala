@@ -8,8 +8,19 @@ import org.bigbluebutton.apps.models.Role
 import spray.json.JsonFormat
 import spray.json.JsString
 import spray.json.JsValue
+import org.bigbluebutton.apps.models.UsersApp.{WebIdentity, CallerId, VoiceIdentity}
 
-object RegisterUserRequestProtocol extends DefaultJsonProtocol {
+object UserMessages {
+	case class RegisterUserRequest(header: Header, payload: User) extends InMessage
+	case class JoinUserRequest(header: Header, token: String) extends InMessage
+	case class JoinUserReplyPayload(success: Boolean, msg: String, user: Option[JoinedUser])
+	case class JoinUserReply(header: Header, payload: JoinUserReplyPayload)  
+}
+
+object UserMessagesProtocol extends DefaultJsonProtocol {
+  import HeaderAndPayloadJsonSupport._
+  import UserMessages._
+  
 	implicit object RoleJsonFormat extends JsonFormat[Role.RoleType] {
 	    def write(obj: Role.RoleType): JsValue = JsString(obj.toString)
 	
@@ -18,11 +29,21 @@ object RegisterUserRequestProtocol extends DefaultJsonProtocol {
 	      case _ => throw new DeserializationException("Enum string expected")
 	    }
 	  }
-  implicit val userFormat = jsonFormat7(User)
+
+	implicit val webIdentityFormat = jsonFormat1(WebIdentity)
+	implicit val callerIdFormat = jsonFormat2(CallerId)
+	implicit val voiceIdentityFormat = jsonFormat2(VoiceIdentity)
+	  
+	implicit val userFormat = jsonFormat7(User)
+	implicit val joinedUserFormat = jsonFormat6(JoinedUser)
+	implicit val JoinUserReplyPayloadFormat = jsonFormat3(JoinUserReplyPayload)  
+	implicit val joinUserReplyFormat = jsonFormat2(JoinUserReply)
 }
 
 trait UsersAppMessageHandler {
-  import RegisterUserRequestProtocol._
+  import UserMessages._
+  import UserMessagesProtocol._
+  
   def handleRegisterUserRequest(header: Header, 
                                  payload: JsObject):InMessage = {
 	payload.fields.get("user") match {

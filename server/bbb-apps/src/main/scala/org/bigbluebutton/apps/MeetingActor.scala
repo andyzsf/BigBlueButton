@@ -12,7 +12,7 @@ import org.bigbluebutton.apps.protocol.MeetingCreated
 import org.bigbluebutton.apps.models.MeetingConfig
 import org.bigbluebutton.apps.models.UsersApp.RegisteredUser
 import org.bigbluebutton.apps.models.UsersAppHandler
-import org.bigbluebutton.apps.protocol.RegisterUserRequest
+import org.bigbluebutton.apps.protocol.UserMessages.RegisterUserRequest
 
 object MeetingActor {
 	def props(pubsub: ActorRef, session: MeetingSession, 

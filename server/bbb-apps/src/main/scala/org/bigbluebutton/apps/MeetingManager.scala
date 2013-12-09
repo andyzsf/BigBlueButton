@@ -8,8 +8,7 @@ import org.bigbluebutton.apps.models.MeetingSession
 import org.bigbluebutton.apps.protocol.MeetingCreated
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.models.MeetingConfig
-import org.bigbluebutton.apps.protocol.RegisterUserRequest
-import org.bigbluebutton.apps.protocol.RegisterUserRequest
+import org.bigbluebutton.apps.protocol.UserMessages.RegisterUserRequest
 import org.bigbluebutton.apps.protocol.Header
 
 class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
