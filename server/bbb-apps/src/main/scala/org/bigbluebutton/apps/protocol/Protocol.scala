@@ -14,14 +14,17 @@ case class HeaderMeeting(name: String, externalId: String, sessionId: Option[Str
 case class HeaderAndPayload(header: Header, payload: JsValue)
 case class ReplyStatus(status: String, message: String, error: Option[Int])
 
+ 
+case class StatusCode(code: Int, message: String)
+case class ErrorCode(code: Int, message: String)
+case class Response(status: StatusCodes.StatusCodeType, errors: Option[Seq[ErrorCode]] = None)
+  
 case class MessageProcessException(message: String) extends Exception(message)
 
 object InMessageNameContants {
   val CreateMeetingRequestMessage = "CreateMeetingRequest"
   val RegisterUserRequestMessage = "RegisterUserRequest"
 }
-
-
 
 object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {  
   implicit val replyHeaderFormat = jsonFormat2(ReplyHeader)
@@ -31,3 +34,24 @@ object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSup
   implicit val headerAndPayloadFormat = jsonFormat2(HeaderAndPayload)
 }
 
+object StatusCodes extends Enumeration {
+  type StatusCodeType = Value
+  
+  val OK = Value(200, "OK")
+  val NOT_MODIFIED = Value(304, "Not Modified")
+  val BAD_REQUEST =  Value(400, "Bad Request")
+  val UNAUTHORIZED = Value(401, "Unauthorized")
+  val FORBIDDEN = Value(403, "Forbidden")
+  val NOT_FOUND = Value(404, "Not Found")
+  val NOT_ACCEPTABLE = Value(406, "Not Acceptable")
+  val INTERNAL_SERVER_ERROR = Value(500, "Internal Server Error")
+  val BAD_GATEWAY = Value(502, "Bad Gateway")
+  val SERVICE_UNAVAILABLE = Value(503, "Service Unavailable")
+}
+
+object ErrorCodes extends Enumeration {
+  type ErrorCodeType = Value
+  
+  val INVALID_TOKEN = Value(89, "Invalid or expired token")   
+  
+}

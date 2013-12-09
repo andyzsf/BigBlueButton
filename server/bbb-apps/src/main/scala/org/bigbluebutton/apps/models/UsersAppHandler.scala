@@ -7,6 +7,8 @@ import akka.event.LoggingAdapter
 import org.bigbluebutton.apps.MeetingActor
 import org.bigbluebutton.apps.models.UsersApp.RegisteredUser
 import org.bigbluebutton.apps.protocol.UserMessages._
+import org.bigbluebutton.apps.protocol.Response
+import org.bigbluebutton.apps.protocol.StatusCodes
 
 /**
  * Users app for meeting
@@ -27,8 +29,9 @@ trait UsersAppHandler {
     val token = msg.token
     usersApp.join(token) match {
       case Some(juser) => {
-        val jur1Payload = JoinUserReplyPayload( true, "Successfully joined user.", Some(juser))
-        val jur1 = JoinUserReply(msg.header, jur1Payload)
+        val response = Response(status = StatusCodes.OK)
+        val jur = JoinUserResponse(response, Some(juser))
+        sender ! jur
       }
       case None => sender ! "Failed to join user"
     }
