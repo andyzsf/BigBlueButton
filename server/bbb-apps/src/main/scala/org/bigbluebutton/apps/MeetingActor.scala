@@ -21,8 +21,8 @@ object MeetingActor {
 }
 
 class MeetingActor (val pubsub: ActorRef, val session: MeetingSession, 
-                    val meeting: MeetingConfig) 
-                    extends Actor with UsersAppHandler with ActorLogging  {
+                    val meeting: MeetingConfig) extends Actor with ActorLogging
+                    with UsersAppHandler {
   
   def receive = {                       
     case rur: RegisterUserRequest => handleRegisterUser(rur)
