@@ -7,9 +7,10 @@ import akka.actor.ActorLogging
 import org.bigbluebutton.apps.models.MeetingSession
 import org.bigbluebutton.apps.protocol.MeetingCreated
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
-import org.bigbluebutton.apps.models.MeetingConfig
+import org.bigbluebutton.apps.models.MeetingDescriptor
 import org.bigbluebutton.apps.protocol.UserMessages.RegisterUserRequest
 import org.bigbluebutton.apps.protocol.Header
+import org.bigbluebutton.apps.Meeting.CreateMeetingResponse
 
 class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
@@ -40,7 +41,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
     internalId + "-" + System.currentTimeMillis()
   }
   
-  def createMeeting(config: MeetingConfig, internalId: String):Meeting = {  
+  def createMeeting(config: MeetingDescriptor, internalId: String):Meeting = {  
 	val sessionId = getValidSession(internalId)
 	val session = createSession(config.name, config.externalId, sessionId)
 	val meetingRef = Meeting(session, pubsub, config)	      
@@ -99,7 +100,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
     getMeeting(internalId) match {
       case Some(meetingActor) => {
 	      log.info("Meeting [{}] : [{}] is already running.", externalMeetingId, name) 
-	      sender ! CreateMeetingRequestReply(false, "Meeting already exist.", meetingActor.session)         
+	      sender ! CreateMeetingResponse(false, msg.payload, Some("Meeting exists"), None)         
       }
       case None => {
 	      log.info("Creating meeting [{}] : [{}]", externalMeetingId, name)
@@ -107,7 +108,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
 	      	      
 	      log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
 	      
-	      sender ! CreateMeetingRequestReply(true, "Meeting has been created.", meetingRef.session)	
+	      sender ! CreateMeetingResponse(true, msg.payload, None,  Some(meetingRef.session))	
 	      pubsub ! MeetingCreated(meetingRef.session, msg.payload)         
       }
     } 

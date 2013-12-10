@@ -1,15 +1,14 @@
-package org.bigbluebutton
+package org.bigbluebutton.endpoint.redis
 
 import akka.actor.Props
 import java.net.InetSocketAddress
 import redis.actors.RedisSubscriberActor
 import redis.api.pubsub.{PMessage, Message}
-import redis.RedisClient
 import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
 import akka.actor.ActorRef
 import org.bigbluebutton.apps.protocol.MessageTransformer
-import akka.event.slf4j.SLF4JLogging
+import akka.actor.actorRef2Scala
+import org.bigbluebutton.SystemConfiguration
 
 object AppsRedisSubscriberActor extends SystemConfiguration {
 

@@ -26,6 +26,15 @@ import akka.util.Timeout
 import scala.concurrent.duration._
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import scala.util.{Success, Failure}
+import org.bigbluebutton.apps.protocol.HeaderBuilder
+import org.bigbluebutton.apps.protocol.StatusCodeBuilder
+import org.bigbluebutton.apps.protocol.StatusCodes
+import org.bigbluebutton.apps.protocol.ErrorCodeBuilder
+import org.bigbluebutton.apps.protocol.ErrorCode
+import org.bigbluebutton.apps.protocol.ErrorCodes
+import org.bigbluebutton.apps.protocol.Response
+import org.bigbluebutton.apps.protocol.JsonResponse
+import org.bigbluebutton.apps.Meeting.CreateMeetingResponse
 
 
 class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with RestEndpointService with ActorLogging {
@@ -66,25 +75,43 @@ trait RestEndpointService extends HttpService {
         respondWithMediaType(`application/json`) {
 	        entity(as[HeaderAndPayload]) { hp =>
               val response = sendCreateMeetingMessage(hp)
-              complete("{OK}")
+              complete(response)
 	        }
         }
       }
     }
     
-    def sendCreateMeetingMessage(hp: HeaderAndPayload):Boolean = {
+    def sendCreateMeetingMessage(hp: HeaderAndPayload):JsonResponse = {
 	  MessageTransformer.processMessage(hp.header, hp.payload.asJsObject) match {
 	    case Success(message) => {
-	       val response = (msgReceiver ? message)
-	                      .mapTo[CreateMeetingRequestReply]
-	                      .map(result => {
-	                        result})
-	                      
-           true
+	      
+	      var statusCode = StatusCodeBuilder.buildStatus(StatusCodes.OK)
+	      
+	      (msgReceiver ? message).mapTo[CreateMeetingResponse].onComplete {
+	        case Success(reply) => {
+		      
+	           
+	        }
+	        case Failure(failure) => {
+		      statusCode = StatusCodeBuilder.buildStatus(StatusCodes.BAD_REQUEST)
+		           
+	        }
+	      }
+	       
+	      val response = Response(statusCode)
+		  val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", hp.header.event)
+		  val header = hp.header.copy(response = Some(response), event = headerEvent)
+		  val jsonResponse = JsonResponse(header)
+		  jsonResponse
 	    }
 	    case Failure(ex) => {
-	      println(s"Problem parsing message content: ${ex.getMessage}")
-	      false
+	      val statusCode = StatusCodeBuilder.buildStatus(StatusCodes.BAD_REQUEST)
+	      val errorCode = ErrorCodeBuilder.buildError(ErrorCodes.INVALID_MESSAGE, ex.getMessage)
+	      val response = Response(statusCode, Some(Seq(errorCode)))
+	      val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", hp.header.event)
+	      val header = hp.header.copy(response = Some(response), event = headerEvent)
+	      val jsonResponse = JsonResponse(header)
+	      jsonResponse
 	    }
 	  }      
     }

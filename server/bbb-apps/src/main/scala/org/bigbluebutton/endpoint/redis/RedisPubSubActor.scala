@@ -1,4 +1,4 @@
-package org.bigbluebutton
+package org.bigbluebutton.endpoint.redis
 
 import akka.actor.Props
 import java.net.InetSocketAddress

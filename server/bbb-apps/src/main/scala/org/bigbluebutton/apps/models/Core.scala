@@ -9,17 +9,17 @@ object Role extends Enumeration {
 }
 
   
-case class MeetingConfig(name: String, externalId: String, 
+case class MeetingDescriptor(name: String, externalId: String, 
                        record: Boolean, welcomeMessage: String, 
                        logoutUrl: String, avatarUrl: String,
-                       users: UsersConfig, duration: DurationConfig, 
-                       voiceConf: VoiceConfig, phoneNumbers: Seq[PhoneNumberConfig], 
+                       users: UsersLimit, duration: MeetingDuration, 
+                       voiceConf: VoiceConfAndPin, phoneNumbers: Seq[PhoneNumber], 
                        metadata: Map[String, String])
   
-case class UsersConfig(max: Int, hardLimit: Boolean)
-case class DurationConfig(length: Int, allowExtend: Boolean, warnBefore: Int)
-case class VoiceConfig(pin: Int, number: Int)
-case class PhoneNumberConfig(number: String, description: String)  
+case class UsersLimit(max: Int, hardLimit: Boolean)
+case class MeetingDuration(length: Int, allowExtend: Boolean, warnBefore: Int)
+case class VoiceConfAndPin(pin: Int, number: Int)
+case class PhoneNumber(number: String, description: String)  
 case class MeetingSession(name: String, externalId: String, session: String)
 
 

@@ -77,31 +77,42 @@ object joinuserrep {
                                                   //| ot Found)
         val errorCode = ErrorCode(ErrorCodes.INVALID_TOKEN.id,
                                   ErrorCodes.INVALID_TOKEN.toString())
-                                                  //> errorCode  : org.bigbluebutton.apps.protocol.ErrorCode = ErrorCode(89,Inval
-                                                  //| id or expired token)
+                                                  //> errorCode  : org.bigbluebutton.apps.protocol.ErrorCode = ErrorCode(1,Invali
+                                                  //| d or expired token)
         val response = Response(status = statusCode,
                         errors = Some(Seq(errorCode)))
                                                   //> response  : org.bigbluebutton.apps.protocol.Response = Response(StatusCode(
-                                                  //| 404,Not Found),Some(List(ErrorCode(89,Invalid or expired token))))
+                                                  //| 404,Not Found),Some(List(ErrorCode(1,Invalid or expired token))))
   
   val jur2 = JoinUserResponse(response, "mytoken", Some(juser1))
                                                   //> jur2  : org.bigbluebutton.apps.protocol.UserMessages.JoinUserResponse = Joi
-                                                  //| nUserResponse(Response(StatusCode(404,Not Found),Some(List(ErrorCode(89,Inv
-                                                  //| alid or expired token)))),mytoken,Some(JoinedUser(user1,usertoken,User(user
-                                                  //| 1,Guga,MODERATOR,85115,Welcome to English 101,http://www.example.com,http:/
-                                                  //| /www.example.com/avatar.png),false,Some(WebIdentity(RichWeb)),Some(VoiceIde
-                                                  //| ntity(Richard,CallerId(Richard,6135207610))))))
+                                                  //| nUserResponse(Response(StatusCode(404,Not Found),Some(List(ErrorCode(1,Inva
+                                                  //| lid or expired token)))),mytoken,Some(JoinedUser(user1,usertoken,User(user1
+                                                  //| ,Guga,MODERATOR,85115,Welcome to English 101,http://www.example.com,http://
+                                                  //| www.example.com/avatar.png),false,Some(WebIdentity(RichWeb)),Some(VoiceIden
+                                                  //| tity(Richard,CallerId(Richard,6135207610))))))
   
   val finalReply = JoinUserReply(header, jur2).toJson
                                                   //> finalReply  : spray.json.JsValue = {"header":{"event":{"name":"CreateMeetin
                                                   //| gRequest","timestamp":123456,"source":"web-api","reply":{"to":"replyChannel
                                                   //| ","correlationId":"abc123"}},"meeting":{"name":"English 101","externalId":"
                                                   //| english_101","sessionId":"english_101-12345"}},"payload":{"response":{"stat
-                                                  //| us":{"code":404,"message":"Not Found"},"errors":[{"code":89,"message":"Inva
-                                                  //| lid or expired token"}]},"token":"mytoken","joinedUser":{"id":"user1","toke
-                                                  //| n":"usertoken","user":{"externalId":"user1","name":"Guga","role":"MODERATOR
-                                                  //| ","pin":85115,"welcomeMessage":"Welcome to English 101","logoutUrl":"http:/
-                                                  //| /www.example.com","avatarUrl":"http://www.example.com/avatar.png"},"isPrese
-                                                  //| nter":false,"webIdent":{"name":"RichWeb"},"voiceIdent":{"name":"Richard","c
-                                                  //| allerId":{"name":"Richard","number":"6135207610"}}}}}
+                                                  //| us":{"code":404,"message":"Not Found"},"errors":[{"code":1,"message":"Inval
+                                                  //| id or expired token"}]},"token":"mytoken","joinedUser":{"id":"user1","token
+                                                  //| ":"usertoken","user":{"externalId":"user1","name":"Guga","role":"MODERATOR"
+                                                  //| ,"pin":85115,"welcomeMessage":"Welcome to English 101","logoutUrl":"http://
+                                                  //| www.example.com","avatarUrl":"http://www.example.com/avatar.png"},"isPresen
+                                                  //| ter":false,"webIdent":{"name":"RichWeb"},"voiceIdent":{"name":"Richard","ca
+                                                  //| llerId":{"name":"Richard","number":"6135207610"}}}}}
+  val failure = JsString(
+    """Malformed message: [{"meeting1":{"name":"English 101","externalId":"english_101","record":true,"welcomeMessage":"Welcome to English 101","logoutUrl":"http://www.bigbluebutton.org","avatarUrl":"http://www.gravatar.com/bigbluebutton","users":{"max":20,"hardLimit":false},"duration":{"length":120,"allowExtend":false,"warnBefore":30},"voiceConf":{"pin":123456,"number":85115},"phoneNumbers":[{"number":"613-520-7600","description":"Ottawa"},{"number":"1-888-555-7890","description":"NA Toll-Free"}],"metadata":{"customerId":"acme-customer","customerName":"ACME"}}}]""")
+                                                  //> failure  : spray.json.JsString = "Malformed message: [{\"meeting1\":{\"name
+                                                  //| \":\"English 101\",\"externalId\":\"english_101\",\"record\":true,\"welcome
+                                                  //| Message\":\"Welcome to English 101\",\"logoutUrl\":\"http://www.bigbluebutt
+                                                  //| on.org\",\"avatarUrl\":\"http://www.gravatar.com/bigbluebutton\",\"users\":
+                                                  //| {\"max\":20,\"hardLimit\":false},\"duration\":{\"length\":120,\"allowExtend
+                                                  //| \":false,\"warnBefore\":30},\"voiceConf\":{\"pin\":123456,\"number\":85115}
+                                                  //| ,\"phoneNumbers\":[{\"number\":\"613-520-7600\",\"description\":\"Ottawa\"}
+                                                  //| ,{\"number\":\"1-888-555-7890\",\"description\":\"NA Toll-Free\"}],\"metada
+                                                  //| ta\":{\"customerId\":\"acme-customer\",\"customerName\":\"ACME\"}}}]"
 }

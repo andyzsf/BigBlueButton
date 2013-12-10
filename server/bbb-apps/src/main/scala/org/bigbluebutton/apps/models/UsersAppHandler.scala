@@ -7,10 +7,9 @@ import akka.event.LoggingAdapter
 import org.bigbluebutton.apps.MeetingActor
 import org.bigbluebutton.apps.models.UsersApp.RegisteredUser
 import org.bigbluebutton.apps.protocol.UserMessages._
-import org.bigbluebutton.apps.protocol.Response
 import org.bigbluebutton.apps.protocol.StatusCodes
 import org.bigbluebutton.apps.protocol.ErrorCodes
-import org.bigbluebutton.apps.protocol.{StatusCode, ErrorCode}
+import org.bigbluebutton.apps.protocol.{Response, StatusCode, ErrorCode}
 
 
 /**

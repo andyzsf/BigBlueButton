@@ -2,21 +2,21 @@ package org.bigbluebutton.apps.protocol
 
 import org.bigbluebutton.apps.models.UsersApp._
 import org.bigbluebutton.apps.models.MeetingSession
-import org.bigbluebutton.apps.models.MeetingConfig
+import org.bigbluebutton.apps.models.MeetingDescriptor
 import spray.json.DefaultJsonProtocol
-import org.bigbluebutton.apps.models.UsersConfig
-import org.bigbluebutton.apps.models.DurationConfig
-import org.bigbluebutton.apps.models.VoiceConfig
-import org.bigbluebutton.apps.models.PhoneNumberConfig
-import org.bigbluebutton.apps.models.MeetingConfig
+import org.bigbluebutton.apps.models.UsersLimit
+import org.bigbluebutton.apps.models.MeetingDuration
+import org.bigbluebutton.apps.models.VoiceConfAndPin
+import org.bigbluebutton.apps.models.PhoneNumber
+import org.bigbluebutton.apps.models.MeetingDescriptor
 
 object MyJsonProtocol extends DefaultJsonProtocol {
   implicit val sessionFormat = jsonFormat3(MeetingSession)
-  implicit val usersDefFormat = jsonFormat2(UsersConfig)
-  implicit val durationDefFormat = jsonFormat3(DurationConfig)
-  implicit val voiceConfDefFormat = jsonFormat2(VoiceConfig)
-  implicit val phoneNumberDefFormat = jsonFormat2(PhoneNumberConfig)
-  implicit val meetingDefFormat = jsonFormat11(MeetingConfig)
+  implicit val usersDefFormat = jsonFormat2(UsersLimit)
+  implicit val durationDefFormat = jsonFormat3(MeetingDuration)
+  implicit val voiceConfDefFormat = jsonFormat2(VoiceConfAndPin)
+  implicit val phoneNumberDefFormat = jsonFormat2(PhoneNumber)
+  implicit val meetingDefFormat = jsonFormat11(MeetingDescriptor)
 }
 
 object CreateMeetingRequestReplyJsonProtocol extends DefaultJsonProtocol {
@@ -25,7 +25,7 @@ object CreateMeetingRequestReplyJsonProtocol extends DefaultJsonProtocol {
 }
 
 case class CreateMeetingRequestReply(created: Boolean, message: String, session: MeetingSession)
-case class MeetingCreated(session: MeetingSession, meeting: MeetingConfig)
+case class MeetingCreated(session: MeetingSession, meeting: MeetingDescriptor)
 
 case class MeetingHeader(name: String, externalId: String, session: String)
 

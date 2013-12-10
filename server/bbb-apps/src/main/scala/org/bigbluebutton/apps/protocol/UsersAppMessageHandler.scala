@@ -37,9 +37,6 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
 	implicit val userFormat = jsonFormat7(User)
 	implicit val joinedUserFormat = jsonFormat6(JoinedUser)
 	
-	implicit val statusCodeFormat = jsonFormat2(StatusCode)  
-	implicit val errorCodeFormat = jsonFormat2(ErrorCode)
-	implicit val responseFormat = jsonFormat2(Response)
 	implicit val joinUserResponseFormat = jsonFormat3(JoinUserResponse)
 	implicit val joinUserReplyFormat = jsonFormat2(JoinUserReply)
 }

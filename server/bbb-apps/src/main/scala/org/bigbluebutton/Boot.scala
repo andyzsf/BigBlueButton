@@ -9,6 +9,7 @@ import redis.RedisClient
 import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.bigbluebutton.apps.MeetingManager
+import org.bigbluebutton.endpoint.redis.AppsRedisPublisherActor
 
 object Boot extends App with SystemConfiguration {
 
