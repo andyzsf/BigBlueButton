@@ -35,6 +35,11 @@ import org.bigbluebutton.apps.protocol.ErrorCodes
 import org.bigbluebutton.apps.protocol.Response
 import org.bigbluebutton.apps.protocol.JsonResponse
 import org.bigbluebutton.apps.Meeting.CreateMeetingResponse
+import org.bigbluebutton.apps.protocol.CreateMeetingJsonResponse
+import org.bigbluebutton.apps.protocol.CreateMeetingRequestPayload
+import org.bigbluebutton.apps.protocol.CreateMeetingRequestMessage
+import org.bigbluebutton.apps.protocol.HeaderAndPayload
+import org.bigbluebutton.apps.protocol.CreateMeetingResponsePayload
 
 
 class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with RestEndpointService with ActorLogging {
@@ -47,8 +52,8 @@ class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with Res
 
 trait RestEndpointService extends HttpService {
   import MessageTransformer._
-  import org.bigbluebutton.apps.protocol.CreateMeetingRequestReplyJsonProtocol._
   import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
+  import org.bigbluebutton.apps.protocol.CreateMeetingRequestJsonProtocol1._
   
   val msgReceiver: ActorRef
   implicit def executionContext = actorRefFactory.dispatcher
@@ -73,48 +78,50 @@ trait RestEndpointService extends HttpService {
     path("meeting") {
       post {
         respondWithMediaType(`application/json`) {
-	        entity(as[HeaderAndPayload]) { hp =>
-              val response = sendCreateMeetingMessage(hp)
-              complete(response)
+	        entity(as[CreateMeetingRequestMessage]) { message => 
+              sendCreateMeetingMessage(message)
 	        }
         }
       }
     }
     
-    def sendCreateMeetingMessage(hp: HeaderAndPayload):JsonResponse = {
-	  MessageTransformer.processMessage(hp.header, hp.payload.asJsObject) match {
-	    case Success(message) => {
-	      
-	      var statusCode = StatusCodeBuilder.buildStatus(StatusCodes.OK)
-	      
-	      (msgReceiver ? message).mapTo[CreateMeetingResponse].onComplete {
-	        case Success(reply) => {
-		      
-	           
-	        }
-	        case Failure(failure) => {
-		      statusCode = StatusCodeBuilder.buildStatus(StatusCodes.BAD_REQUEST)
-		           
-	        }
+    def sendCreateMeetingMessage(message: CreateMeetingRequestMessage) = {   
+	  val response = (msgReceiver ? message)
+	                 .mapTo[CreateMeetingResponse]
+	                 .map(result => {
+	                   	var statusCode = StatusCodeBuilder.buildStatus(StatusCodes.OK)
+	      var payload = CreateMeetingResponsePayload(message.payload.meeting)
+             if (result.success) {
+               payload = CreateMeetingResponsePayload(message.payload.meeting, session = result.session) 
+		      val response = Response(statusCode)
+			  val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", message.header.event)
+			  val header = message.header.copy(response = Some(response), event = headerEvent)
+			  val jsonResponse = CreateMeetingJsonResponse(header, payload)
+			  jsonResponse               
+             } else {
+               	            var statusCode = StatusCodeBuilder.buildStatus(StatusCodes.BAD_REQUEST)
+	            var payload = CreateMeetingResponsePayload(message.payload.meeting, error = Some("Failed to receive response from meeting"))
+		      val response = Response(statusCode)
+			  val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", message.header.event)
+			  val header = message.header.copy(response = Some(response), event = headerEvent)
+			  val jsonResponse = CreateMeetingJsonResponse(header, payload)
+			  jsonResponse                 
+             }	                   
+	                 })
+	         .recover { case _ =>
+	            var statusCode = StatusCodeBuilder.buildStatus(StatusCodes.BAD_REQUEST)
+	            var payload = CreateMeetingResponsePayload(message.payload.meeting, error = Some("Some exception was thrown"))
+		      val response = Response(statusCode)
+			  val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", message.header.event)
+			  val header = message.header.copy(response = Some(response), event = headerEvent)
+			  val jsonResponse = CreateMeetingJsonResponse(header, payload)
+			  jsonResponse 	    
 	      }
-	       
-	      val response = Response(statusCode)
-		  val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", hp.header.event)
-		  val header = hp.header.copy(response = Some(response), event = headerEvent)
-		  val jsonResponse = JsonResponse(header)
-		  jsonResponse
-	    }
-	    case Failure(ex) => {
-	      val statusCode = StatusCodeBuilder.buildStatus(StatusCodes.BAD_REQUEST)
-	      val errorCode = ErrorCodeBuilder.buildError(ErrorCodes.INVALID_MESSAGE, ex.getMessage)
-	      val response = Response(statusCode, Some(Seq(errorCode)))
-	      val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", hp.header.event)
-	      val header = hp.header.copy(response = Some(response), event = headerEvent)
-	      val jsonResponse = JsonResponse(header)
-	      jsonResponse
-	    }
-	  }      
+	  
+	  complete(response)
+
     }
+  
 }
 
 

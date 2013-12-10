@@ -11,6 +11,7 @@ import org.bigbluebutton.apps.models.MeetingDescriptor
 import org.bigbluebutton.apps.protocol.UserMessages.RegisterUserRequest
 import org.bigbluebutton.apps.protocol.Header
 import org.bigbluebutton.apps.Meeting.CreateMeetingResponse
+import org.bigbluebutton.apps.protocol.CreateMeetingRequestMessage
 
 class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
@@ -19,7 +20,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   private var meetings = new collection.immutable.HashMap[String, Meeting]
   
   def receive = {
-    case createMeetingRequest: CreateMeetingRequest => 
+    case createMeetingRequest: CreateMeetingRequestMessage => 
            handleCreateMeetingRequest(createMeetingRequest)
     case registerUser : RegisterUserRequest =>
            handleRegisterUser(registerUser)
@@ -88,8 +89,8 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
    * Handle the CreateMeetingRequest message.
    */
-  def handleCreateMeetingRequest(msg: CreateMeetingRequest) = {
-    val mConfig = msg.payload
+  def handleCreateMeetingRequest(msg: CreateMeetingRequestMessage) = {
+    val mConfig = msg.payload.meeting
     val externalMeetingId = mConfig.externalId
     val name = mConfig.name
     
@@ -100,7 +101,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
     getMeeting(internalId) match {
       case Some(meetingActor) => {
 	      log.info("Meeting [{}] : [{}] is already running.", externalMeetingId, name) 
-	      sender ! CreateMeetingResponse(false, msg.payload, Some("Meeting exists"), None)         
+	      sender ! CreateMeetingResponse(false, msg.payload.meeting, Some("Meeting exists"), None)         
       }
       case None => {
 	      log.info("Creating meeting [{}] : [{}]", externalMeetingId, name)
@@ -108,8 +109,8 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
 	      	      
 	      log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
 	      
-	      sender ! CreateMeetingResponse(true, msg.payload, None,  Some(meetingRef.session))	
-	      pubsub ! MeetingCreated(meetingRef.session, msg.payload)         
+	      sender ! CreateMeetingResponse(true, msg.payload.meeting, None,  Some(meetingRef.session))	
+	      pubsub ! MeetingCreated(meetingRef.session, msg.payload.meeting)         
       }
     } 
   } 

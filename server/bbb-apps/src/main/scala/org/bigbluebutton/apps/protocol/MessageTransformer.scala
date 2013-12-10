@@ -83,8 +83,8 @@ object MessageTransformer extends MeetingMessageHandler
    */
   def determineMessage(header: Header, payload:JsObject):InMessage = {
     header.event.name match {
-      case CreateMeetingRequestMessage  => 
-        handleCreateMeetingRequest(header, payload)
+//      case CreateMeetingRequestMessage  => 
+//        handleCreateMeetingRequest(header, payload)
       case RegisterUserRequestMessage =>
         handleRegisterUserRequest(header, payload)
 	  case _ => 

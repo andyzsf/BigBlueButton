@@ -19,11 +19,6 @@ object MyJsonProtocol extends DefaultJsonProtocol {
   implicit val meetingDefFormat = jsonFormat11(MeetingDescriptor)
 }
 
-object CreateMeetingRequestReplyJsonProtocol extends DefaultJsonProtocol {
-  implicit val sessionFormat = jsonFormat3(MeetingSession)
-  implicit val createMeetingRequestReplyFormat = jsonFormat3(CreateMeetingRequestReply)
-}
-
 case class CreateMeetingRequestReply(created: Boolean, message: String, session: MeetingSession)
 case class MeetingCreated(session: MeetingSession, meeting: MeetingDescriptor)
 
