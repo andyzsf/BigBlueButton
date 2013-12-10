@@ -78,12 +78,14 @@ trait RestEndpointService extends HttpService {
 	       val response = (msgReceiver ? message)
 	                      .mapTo[CreateMeetingRequestReply]
 	                      .map(result => {
-	                        println("**** "+ result + " ****")
 	                        result})
 	                      
            true
 	    }
-	    case Failure(_) => false
+	    case Failure(ex) => {
+	      println(s"Problem parsing message content: ${ex.getMessage}")
+	      false
+	    }
 	  }      
     }
 }

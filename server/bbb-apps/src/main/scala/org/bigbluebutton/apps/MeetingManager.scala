@@ -43,7 +43,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   def createMeeting(config: MeetingConfig, internalId: String):Meeting = {  
 	val sessionId = getValidSession(internalId)
 	val session = createSession(config.name, config.externalId, sessionId)
-	val meetingRef = new Meeting(session, pubsub, config)	      
+	val meetingRef = Meeting(session, pubsub, config)	      
 	storeMeeting(session.session, meetingRef)
     meetingRef
   }

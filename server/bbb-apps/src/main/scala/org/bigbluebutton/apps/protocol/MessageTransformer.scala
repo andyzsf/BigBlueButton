@@ -25,11 +25,11 @@ object MessageTransformer extends MeetingMessageHandler
     try {
       msg.fields.get("header") match {
         case Some(header) => header.convertTo[Header]
-        case None => throw MessageProcessException("Cannot get header : " + msg)
+        case None => throw MessageProcessException("Cannot get header: [" + msg + "]")
      }
     } catch {
       case e: DeserializationException =>
-        throw MessageProcessException("Failed to deserialize header : " + msg)
+        throw MessageProcessException("Failed to deserialize header: [" + msg + "]")
     }
   }
  
@@ -41,7 +41,7 @@ object MessageTransformer extends MeetingMessageHandler
   def extractPayload(msg: JsObject): JsObject = {
     msg.fields.get("payload") match {
       case Some(payload) => payload.asJsObject
-      case None => throw MessageProcessException("Cannot get payload information")
+      case None => throw MessageProcessException("Cannot get payload information: [" + msg + "]")
     } 
   }
   
@@ -55,7 +55,7 @@ object MessageTransformer extends MeetingMessageHandler
     } catch {
       case e: ParsingException => {
         log.error("Cannot parse message: {}", msg)
-        throw MessageProcessException("Cannot parse JSON message: " + msg)
+        throw MessageProcessException("Cannot parse JSON message: [" + msg + "]")
       }
     }
   }
@@ -88,7 +88,7 @@ object MessageTransformer extends MeetingMessageHandler
       case RegisterUserRequestMessage =>
         handleRegisterUserRequest(header, payload)
 	  case _ => 
-	    throw MessageProcessException("Unknown message name : " + header.event.name)
+	    throw MessageProcessException("Unknown message name: [" + header.event.name + "]")
 	}
   }
   

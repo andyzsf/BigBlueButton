@@ -4,7 +4,15 @@ import akka.actor.ActorRef
 import akka.actor.ActorContext
 import org.bigbluebutton.apps.models.MeetingConfig
 
-class Meeting(val session: MeetingSession, 
+object Meeting {
+  def apply(session: MeetingSession, 
+              pubsub: ActorRef,
+              config: MeetingConfig)
+              (implicit context: ActorContext) = 
+                new Meeting(session, pubsub, config)(context)
+}
+
+class Meeting private (val session: MeetingSession, 
               val pubsub: ActorRef,
               val config: MeetingConfig)
               (implicit val context: ActorContext) {

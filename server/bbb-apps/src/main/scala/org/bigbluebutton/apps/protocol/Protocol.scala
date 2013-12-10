@@ -17,7 +17,7 @@ case class ReplyStatus(status: String, message: String, error: Option[Int])
  
 case class StatusCode(code: Int, message: String)
 case class ErrorCode(code: Int, message: String)
-case class Response(status: StatusCodes.StatusCodeType, errors: Option[Seq[ErrorCode]] = None)
+case class Response(status: StatusCode, errors: Option[Seq[ErrorCode]] = None)
   
 case class MessageProcessException(message: String) extends Exception(message)
 

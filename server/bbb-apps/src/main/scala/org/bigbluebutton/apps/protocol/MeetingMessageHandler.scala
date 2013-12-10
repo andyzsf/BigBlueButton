@@ -34,11 +34,11 @@ trait MeetingMessageHandler extends SLF4JLogging {
 	        CreateMeetingRequest(header, m)
 	      } catch {
 	        case e: DeserializationException => {
-	          throw MessageProcessException("Failed to deserialize create meeting message")
+	          throw MessageProcessException("Failed to deserialize create meeting message: [" + payload + "]")
 	        }
 	      }        
       }
-      case None => throw MessageProcessException("Malformed message")
+      case None => throw MessageProcessException("Malformed message: [" + payload + "]")
     }   
   }
 }

@@ -27,10 +27,10 @@ object UsersApp {
   case class ChangeUserStatus(meetingID: String, userID: String, status: String, value: Object) 
   case class AssignPresenter(meetingID: String, newPresenterID: String, newPresenterName: String, assignedBy: String)  
   
-  
+  def apply() = new UsersApp()
 }
 
-class UsersApp {
+class UsersApp private {
   import UsersApp._
   
   private var registeredUsers = 
@@ -70,7 +70,7 @@ class UsersApp {
    * Joins a user in the meeting.
    */
   private def add(token: String, ruser: User):JoinedUser = {
-    val userId = getValidUserId
+    val userId = generateValidUserId
     val user = JoinedUser(userId, token, ruser)
     joinedUsers += (user.id -> user)
     user
@@ -83,7 +83,15 @@ class UsersApp {
    *  @return user that left or None if user does not exist.     
    *               
    */
-  private def remove(id: String) = joinedUsers -= id
+  private def remove(id: String):Option[JoinedUser] = {
+    joinedUsers get (id) match {
+      case Some(user) => {
+        joinedUsers -= id
+        Some(user)
+      }
+      case None => None
+    }
+  }
   
   /**
    * Returns true if the user is in the meeting.
@@ -92,18 +100,18 @@ class UsersApp {
    */
   def exist(id: String):Boolean = joinedUsers.get(id) != None
   
-  private def getValidToken: String = {
+  private def generateValidToken: String = {
     val token = RandomStringGenerator.randomAlphanumericString(12)
-    if (! isRegistered(token)) token else getValidToken
+    if (! isRegistered(token)) token else generateValidToken
   }
   
-  private def getValidUserId: String = {
+  private def generateValidUserId: String = {
     val userId = RandomStringGenerator.randomAlphanumericString(6)
-    if (! exist(userId)) userId else getValidUserId
+    if (! exist(userId)) userId else generateValidUserId
   }
   
   def register(user: User):RegisteredUser = {
-    val token = getValidToken    
+    val token = generateValidToken    
     val u = RegisteredUser(token, user)
     add(u)
     u

@@ -13,8 +13,8 @@ import org.bigbluebutton.apps.models.UsersApp.{WebIdentity, CallerId, VoiceIdent
 object UserMessages {
 	case class RegisterUserRequest(header: Header, payload: User) extends InMessage
 	case class JoinUserRequest(header: Header, token: String) extends InMessage
-	case class JoinUserResponse(response: Response, user: Option[JoinedUser])
-//	case class JoinUserReply(header: Header, payload: JoinUserReplyPayload)  
+	case class JoinUserResponse(response: Response, token: String, joinedUser: Option[JoinedUser])
+	case class JoinUserReply(header: Header, payload: JoinUserResponse)  
 }
 
 object UserMessagesProtocol extends DefaultJsonProtocol {
@@ -36,8 +36,12 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
 	  
 	implicit val userFormat = jsonFormat7(User)
 	implicit val joinedUserFormat = jsonFormat6(JoinedUser)
-//	implicit val JoinUserReplyPayloadFormat = jsonFormat3(JoinUserReplyPayload)  
-//	implicit val joinUserReplyFormat = jsonFormat2(JoinUserReply)
+	
+	implicit val statusCodeFormat = jsonFormat2(StatusCode)  
+	implicit val errorCodeFormat = jsonFormat2(ErrorCode)
+	implicit val responseFormat = jsonFormat2(Response)
+	implicit val joinUserResponseFormat = jsonFormat3(JoinUserResponse)
+	implicit val joinUserReplyFormat = jsonFormat2(JoinUserReply)
 }
 
 trait UsersAppMessageHandler {

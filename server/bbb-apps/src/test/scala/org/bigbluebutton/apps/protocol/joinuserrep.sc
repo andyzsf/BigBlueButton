@@ -6,7 +6,7 @@ import org.bigbluebutton.apps.models.UsersApp.JoinedUser
 import org.bigbluebutton.apps.models.UsersApp.User
 import org.bigbluebutton.apps.models.Role
 import org.bigbluebutton.apps.models.UsersApp.{WebIdentity, CallerId, VoiceIdentity}
-import org.bigbluebutton.apps.protocol.UserMessages.JoinUserResponse
+import org.bigbluebutton.apps.protocol.UserMessages.{JoinUserReply, JoinUserResponse}
 
 object joinuserrep {
 
@@ -71,16 +71,37 @@ object joinuserrep {
 //  jur1.toJson
   
 
-  val response = Response(status = StatusCodes.OK)//> response  : org.bigbluebutton.apps.protocol.Response = Response(OK,None)
+        val statusCode = StatusCode(StatusCodes.NOT_FOUND.id,
+                                    StatusCodes.NOT_FOUND.toString())
+                                                  //> statusCode  : org.bigbluebutton.apps.protocol.StatusCode = StatusCode(404,N
+                                                  //| ot Found)
+        val errorCode = ErrorCode(ErrorCodes.INVALID_TOKEN.id,
+                                  ErrorCodes.INVALID_TOKEN.toString())
+                                                  //> errorCode  : org.bigbluebutton.apps.protocol.ErrorCode = ErrorCode(89,Inval
+                                                  //| id or expired token)
+        val response = Response(status = statusCode,
+                        errors = Some(Seq(errorCode)))
+                                                  //> response  : org.bigbluebutton.apps.protocol.Response = Response(StatusCode(
+                                                  //| 404,Not Found),Some(List(ErrorCode(89,Invalid or expired token))))
   
-  println(response.status.id + " " + response.status)
-                                                  //> 200 OK
-  
-  val jur2 = JoinUserResponse(response, Some(juser1))
+  val jur2 = JoinUserResponse(response, "mytoken", Some(juser1))
                                                   //> jur2  : org.bigbluebutton.apps.protocol.UserMessages.JoinUserResponse = Joi
-                                                  //| nUserResponse(Response(OK,None),Some(JoinedUser(user1,usertoken,User(user1,
-                                                  //| Guga,MODERATOR,85115,Welcome to English 101,http://www.example.com,http://w
-                                                  //| ww.example.com/avatar.png),false,Some(WebIdentity(RichWeb)),Some(VoiceIdent
-                                                  //| ity(Richard,CallerId(Richard,6135207610))))))
+                                                  //| nUserResponse(Response(StatusCode(404,Not Found),Some(List(ErrorCode(89,Inv
+                                                  //| alid or expired token)))),mytoken,Some(JoinedUser(user1,usertoken,User(user
+                                                  //| 1,Guga,MODERATOR,85115,Welcome to English 101,http://www.example.com,http:/
+                                                  //| /www.example.com/avatar.png),false,Some(WebIdentity(RichWeb)),Some(VoiceIde
+                                                  //| ntity(Richard,CallerId(Richard,6135207610))))))
   
+  val finalReply = JoinUserReply(header, jur2).toJson
+                                                  //> finalReply  : spray.json.JsValue = {"header":{"event":{"name":"CreateMeetin
+                                                  //| gRequest","timestamp":123456,"source":"web-api","reply":{"to":"replyChannel
+                                                  //| ","correlationId":"abc123"}},"meeting":{"name":"English 101","externalId":"
+                                                  //| english_101","sessionId":"english_101-12345"}},"payload":{"response":{"stat
+                                                  //| us":{"code":404,"message":"Not Found"},"errors":[{"code":89,"message":"Inva
+                                                  //| lid or expired token"}]},"token":"mytoken","joinedUser":{"id":"user1","toke
+                                                  //| n":"usertoken","user":{"externalId":"user1","name":"Guga","role":"MODERATOR
+                                                  //| ","pin":85115,"welcomeMessage":"Welcome to English 101","logoutUrl":"http:/
+                                                  //| /www.example.com","avatarUrl":"http://www.example.com/avatar.png"},"isPrese
+                                                  //| nter":false,"webIdent":{"name":"RichWeb"},"voiceIdent":{"name":"Richard","c
+                                                  //| allerId":{"name":"Richard","number":"6135207610"}}}}}
 }
