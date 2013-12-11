@@ -75,38 +75,35 @@ trait RestEndpointService extends HttpService {
       }
     }
     
+    def buildJsonResponse(message: CreateMeetingRequestMessage, result: CreateMeetingResponse):CreateMeetingJsonResponse = {
+      	  var statusCode = StatusCodeBuilder.buildStatus(StatusCodes.OK)
+	      val payload = CreateMeetingResponsePayload(result.success, result.message,
+	                                 message.payload.meeting, result.session)
+
+	      val response = Response(statusCode)
+		  val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", message.header.event)
+		  val header = message.header.copy(response = Some(response), event = headerEvent)
+		  CreateMeetingJsonResponse(header, payload)       
+    }
+    
+    def buildJsonFailedResponse(message: CreateMeetingRequestMessage):CreateMeetingJsonResponse = {
+	      val statusCode = StatusCodeBuilder.buildStatus(StatusCodes.BAD_REQUEST)
+	      val payload = CreateMeetingResponsePayload(false, "Some exception was thrown", message.payload.meeting, None)
+		  val response = Response(statusCode)
+	      val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", message.header.event)
+	      val header = message.header.copy(response = Some(response), event = headerEvent)
+		   CreateMeetingJsonResponse(header, payload)   
+    }
+    
     def sendCreateMeetingMessage(message: CreateMeetingRequestMessage) = {   
 	  val response = (msgReceiver ? message)
 	                 .mapTo[CreateMeetingResponse]
 	                 .map(result => {
-	                   	var statusCode = StatusCodeBuilder.buildStatus(StatusCodes.OK)
-	      var payload = CreateMeetingResponsePayload(message.payload.meeting)
-             if (result.success) {
-               payload = CreateMeetingResponsePayload(message.payload.meeting, session = result.session) 
-		      val response = Response(statusCode)
-			  val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", message.header.event)
-			  val header = message.header.copy(response = Some(response), event = headerEvent)
-			  val jsonResponse = CreateMeetingJsonResponse(header, payload)
-			  jsonResponse               
-             } else {
-               	            var statusCode = StatusCodeBuilder.buildStatus(StatusCodes.BAD_REQUEST)
-	            var payload = CreateMeetingResponsePayload(message.payload.meeting, error = Some("Failed to receive response from meeting"))
-		      val response = Response(statusCode)
-			  val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", message.header.event)
-			  val header = message.header.copy(response = Some(response), event = headerEvent)
-			  val jsonResponse = CreateMeetingJsonResponse(header, payload)
-			  jsonResponse                 
-             }	                   
-	                 })
-	         .recover { case _ =>
-	            var statusCode = StatusCodeBuilder.buildStatus(StatusCodes.BAD_REQUEST)
-	            var payload = CreateMeetingResponsePayload(message.payload.meeting, error = Some("Some exception was thrown"))
-		      val response = Response(statusCode)
-			  val headerEvent = HeaderBuilder.buildResponseHeader("CreateMeetingResponse", message.header.event)
-			  val header = message.header.copy(response = Some(response), event = headerEvent)
-			  val jsonResponse = CreateMeetingJsonResponse(header, payload)
-			  jsonResponse 	    
-	      }
+                        buildJsonResponse(message, result)                  
+	                  })
+	                  .recover { case _ =>
+                         buildJsonFailedResponse(message)
+	                  }
 	  
 	  complete(response)
 

@@ -100,7 +100,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
     getMeeting(internalId) match {
       case Some(meetingActor) => {
 	      log.info("Meeting [{}] : [{}] is already running.", externalMeetingId, name) 
-	      sender ! CreateMeetingResponse(false, msg.payload.meeting, Some("Meeting exists"), None)         
+	      sender ! CreateMeetingResponse(true, msg.payload.meeting, "Meeting already exists.", None)         
       }
       case None => {
 	      log.info("Creating meeting [{}] : [{}]", externalMeetingId, name)
@@ -108,7 +108,7 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
 	      	      
 	      log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
 	      
-	      sender ! CreateMeetingResponse(true, msg.payload.meeting, None,  Some(meetingRef.session))	
+	      sender ! CreateMeetingResponse(true, msg.payload.meeting, "Meeting successfully created.",  Some(meetingRef.session))	
 	      pubsub ! MeetingCreated(meetingRef.session, msg.payload.meeting)         
       }
     } 

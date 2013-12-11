@@ -28,7 +28,7 @@ object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
   implicit val meetingSessionFormat = jsonFormat3(MeetingSession)
   implicit val createMeetingResponseFormat = jsonFormat4(CreateMeetingResponse)
   implicit val createMeetingRequestPayloadFormat = jsonFormat1(CreateMeetingRequestPayload)
-  implicit val createMeetingResponsePayloadFormat = jsonFormat3(CreateMeetingResponsePayload)
+  implicit val createMeetingResponsePayloadFormat = jsonFormat4(CreateMeetingResponsePayload)
   implicit val createMeetingJsonResponseFormat = jsonFormat2(CreateMeetingJsonResponse)
   implicit val createMeetingRequestMessageFormat = jsonFormat2(CreateMeetingRequestMessage)
 }
@@ -36,17 +36,15 @@ object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
 object MeetingMessages {
   case class CreateMeetingRequestPayload(meeting: MeetingDescriptor)
 	                                       
-  case class CreateMeetingResponsePayload(meeting: MeetingDescriptor, 
-	                                       session: Option[MeetingSession] = None, 
-	                                       error: Option[String] = None)
+  case class CreateMeetingResponsePayload(success: Boolean, message: String,
+                                          meeting: MeetingDescriptor, 
+	                                      session: Option[MeetingSession] = None)
   case class CreateMeetingJsonResponse(header: Header, payload: CreateMeetingResponsePayload)
 	
   case class CreateMeetingRequestMessage(header: Header, payload: CreateMeetingRequestPayload) 
 	
   case class CreateMeetingRequest(header: Header, payload: MeetingDescriptor) extends InMessage  
 }
-
-
 
 
 trait MeetingMessageHandler extends SLF4JLogging {

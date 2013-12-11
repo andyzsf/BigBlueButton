@@ -10,7 +10,7 @@ object Meeting {
   case class CreateMeeting(name: String, externalId: String, descriptor: MeetingDescriptor)
   case class CreateMeetingResponse(success: Boolean, 
                                    descriptor: MeetingDescriptor, 
-                                   error: Option[String] = None, 
+                                   message: String, 
                                    session: Option[MeetingSession])
   
   def apply(session: MeetingSession, 
