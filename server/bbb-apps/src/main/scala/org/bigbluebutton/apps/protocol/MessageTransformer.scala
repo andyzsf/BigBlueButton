@@ -11,6 +11,7 @@ import akka.event.slf4j.SLF4JLogging
 import scala.util.Try
 import spray.json.DeserializationException
 import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
+import org.bigbluebutton.apps.protocol.Protocol._
 
 object MessageTransformer extends MeetingMessageHandler 
                           with UsersAppMessageHandler

@@ -4,6 +4,7 @@ import org.specs2.mutable.Specification
 import spray.json.JsonParser
 import scala.util.Success
 import scala.util.Failure
+import org.bigbluebutton.apps.protocol.MeetingMessages.CreateMeetingRequest
 
 class MeetingMessageHandlerSpec extends Specification with ExampleMessageFixtures {
 

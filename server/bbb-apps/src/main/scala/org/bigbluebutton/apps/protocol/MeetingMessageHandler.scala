@@ -14,8 +14,11 @@ import org.bigbluebutton.apps.models.MeetingSession
 import spray.httpx.SprayJsonSupport
 import org.bigbluebutton.apps.Meeting.CreateMeetingResponse
 
+import Protocol._
+
 object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
   import HeaderAndPayloadJsonSupport._
+  import MeetingMessages._
   
   implicit val usersDefFormat = jsonFormat2(UsersLimit)
   implicit val durationDefFormat = jsonFormat3(MeetingDuration)
@@ -30,20 +33,24 @@ object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
   implicit val createMeetingRequestMessageFormat = jsonFormat2(CreateMeetingRequestMessage)
 }
 
-case class CreateMeetingRequestPayload(meeting: MeetingDescriptor)
-                                       
-case class CreateMeetingResponsePayload(meeting: MeetingDescriptor, 
-                                       session: Option[MeetingSession] = None, 
-                                       error: Option[String] = None)
-case class CreateMeetingJsonResponse(header: Header, payload: CreateMeetingResponsePayload)
+object MeetingMessages {
+  case class CreateMeetingRequestPayload(meeting: MeetingDescriptor)
+	                                       
+  case class CreateMeetingResponsePayload(meeting: MeetingDescriptor, 
+	                                       session: Option[MeetingSession] = None, 
+	                                       error: Option[String] = None)
+  case class CreateMeetingJsonResponse(header: Header, payload: CreateMeetingResponsePayload)
+	
+  case class CreateMeetingRequestMessage(header: Header, payload: CreateMeetingRequestPayload) 
+	
+  case class CreateMeetingRequest(header: Header, payload: MeetingDescriptor) extends InMessage  
+}
 
-case class CreateMeetingRequestMessage(header: Header, payload: CreateMeetingRequestPayload) 
-
-case class CreateMeetingRequest(header: Header, payload: MeetingDescriptor) extends InMessage
 
 
 
 trait MeetingMessageHandler extends SLF4JLogging {
+  import MeetingMessages._
   import CreateMeetingRequestJsonProtocol1._
   
   def handleCreateMeetingRequest(header: Header, 

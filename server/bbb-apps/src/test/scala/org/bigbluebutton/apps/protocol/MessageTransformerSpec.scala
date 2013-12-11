@@ -5,6 +5,7 @@ import org.parboiled.errors.ParsingException
 import spray.json.JsObject
 import spray.json.JsValue
 import org.bigbluebutton.apps.protocol.Message._
+import org.bigbluebutton.apps.protocol.Protocol._
 
 class MessageTransformerSpec extends Specification with ExampleMessageFixtures {
 

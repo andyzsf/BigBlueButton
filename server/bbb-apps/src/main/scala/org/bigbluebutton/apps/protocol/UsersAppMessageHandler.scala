@@ -9,6 +9,7 @@ import spray.json.JsonFormat
 import spray.json.JsString
 import spray.json.JsValue
 import org.bigbluebutton.apps.models.UsersApp.{WebIdentity, CallerId, VoiceIdentity}
+import org.bigbluebutton.apps.protocol.Protocol._
 
 object UserMessages {
 	case class RegisterUserRequest(header: Header, payload: User) extends InMessage

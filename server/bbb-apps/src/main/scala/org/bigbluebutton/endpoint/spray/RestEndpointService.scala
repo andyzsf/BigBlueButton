@@ -13,10 +13,7 @@ import spray.json.JsObject
 import spray.httpx.SprayJsonSupport
 import spray.json.JsValue
 import akka.actor.Props
-import org.bigbluebutton.apps.protocol.Header
-import org.bigbluebutton.apps.protocol.HeaderEvent
-import org.bigbluebutton.apps.protocol.HeaderMeeting
-import org.bigbluebutton.apps.protocol.HeaderAndPayload
+import org.bigbluebutton.apps.protocol.Protocol._
 import spray.json.JsString
 import org.bigbluebutton.apps.protocol.MessageTransformer
 import akka.event.LoggingAdapter
@@ -30,16 +27,9 @@ import org.bigbluebutton.apps.protocol.HeaderBuilder
 import org.bigbluebutton.apps.protocol.StatusCodeBuilder
 import org.bigbluebutton.apps.protocol.StatusCodes
 import org.bigbluebutton.apps.protocol.ErrorCodeBuilder
-import org.bigbluebutton.apps.protocol.ErrorCode
 import org.bigbluebutton.apps.protocol.ErrorCodes
-import org.bigbluebutton.apps.protocol.Response
-import org.bigbluebutton.apps.protocol.JsonResponse
 import org.bigbluebutton.apps.Meeting.CreateMeetingResponse
-import org.bigbluebutton.apps.protocol.CreateMeetingJsonResponse
-import org.bigbluebutton.apps.protocol.CreateMeetingRequestPayload
-import org.bigbluebutton.apps.protocol.CreateMeetingRequestMessage
-import org.bigbluebutton.apps.protocol.HeaderAndPayload
-import org.bigbluebutton.apps.protocol.CreateMeetingResponsePayload
+import org.bigbluebutton.apps.protocol.MeetingMessages._
 
 
 class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with RestEndpointService with ActorLogging {

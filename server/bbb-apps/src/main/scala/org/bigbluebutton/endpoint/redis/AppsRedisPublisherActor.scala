@@ -29,6 +29,7 @@ class AppsRedisPublisherActor(val system: ActorSystem,
   futurePong.map(pong => {
     println(s"Redis replied with a $pong")
   })
+  
   Await.result(futurePong, 5 seconds)
   
   def publish(msg: String) {

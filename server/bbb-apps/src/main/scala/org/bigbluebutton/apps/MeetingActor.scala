@@ -1,7 +1,7 @@
 package org.bigbluebutton.apps
 
 import akka.actor.Actor
-import org.bigbluebutton.apps.protocol.CreateMeetingRequest
+import org.bigbluebutton.apps.protocol.MeetingMessages.CreateMeetingRequest
 import akka.actor.ActorRef
 import akka.actor.ActorLogging
 import akka.actor.Props

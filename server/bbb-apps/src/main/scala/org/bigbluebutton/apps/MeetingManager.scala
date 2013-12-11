@@ -1,7 +1,6 @@
 package org.bigbluebutton.apps
 
 import akka.actor.Actor
-import org.bigbluebutton.apps.protocol.CreateMeetingRequest
 import akka.actor.ActorRef
 import akka.actor.ActorLogging
 import org.bigbluebutton.apps.models.MeetingSession
@@ -9,9 +8,9 @@ import org.bigbluebutton.apps.protocol.MeetingCreated
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.models.MeetingDescriptor
 import org.bigbluebutton.apps.protocol.UserMessages.RegisterUserRequest
-import org.bigbluebutton.apps.protocol.Header
+import org.bigbluebutton.apps.protocol.Protocol._
 import org.bigbluebutton.apps.Meeting.CreateMeetingResponse
-import org.bigbluebutton.apps.protocol.CreateMeetingRequestMessage
+import org.bigbluebutton.apps.protocol.MeetingMessages.{CreateMeetingRequest, CreateMeetingRequestMessage}
 
 class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
