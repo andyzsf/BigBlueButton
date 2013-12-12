@@ -5,22 +5,21 @@ import org.bigbluebutton.apps.protocol.MeetingMessages.CreateMeetingRequest
 import akka.actor.ActorRef
 import akka.actor.ActorLogging
 import akka.actor.Props
-import org.bigbluebutton.apps.models.UsersApp
-import org.bigbluebutton.apps.models.MeetingSession
+import org.bigbluebutton.apps.users.UsersApp
+import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
-import org.bigbluebutton.apps.protocol.MeetingCreated
 import org.bigbluebutton.apps.models.MeetingDescriptor
-import org.bigbluebutton.apps.models.UsersApp.RegisteredUser
-import org.bigbluebutton.apps.models.UsersAppHandler
+import org.bigbluebutton.apps.users.UsersApp.RegisteredUser
+import org.bigbluebutton.apps.users.UsersAppHandler
 import org.bigbluebutton.apps.protocol.UserMessages.RegisterUserRequest
 
-object MeetingActor {
-	def props(pubsub: ActorRef, session: MeetingSession, 
-	    meeting: MeetingDescriptor): Props = 
-	      Props(classOf[MeetingActor], pubsub, session, meeting)
+object RunningMeetingActor {
+	def props(pubsub: ActorRef, session: Session, 
+	          meeting: MeetingDescriptor): Props = 
+	      Props(classOf[RunningMeetingActor], pubsub, session, meeting)
 }
 
-class MeetingActor (val pubsub: ActorRef, val session: MeetingSession, 
+class RunningMeetingActor (val pubsub: ActorRef, val session: Session, 
                     val meeting: MeetingDescriptor) extends Actor with ActorLogging
                     with UsersAppHandler {
   

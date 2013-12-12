@@ -2,13 +2,13 @@ package org.bigbluebutton.apps.protocol
 
 import spray.json.DefaultJsonProtocol
 import spray.json.JsObject
-import org.bigbluebutton.apps.models.UsersApp._
+import org.bigbluebutton.apps.users._
 import spray.json.DeserializationException
 import org.bigbluebutton.apps.models.Role
 import spray.json.JsonFormat
 import spray.json.JsString
 import spray.json.JsValue
-import org.bigbluebutton.apps.models.UsersApp.{WebIdentity, CallerId, VoiceIdentity}
+import org.bigbluebutton.apps.users.Model._
 import org.bigbluebutton.apps.protocol.Protocol._
 
 object UserMessages {

@@ -21,7 +21,7 @@ object Boot extends App with SystemConfiguration {
                             "redis-publisher")
                                 
   
-  val meetingManager = system.actorOf(Props(classOf[MeetingManager], redisPublisherActor), "message-handler")
+  val meetingManager = system.actorOf(MeetingManager.props(redisPublisherActor), "meeting-manager")
   
   // create and start our service actor
   val service = system.actorOf(Props(classOf[RestEndpointServiceActor], meetingManager), "rest-service")

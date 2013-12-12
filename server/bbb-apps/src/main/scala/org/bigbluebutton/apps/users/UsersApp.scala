@@ -1,32 +1,10 @@
-package org.bigbluebutton.apps.models
+package org.bigbluebutton.apps.users
 
 import org.bigbluebutton.apps.utils.RandomStringGenerator
+import org.bigbluebutton.apps.models.Role
+import Model._
 
-object UsersApp {
-  case class WebIdentity(name: String)
-  case class CallerId(name: String, number: String)
-  case class VoiceIdentity(name: String, callerId: CallerId)
-  case class UserIdAndName(id: String, name: String)
-  object SystemUser extends UserIdAndName(id = "system", name = "System")
-  
-  case class JoinedUser(id: String, token: String, user: User,
-		  				isPresenter: Boolean = false,
-		  				webIdent: Option[WebIdentity] = None, 
-		  				voiceIdent: Option[VoiceIdentity] = None)
-	
-  case class RegisteredUser(token: String, user: User)
-  
-  case class User(externalId: String, name: String, 
-                  role: Role.RoleType, pin: Int, welcomeMessage: String,
-                  logoutUrl: String, avatarUrl: String)
-                
-  
-  case class UserJoining(meetingID: String, userID: String, name: String, role: String, extUserID: String)
-  case class UserLeaving(meetingID: String, userID: String) 
-  case class GetUsers(meetingID: String, requesterID: String) 
-  case class ChangeUserStatus(meetingID: String, userID: String, status: String, value: Object) 
-  case class AssignPresenter(meetingID: String, newPresenterID: String, newPresenterName: String, assignedBy: String)  
-  
+object UsersApp {               
   def apply() = new UsersApp()
 }
 

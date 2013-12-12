@@ -14,7 +14,7 @@
 	    "payload": {
 	        "meeting": {
 	            "name": "English 101",
-	            "externalId": "english_101",
+	            "id": "english_101",
 	            "record": true,
 	            "welcomeMessage": "Welcome to English 101",
 	            "logoutUrl": "http://www.bigbluebutton.org",
@@ -24,9 +24,9 @@
 	                "hardLimit": false
 	            },
 	            "duration": {
-	                "length": 120,
+	                "lengthInMinutes": 120,
 	                "allowExtend": false,
-	                "warnBefore": 30
+	                "maxDuration": 150
 	            },
 	            "voiceConf": {
 	                "pin": 123456,

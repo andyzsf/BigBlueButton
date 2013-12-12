@@ -28,7 +28,7 @@ import org.bigbluebutton.apps.protocol.StatusCodeBuilder
 import org.bigbluebutton.apps.protocol.StatusCodes
 import org.bigbluebutton.apps.protocol.ErrorCodeBuilder
 import org.bigbluebutton.apps.protocol.ErrorCodes
-import org.bigbluebutton.apps.Meeting.CreateMeetingResponse
+import org.bigbluebutton.apps.MeetingMessage.{CreateMeeting, CreateMeetingResponse}
 import org.bigbluebutton.apps.protocol.MeetingMessages._
 
 
@@ -96,7 +96,8 @@ trait RestEndpointService extends HttpService {
     }
     
     def sendCreateMeetingMessage(message: CreateMeetingRequestMessage) = {   
-	  val response = (msgReceiver ? message)
+      val createMeetingMessage = CreateMeeting(message.payload.meeting)
+	  val response = (msgReceiver ? createMeetingMessage)
 	                 .mapTo[CreateMeetingResponse]
 	                 .map(result => {
                         buildJsonResponse(message, result)                  

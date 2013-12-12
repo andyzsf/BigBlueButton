@@ -1,26 +1,28 @@
 package org.bigbluebutton.apps
 
-import akka.actor.Actor
-import akka.actor.ActorRef
-import akka.actor.ActorLogging
-import org.bigbluebutton.apps.models.MeetingSession
-import org.bigbluebutton.apps.protocol.MeetingCreated
-import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
+import akka.actor.{Actor, ActorRef, ActorLogging, Props}
+import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.MeetingMessage.MeetingCreated
 import org.bigbluebutton.apps.models.MeetingDescriptor
-import org.bigbluebutton.apps.protocol.UserMessages.RegisterUserRequest
+import org.bigbluebutton.apps.users.Messages._
 import org.bigbluebutton.apps.protocol.Protocol._
-import org.bigbluebutton.apps.Meeting.CreateMeetingResponse
-import org.bigbluebutton.apps.protocol.MeetingMessages.{CreateMeetingRequest, CreateMeetingRequestMessage}
+import org.bigbluebutton.apps.MeetingMessage.{CreateMeeting, CreateMeetingResponse}
 
-class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
+object MeetingManager {
+  	def props(pubsub: ActorRef): Props =  Props(classOf[MeetingManager], pubsub)
+}
+
+class MeetingManager private (val pubsub: ActorRef) extends Actor with ActorLogging {
   /**
    * Holds our currently running meetings.
    */
-  private var meetings = new collection.immutable.HashMap[String, Meeting]
+  private var meetings = new collection.immutable.HashMap[String, RunningMeeting]
   
   def receive = {
-    case createMeetingRequest: CreateMeetingRequestMessage => 
+    case createMeetingRequest: CreateMeeting => 
            handleCreateMeetingRequest(createMeetingRequest)
+    case meetingMessage: MeetingMessage => handleMeetingMessage(meetingMessage)
+    
     case registerUser : RegisterUserRequest =>
            handleRegisterUser(registerUser)
     case "test" => {sender ! "test"; pubsub ! "test"}
@@ -41,15 +43,15 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
     internalId + "-" + System.currentTimeMillis()
   }
   
-  def createMeeting(config: MeetingDescriptor, internalId: String):Meeting = {  
+  def createMeeting(config: MeetingDescriptor, internalId: String):RunningMeeting = {  
 	val sessionId = getValidSession(internalId)
-	val session = createSession(config.name, config.externalId, sessionId)
-	val meetingRef = Meeting(session, pubsub, config)	      
-	storeMeeting(session.session, meetingRef)
-    meetingRef
+	val session = createSession(config.name, config.id, sessionId)
+	val runningMeeting = RunningMeeting(session, pubsub, config)	      
+	storeMeeting(session.id, runningMeeting)
+    runningMeeting
   }
   
-  def storeMeeting(session: String, meeting: Meeting) = {
+  def storeMeeting(session: String, meeting: RunningMeeting) = {
     meetings += (session -> meeting) 
   }
   
@@ -57,59 +59,62 @@ class MeetingManager(val pubsub: ActorRef) extends Actor with ActorLogging {
 	 meetings.keys find {key => key.startsWith(internalId)}
   }
   
-  def getMeeting(internalId: String):Option[Meeting] = {
+  def getMeeting(internalId: String):Option[RunningMeeting] = {
     for {
       session <- getSessionFor(internalId)
       meeting <- meetings.get(session)
     } yield meeting
   }
   
-  def createSession(name: String, externalId: String, sessionId: String):MeetingSession = {   
-	 MeetingSession(name, externalId, sessionId)    
+  def createSession(name: String, externalId: String, sessionId: String):Session = {   
+	 Session(sessionId, externalId, name)    
   }
   
-  def getMeetingUsingSessionId(sessionId: String):Option[Meeting] = {
+  def getMeetingUsingSessionId(sessionId: String):Option[RunningMeeting] = {
     for { meeting <- meetings.get(sessionId) } yield meeting    
   }
-  
-  def getSessionIdFromHeader(header: Header):Option[String] = {
-    for { sessionId <- header.meeting.sessionId } yield sessionId
-  }
-  
+    
   def handleRegisterUser(msg: RegisterUserRequest) = {
     val meeting = for {
-      sessionId <- getSessionIdFromHeader(msg.header)
-      meeting <- getMeetingUsingSessionId(sessionId)
+      meeting <- getMeetingUsingSessionId(msg.session.id)
     } yield meeting
     
     meeting.map {m => m.actorRef forward msg}
   }
   
+  def handleMeetingMessage(msg: MeetingMessage) = {
+    val meeting = for {
+      meeting <- getMeetingUsingSessionId(msg.session.id)
+    } yield meeting
+    
+    meeting.map {m => m.actorRef forward msg}    
+  }
+  
   /**
    * Handle the CreateMeetingRequest message.
    */
-  def handleCreateMeetingRequest(msg: CreateMeetingRequestMessage) = {
-    val mConfig = msg.payload.meeting
-    val externalMeetingId = mConfig.externalId
-    val name = mConfig.name
+  def handleCreateMeetingRequest(msg: CreateMeeting) = {
+    val descriptor = msg.descriptor
+    val meetingId = descriptor.id
+    val name = descriptor.name
     
-    log.debug("Received create meeting request for [{}] : [{}]", externalMeetingId, name)
+    log.debug("Received create meeting request for [{}] : [{}]", meetingId, name)
     
-    val internalId = Util.toInternalMeetingId(externalMeetingId)
+    val internalId = Util.toInternalMeetingId(meetingId)
     
     getMeeting(internalId) match {
-      case Some(meetingActor) => {
-	      log.info("Meeting [{}] : [{}] is already running.", externalMeetingId, name) 
-	      sender ! CreateMeetingResponse(true, msg.payload.meeting, "Meeting already exists.", None)         
+      case Some(runningMeeting) => {
+	      log.info("Meeting [{}] : [{}] is already running.", meetingId, name) 
+	      sender ! CreateMeetingResponse(true, descriptor, "Meeting already exists.", None)         
       }
       case None => {
-	      log.info("Creating meeting [{}] : [{}]", externalMeetingId, name)
-	      val meetingRef = createMeeting(mConfig, internalId)	      
+	      log.info("Creating meeting [{}] : [{}]", meetingId, name)
+	      val runningMeeting = createMeeting(descriptor, internalId)	      
 	      	      
-	      log.debug("Replying to create meeting request. [{}] : [{}]", externalMeetingId, name)
+	      log.debug("Replying to create meeting request. [{}] : [{}]", meetingId, name)
 	      
-	      sender ! CreateMeetingResponse(true, msg.payload.meeting, "Meeting successfully created.",  Some(meetingRef.session))	
-	      pubsub ! MeetingCreated(meetingRef.session, msg.payload.meeting)         
+	      sender ! CreateMeetingResponse(true, descriptor, "Meeting successfully created.",  Some(runningMeeting.session))	
+	      pubsub ! MeetingCreated(runningMeeting.session, descriptor)         
       }
     } 
   } 

@@ -7,12 +7,12 @@ import org.bigbluebutton.apps.models.MeetingDescriptor
 import org.bigbluebutton.apps.models.PhoneNumber
 import org.bigbluebutton.apps.models.VoiceConfAndPin
 import org.bigbluebutton.apps.models.MeetingDuration
-import org.bigbluebutton.apps.models.UsersLimit
+import org.bigbluebutton.apps.models.MaxUsers
 import akka.event.LoggingAdapter
 import akka.event.slf4j.SLF4JLogging
-import org.bigbluebutton.apps.models.MeetingSession
+import org.bigbluebutton.apps.models.Session
 import spray.httpx.SprayJsonSupport
-import org.bigbluebutton.apps.Meeting.CreateMeetingResponse
+import org.bigbluebutton.apps.MeetingMessage.CreateMeetingResponse
 
 import Protocol._
 
@@ -20,12 +20,12 @@ object CreateMeetingRequestJsonProtocol1 extends DefaultJsonProtocol {
   import HeaderAndPayloadJsonSupport._
   import MeetingMessages._
   
-  implicit val usersDefFormat = jsonFormat2(UsersLimit)
+  implicit val usersDefFormat = jsonFormat2(MaxUsers)
   implicit val durationDefFormat = jsonFormat3(MeetingDuration)
   implicit val voiceConfDefFormat = jsonFormat2(VoiceConfAndPin)
   implicit val phoneNumberDefFormat = jsonFormat2(PhoneNumber)
   implicit val meetingDefFormat = jsonFormat11(MeetingDescriptor)
-  implicit val meetingSessionFormat = jsonFormat3(MeetingSession)
+  implicit val sessionFormat = jsonFormat3(Session)
   implicit val createMeetingResponseFormat = jsonFormat4(CreateMeetingResponse)
   implicit val createMeetingRequestPayloadFormat = jsonFormat1(CreateMeetingRequestPayload)
   implicit val createMeetingResponsePayloadFormat = jsonFormat4(CreateMeetingResponsePayload)
@@ -38,7 +38,7 @@ object MeetingMessages {
 	                                       
   case class CreateMeetingResponsePayload(success: Boolean, message: String,
                                           meeting: MeetingDescriptor, 
-	                                      session: Option[MeetingSession] = None)
+	                                      session: Option[Session] = None)
   case class CreateMeetingJsonResponse(header: Header, payload: CreateMeetingResponsePayload)
 	
   case class CreateMeetingRequestMessage(header: Header, payload: CreateMeetingRequestPayload) 

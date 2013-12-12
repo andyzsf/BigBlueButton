@@ -1,6 +1,6 @@
 package org.bigbluebutton.apps.protocol
 
-import org.bigbluebutton.apps.models.UsersApp.UserIdAndName
+import org.bigbluebutton.apps.users.UsersApp.UserIdAndName
 import org.bigbluebutton.apps.models.ChatApp._
 
 import Protocol._
