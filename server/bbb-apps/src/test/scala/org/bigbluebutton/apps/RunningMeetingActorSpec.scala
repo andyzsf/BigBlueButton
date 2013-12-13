@@ -16,6 +16,7 @@ import akka.testkit.TestProbe
 import org.bigbluebutton.apps.MeetingMessage.CreateMeetingResponse
 import org.bigbluebutton.apps.MeetingMessage.MeetingCreated
 import org.bigbluebutton.apps.users.Messages.{RegisterUserRequest, RegisterUserResponse}
+import akka.testkit.TestActorRef
 
 class RunningMeetingActorSpec extends 
   TestKit(ActorSystem("MeetingManagerSpec"))
@@ -25,7 +26,7 @@ class RunningMeetingActorSpec extends
   val pubsub = TestProbe()
   val session = generateMeetingSession()
   val config = generateMeetingDescriptor()
-  val runningMeetingActor=  system.actorOf(RunningMeetingActor.props(pubsub.ref, session, config))
+  val runningMeetingActor=  TestActorRef[RunningMeetingActor](RunningMeetingActor.props(pubsub.ref, session, config))
   
   override def afterAll {
     shutdown(system)
@@ -42,6 +43,8 @@ class RunningMeetingActorSpec extends
           case resp:RegisterUserResponse => {
             resp.response.success shouldBe true
             resp.response.message shouldBe "User has been registered."
+            runningMeetingActor.underlyingActor.usersApp.isRegistered(resp.token) shouldBe true
+            runningMeetingActor.underlyingActor.usersApp.registered.length == 1
           }            
         }
       }
