@@ -105,7 +105,7 @@ class MeetingManager private (val pubsub: ActorRef) extends Actor with ActorLogg
     getMeeting(internalId) match {
       case Some(runningMeeting) => {
 	      log.info("Meeting [{}] : [{}] is already running.", meetingId, name) 
-	      sender ! CreateMeetingResponse(true, descriptor, "Meeting already exists.", None)         
+	      sender ! CreateMeetingResponse(true, descriptor, "Meeting already exists.", Some(runningMeeting.session))         
       }
       case None => {
 	      log.info("Creating meeting [{}] : [{}]", meetingId, name)
