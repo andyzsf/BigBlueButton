@@ -1,14 +1,14 @@
 package org.bigbluebutton.apps.protocol
 
 import org.bigbluebutton.apps.models.MeetingDescriptor
-import org.bigbluebutton.apps.models.UsersLimit
+import org.bigbluebutton.apps.models.MaxUsers
 import org.bigbluebutton.apps.models.MeetingDuration
 import org.bigbluebutton.apps.models.PhoneNumber
 import org.bigbluebutton.apps.models.VoiceConfAndPin
 
 trait MeetingTestFixtures {
   
-  val usersConfig = UsersLimit(20, true)
+  val usersConfig = MaxUsers(20, true)
   val durationCOnfig = MeetingDuration(120, false, 30)
   val voiceConfig = VoiceConfAndPin(12345, 85115)
   val phone1 = PhoneNumber("613-520-7600", "Ottawa") 

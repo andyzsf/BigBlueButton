@@ -9,7 +9,7 @@ import org.bigbluebutton.apps.users.UsersApp
 import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.models.MeetingDescriptor
-import org.bigbluebutton.apps.users.UsersApp.RegisteredUser
+import org.bigbluebutton.apps.users.Model.RegisteredUser
 import org.bigbluebutton.apps.users.UsersAppHandler
 import org.bigbluebutton.apps.protocol.UserMessages.RegisterUserRequest
 

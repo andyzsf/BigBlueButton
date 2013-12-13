@@ -32,8 +32,5 @@ class MessageTransformerSpec extends Specification with ExampleMessageFixtures {
         val jsObject = MessageTransformer.jsonMessageToObject(validMessage)
         MessageTransformer.extractPayload(jsObject) must haveClass[JsObject]
       }   
-      "returns a CreateMeeting message" in {
-       MessageTransformer.transformMessage(validMessage) must beSuccessfulTry 
-      }
     }
 }
