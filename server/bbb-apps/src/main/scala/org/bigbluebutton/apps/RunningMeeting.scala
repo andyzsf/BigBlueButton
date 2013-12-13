@@ -10,7 +10,7 @@ object RunningMeeting {
                 new RunningMeeting(session, pubsub, config)(context)
 }
 
-class RunningMeeting private (val session: Session, 
+class RunningMeeting (val session: Session, 
               val pubsub: ActorRef,
               val config: MeetingDescriptor)
               (implicit val context: ActorContext) {

@@ -3,10 +3,10 @@ package org.bigbluebutton.apps.users
 import akka.actor.{ActorRef, actorRef2Scala}
 import akka.event.LoggingAdapter
 import org.bigbluebutton.apps.RunningMeetingActor
-import org.bigbluebutton.apps.protocol.UserMessages._
+import org.bigbluebutton.apps.users.Messages._
 import org.bigbluebutton.apps.protocol.StatusCodes
 import org.bigbluebutton.apps.protocol.ErrorCodes
-import org.bigbluebutton.apps.protocol.Protocol.{Response, StatusCode, ErrorCode}
+
 
 /**
  * Users app for meeting
@@ -19,10 +19,13 @@ trait UsersAppHandler {
   val usersApp = UsersApp()
   
   def handleRegisterUser(msg: RegisterUserRequest) = {
-    val user = usersApp.register(msg.payload)
-    
+    val user = usersApp.register(msg.user)
+    val response = Response(true, "User has been registered.")
+    sender ! RegisterUserResponse(msg.session, response,
+                                  user.token, msg.user)
   }
-  
+
+  /*
   def handleJoinUser(msg: JoinUserRequest) = {
     val token = msg.token
     usersApp.join(token) match {
@@ -43,4 +46,5 @@ trait UsersAppHandler {
       }
     }
   }
+  */
 }

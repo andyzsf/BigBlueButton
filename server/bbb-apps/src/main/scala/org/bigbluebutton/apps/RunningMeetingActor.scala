@@ -11,7 +11,7 @@ import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.models.MeetingDescriptor
 import org.bigbluebutton.apps.users.Model.RegisteredUser
 import org.bigbluebutton.apps.users.UsersAppHandler
-import org.bigbluebutton.apps.protocol.UserMessages.RegisterUserRequest
+import org.bigbluebutton.apps.users.Messages.RegisterUserRequest
 
 object RunningMeetingActor {
 	def props(pubsub: ActorRef, session: Session, 
