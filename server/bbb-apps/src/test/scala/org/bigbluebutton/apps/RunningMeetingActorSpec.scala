@@ -18,7 +18,7 @@ import org.bigbluebutton.apps.MeetingMessage.MeetingCreated
 import org.bigbluebutton.apps.users.data.User
 import org.bigbluebutton.apps.users._
 import akka.testkit.TestActorRef
-import org.bigbluebutton.apps.users.messages.RegisterUserResponse
+import org.bigbluebutton.apps.users.messages._
 
 class RunningMeetingActorSpec extends 
   TestKit(ActorSystem("MeetingManagerSpec"))

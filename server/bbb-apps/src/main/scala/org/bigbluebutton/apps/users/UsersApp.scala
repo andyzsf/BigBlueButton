@@ -64,6 +64,7 @@ class UsersApp private {
   }
   
   private def addJoinedUser(user:JoinedUser) = joinedUsers += (user.id -> user)
+  private def save(user: JoinedUser) = joinedUsers += (user.id -> user)
   
   /** 
    *  Removes the user from the joined users.
@@ -163,15 +164,17 @@ class UsersApp private {
   def findAModerator:Option[JoinedUser] = 
     joinedUsers.values find (m => m.user.role == Role.MODERATOR)
   
-  def raiseHand(id: String):Option[JoinedUser] = {
+  def raiseHand(id: String, raise: Boolean):Option[JoinedUser] = {
     getJoinedUser(id) match {
       case Some(u) => {
-        Some(u)
+        val juser = u.copy(webIdentity = u.webIdentity.copy(handRaised = raise))
+        save(juser)
+        Some(juser)
       }
       case None => None
     }   
   }
-  
+    
   def joinVoiceUser(userId: String, voiceIdent: VoiceIdentity, 
       meeting: MeetingDescriptor):JoinedUser = {
     

@@ -26,13 +26,14 @@ class RunningMeetingActor (val pubsub: ActorRef, val session: Session,
   
   def receive = {                       
     case rur: RegisterUserRequest => handleRegisterUser(rur)
-    case ujr: UserJoinRequest => handleUserJoinRequest(ujr)
-    case userLeave: UserLeave => handleUserLeave(userLeave)
-    case gur: GetUsersRequest => handleGetUsersRequest(gur)
-    case apm: AssignPresenter => handleAssignPresenter(apm)
-    case rhm: RaiseHand       => handleRaiseHand(rhm)
-    case lhm: LowerHand       => handleLowerHand(lhm)
-    case vuj: VoiceUserJoin   => handleVoiceUserJoin(vuj)
+    case ujr: UserJoinRequest     => handleUserJoinRequest(ujr)
+    case userLeave: UserLeave     => handleUserLeave(userLeave)
+    case gur: GetUsersRequest     => handleGetUsersRequest(gur)
+    case apm: AssignPresenter     => handleAssignPresenter(apm)
+    case rhm: RaiseHand           => handleRaiseHand(rhm)
+    case lhm: LowerHand           => handleLowerHand(lhm)
+    case vuj: VoiceUserJoin       => handleVoiceUserJoin(vuj)
+    case mum: MuteUser            => handleMuteUser(mum)
     case _ => None
   }
  
