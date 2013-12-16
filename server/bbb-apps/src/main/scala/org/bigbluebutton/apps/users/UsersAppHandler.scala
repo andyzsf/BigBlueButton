@@ -135,6 +135,17 @@ trait UsersAppHandler {
   }
   
   def handleMuteUser(msg: MuteUser) = {
-    
+    val user = usersApp.getJoinedUser(msg.user.id)
+    user foreach { u =>
+      // Tell the voice conference to mute the user.
+      pubsub ! UserMuteRequest(session, msg.user, msg.mute, u.voiceIdentity.metadata)  
+      
+      // Tell interested parties that the user is being muted.
+      pubsub ! MuteUserRequest(session, msg.user, msg.mute, msg.mutedBy)
+    }
+  }
+  
+  def handleUserMuted(msg: UserMuted) = {
+    val user = usersApp.userMuted(msg.userId, msg.muted)
   }
 }

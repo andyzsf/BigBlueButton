@@ -164,15 +164,17 @@ class UsersApp private {
   def findAModerator:Option[JoinedUser] = 
     joinedUsers.values find (m => m.user.role == Role.MODERATOR)
   
+  private def raiseHand(user:JoinedUser, raised: Boolean):JoinedUser = {
+    val juser = user.copy(webIdentity = user.webIdentity.copy(handRaised = raised))
+    addJoinedUser(juser)
+    juser      
+  }
+  
   def raiseHand(id: String, raise: Boolean):Option[JoinedUser] = {
-    getJoinedUser(id) match {
-      case Some(u) => {
-        val juser = u.copy(webIdentity = u.webIdentity.copy(handRaised = raise))
-        save(juser)
-        Some(juser)
-      }
-      case None => None
-    }   
+    for {
+      u <- getJoinedUser(id)
+      juser = raiseHand(u, raise)
+    } yield juser    
   }
     
   def joinVoiceUser(userId: String, voiceIdent: VoiceIdentity, 
@@ -202,5 +204,18 @@ class UsersApp private {
 	    juser
       }
     }
+  }
+  
+  private def muteUser(user: JoinedUser, muted: Boolean):JoinedUser = {    
+    val juser = user.copy(voiceIdentity = user.voiceIdentity.copy(muted = muted))
+    addJoinedUser(juser)
+    juser
+  }
+  
+  def userMuted(userId: String, muted: Boolean):Option[JoinedUser] = {  
+    for {
+      u <- getJoinedUser(userId)
+      juser = muteUser(u, muted)
+    } yield juser   
   }
 }

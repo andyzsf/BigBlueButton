@@ -107,17 +107,17 @@ case class VoiceUserJoin(userId: String, voiceConfId: String, callerId: CallerId
 /**
  * Message to mute a user.
  */
-case class MuteUser(userId: String, mute: Boolean, mutedBy: UserIdAndName)
+case class MuteUser(user: UserIdAndName, mute: Boolean, mutedBy: UserIdAndName)
 
 /**
  * Broadcast message that a user will be muted.
  */
-case class MuteUserRequest(session: Session, userId: String, mute: Boolean, mutedBy: UserIdAndName)
+case class MuteUserRequest(session: Session, user: UserIdAndName, mute: Boolean, mutedBy: UserIdAndName)
 
 /**
  * Message to voice conference server to mute the user.
  */
-case class UserMuteRequest(session: Session, userId: String, mute: Boolean,
+case class UserMuteRequest(session: Session, user: UserIdAndName, mute: Boolean,
                            metadata: Map[String, String])
                            
 /**

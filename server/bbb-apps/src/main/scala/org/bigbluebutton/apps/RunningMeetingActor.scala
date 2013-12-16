@@ -34,6 +34,7 @@ class RunningMeetingActor (val pubsub: ActorRef, val session: Session,
     case lhm: LowerHand           => handleLowerHand(lhm)
     case vuj: VoiceUserJoin       => handleVoiceUserJoin(vuj)
     case mum: MuteUser            => handleMuteUser(mum)
+    case mutedUsr: UserMuted      => handleUserMuted(mutedUsr)
     case _ => None
   }
  
