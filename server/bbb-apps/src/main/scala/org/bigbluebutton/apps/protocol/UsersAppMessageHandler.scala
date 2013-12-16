@@ -8,8 +8,13 @@ import org.bigbluebutton.apps.models.Role
 import spray.json.JsonFormat
 import spray.json.JsString
 import spray.json.JsValue
-import org.bigbluebutton.apps.users.Model._
+import org.bigbluebutton.apps.users.data._
 import org.bigbluebutton.apps.protocol.Protocol._
+import org.bigbluebutton.apps.users.data.WebIdentity
+import org.bigbluebutton.apps.users.data.VoiceIdentity
+import org.bigbluebutton.apps.users.data.User
+import org.bigbluebutton.apps.users.data.JoinedUser
+import org.bigbluebutton.apps.users.data.CallerId
 
 object UserMessages {
 	case class RegisterUserRequest(header: Header, payload: User) extends InMessage
@@ -33,7 +38,7 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
 
 	implicit val webIdentityFormat = jsonFormat1(WebIdentity)
 	implicit val callerIdFormat = jsonFormat2(CallerId)
-	implicit val voiceIdentityFormat = jsonFormat2(VoiceIdentity)
+	implicit val voiceIdentityFormat = jsonFormat5(VoiceIdentity)
 	  
 	implicit val userFormat = jsonFormat7(User)
 	implicit val joinedUserFormat = jsonFormat6(JoinedUser)

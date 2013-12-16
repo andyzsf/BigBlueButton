@@ -9,10 +9,10 @@ import org.bigbluebutton.apps.users.UsersApp
 import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.models.MeetingDescriptor
-import org.bigbluebutton.apps.users.Model.RegisteredUser
 import org.bigbluebutton.apps.users.UsersAppHandler
-import org.bigbluebutton.apps.users.Messages.{RegisterUserRequest, 
-                     UserJoinRequest, UserLeave, GetUsersRequest}
+import org.bigbluebutton.apps.users._
+import org.bigbluebutton.apps.users.messages._
+
 
 object RunningMeetingActor {
 	def props(pubsub: ActorRef, session: Session, 
@@ -29,6 +29,10 @@ class RunningMeetingActor (val pubsub: ActorRef, val session: Session,
     case ujr: UserJoinRequest => handleUserJoinRequest(ujr)
     case userLeave: UserLeave => handleUserLeave(userLeave)
     case gur: GetUsersRequest => handleGetUsersRequest(gur)
+    case apm: AssignPresenter => handleAssignPresenter(apm)
+    case rhm: RaiseHand       => handleRaiseHand(rhm)
+    case lhm: LowerHand       => handleLowerHand(lhm)
+    case vuj: VoiceUserJoin   => handleVoiceUserJoin(vuj)
     case _ => None
   }
  

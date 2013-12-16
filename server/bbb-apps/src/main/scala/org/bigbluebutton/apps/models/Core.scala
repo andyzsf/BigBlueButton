@@ -7,8 +7,7 @@ object Role extends Enumeration {
 	val MODERATOR = Value("MODERATOR")
 	val VIEWER = Value("VIEWER")
 }
-
-  
+ 
 case class MeetingDescriptor(id: String, name: String,  
                        record: Boolean, welcomeMessage: String, 
                        logoutUrl: String, avatarUrl: String,

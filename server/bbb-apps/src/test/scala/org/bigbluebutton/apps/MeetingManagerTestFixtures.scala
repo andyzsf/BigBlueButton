@@ -2,7 +2,7 @@ package org.bigbluebutton.apps
 
 import org.bigbluebutton.apps.MeetingMessage.CreateMeeting
 import org.bigbluebutton.apps.models._
-import org.bigbluebutton.apps.users.Model._
+import org.bigbluebutton.apps.users.data._
 
 trait MeetingManagerTestFixtures {
 

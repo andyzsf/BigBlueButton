@@ -2,7 +2,8 @@ package org.bigbluebutton.apps.users
 
 import org.bigbluebutton.apps.utils.RandomStringGenerator
 import org.bigbluebutton.apps.models.Role
-import Model._
+import org.bigbluebutton.apps.users.data._
+import org.bigbluebutton.apps.models.MeetingDescriptor
 
 object UsersApp {               
   def apply() = new UsersApp()
@@ -49,10 +50,20 @@ class UsersApp private {
    */
   private def add(token: String, ruser: User):JoinedUser = {
     val userId = generateValidUserId
-    val user = JoinedUser(userId, token, ruser)
-    joinedUsers += (user.id -> user)
+    val webIdent = WebIdentity()
+    val voceIdent = VoiceIdentity(callerId = CallerId(ruser.name, ruser.name), 
+                            muted = true, 
+                            locked = false, 
+                            talking = false,
+                            metadata = Map("name" -> ruser.name))
+                            
+    val user = JoinedUser(userId, token, ruser, false, webIdent, voceIdent)
+    
+    addJoinedUser(user)
     user
   }
+  
+  private def addJoinedUser(user:JoinedUser) = joinedUsers += (user.id -> user)
   
   /** 
    *  Removes the user from the joined users.
@@ -102,6 +113,22 @@ class UsersApp private {
     } yield user
   }
   
+  def makeAllUsersViewer() = {
+    joined foreach { u =>
+      makeViewer(u)
+    }
+  }
+    
+  def makePresenter(user:JoinedUser) = {
+    val u = user.copy(isPresenter = true)
+    joinedUsers += (user.id -> user) 
+  }
+  
+  def makeViewer(user:JoinedUser) = {
+    val u = user.copy(isPresenter = false)
+    joinedUsers += (user.id -> user) 
+  }
+    
   /**
    * Returns the moderators in the meeting.
    */
@@ -113,6 +140,13 @@ class UsersApp private {
    */
   def viewers:Array[JoinedUser] = 
         joinedUsers.values filter (p => p.user.role == Role.VIEWER) toArray
+  
+  def hasPresenter():Boolean = {
+    currentPresenter match {
+      case None => false
+      case Some(p) => true
+    }
+  }
   
   /**
    * Returns the current presenter in the meeting.
@@ -126,24 +160,44 @@ class UsersApp private {
     remove(id)
   }
   
-
+  def findAModerator:Option[JoinedUser] = 
+    joinedUsers.values find (m => m.user.role == Role.MODERATOR)
   
-  /**
-   * Assign a new presenter in the meeting.
-   * 
-   * @param  newPresenterId - the user that will become presenter
-   *         assignedBy     - the user that assigned the new presenter
-   */
-//  def assignPresenter(newPresenterId: String, 
-//                      assignedBy: UserIdAndName):Option[JoinedUser] = {
-//    val curPresenter = currentPresenter
-//    val newPresenter = getJoinedUser(newPresenterId)
-//    if (curPresenter != None) {
-//      val cp = curPresenter.get
-//      joinedUsers += (cp.id -> cp.copy(isPresenter = false))
-//      curPresenter
-//    }
-//    
-//    None
-//  }
+  def raiseHand(id: String):Option[JoinedUser] = {
+    getJoinedUser(id) match {
+      case Some(u) => {
+        Some(u)
+      }
+      case None => None
+    }   
+  }
+  
+  def joinVoiceUser(userId: String, voiceIdent: VoiceIdentity, 
+      meeting: MeetingDescriptor):JoinedUser = {
+    
+    getJoinedUser(userId) match {
+      case Some(u) => {
+        val juser = u.copy(voiceIdentity = voiceIdent)
+	    addJoinedUser(juser)
+	    juser        
+      }
+      case None => {
+        val uid = generateValidUserId
+        val token = generateValidToken
+        val usr = User(uid, voiceIdent.callerId.name, 
+	            Role.VIEWER, meeting.voiceConf.pin, 
+	            welcomeMessage = meeting.welcomeMessage,
+	            logoutUrl = meeting.logoutUrl, 
+	            avatarUrl = meeting.avatarUrl)
+	            
+	    val webIdent = WebIdentity()
+	    val juser = JoinedUser(uid, token, usr,
+	                      false,
+	                      webIdent, 
+	                      voiceIdent)
+	    addJoinedUser(juser)
+	    juser
+      }
+    }
+  }
 }

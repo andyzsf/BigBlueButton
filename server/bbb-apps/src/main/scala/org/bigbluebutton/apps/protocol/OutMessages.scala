@@ -1,6 +1,6 @@
 package org.bigbluebutton.apps.protocol
 
-import org.bigbluebutton.apps.users.Model._
+import org.bigbluebutton.apps.users.data._
 import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.models.MeetingDescriptor
 import spray.json.DefaultJsonProtocol

@@ -1,7 +1,7 @@
 package org.bigbluebutton.apps.models
 
 import org.bigbluebutton.apps.models.ChatApp._
-import org.bigbluebutton.apps.users.Model._
+import org.bigbluebutton.apps.users.data._
 
 object ChatApp {
 	case class Chatter(id: String, name: String)

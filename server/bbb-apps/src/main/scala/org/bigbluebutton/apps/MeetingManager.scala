@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorRef, ActorLogging, Props}
 import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.MeetingMessage.MeetingCreated
 import org.bigbluebutton.apps.models.MeetingDescriptor
-import org.bigbluebutton.apps.users.Messages._
+import org.bigbluebutton.apps.users.messages._
 import org.bigbluebutton.apps.protocol.Protocol._
 import org.bigbluebutton.apps.MeetingMessage.{CreateMeeting, CreateMeetingResponse}
 
