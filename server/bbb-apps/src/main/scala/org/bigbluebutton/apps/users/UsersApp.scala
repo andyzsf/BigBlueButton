@@ -122,11 +122,9 @@ class UsersApp private {
   
   def getJoinedUser(id: String):Option[JoinedUser] = joinedUsers.get(id)
 
-//  def left(id: String):Option[JoinedUser] = {
-//    val u = joinedUsers.get(id)
-//    if (u != None) joinedUsers -= id
-//    u
-//  }
+  def left(id: String):Option[JoinedUser] = {
+    remove(id)
+  }
   
 
   

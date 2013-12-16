@@ -17,9 +17,11 @@ object Messages {
   
   case class UserJoinRequest(session: Session, token: String)
   case class UserJoinResponse(session: Session, response: Response,
-                              user: JoinedUser)
+                              token: String, user: Option[JoinedUser])
+  case class UserJoined(session: Session, token: String, user: JoinedUser)
   
   case class UserLeave(session: Session, userId: String)
+  case class UserLeft(session: Session, user: JoinedUser)
   
   case class GetUsersRequest(session: Session, requesterId: String)
   case class GetUsersResponse(session: Session, requesterId: String, users: Seq[JoinedUser])
