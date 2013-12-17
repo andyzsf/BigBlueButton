@@ -11,6 +11,14 @@ class PresentationApp {
     presentations += p.id -> p
   }
   
+  private def getPresentation(id: String):Option[Presentation] = {
+    presentations.get(id)
+  }
+  
+  private def getPage(pres: Presentation, page: Int):Option[Page] = {
+    pres.pages find { x => x.num == page}
+  }
+  
   def newPresentation(pres: Presentation) = {
     savePresentation(pres)
   }
@@ -36,4 +44,20 @@ class PresentationApp {
       case None => None
     }
   }
+ 
+  def setCurrentPageForPresentation(pres: Presentation, page: Int):Option[Presentation] = {
+    val newPres = pres.copy(currentPage = page)
+    savePresentation(newPres)
+    Some(newPres)
+  }
+ 
+  def displayPage2(presentation: String, page: Int):Option[Page] = {
+    for { 
+      p <- getPresentation(presentation) 
+      s <-  getPage(p, page) 
+      p2 <- setCurrentPageForPresentation(p, page)
+    } yield s    
+  }
+  
+
 }
