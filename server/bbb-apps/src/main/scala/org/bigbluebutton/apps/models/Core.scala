@@ -21,5 +21,4 @@ case class VoiceConfAndPin(pin: Int, number: Int)
 case class PhoneNumber(number: String, description: String)  
 
 case class Session(id: String, meetingId: String, meetingName: String)
-
-
+case class IdAndName(id: String, name: String)

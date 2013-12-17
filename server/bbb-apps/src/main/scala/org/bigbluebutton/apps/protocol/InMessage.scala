@@ -39,16 +39,7 @@ case class Responder(val userID: String, name: String)
 	case class AssignPresenter(meetingID: String, newPresenterID: String, newPresenterName: String, assignedBy: String) extends InMessage  
 
 // Presentation
-case class ClearPresentation(meetingID: String) extends InMessage
-case class PresentationConversionUpdate(meetingID: String, msg: Map[String, Object]) extends InMessage
-case class RemovePresentation(meetingID: String, presentationID: String) extends InMessage
-case class GetPresentationInfo(meetingID: String, requesterID: String) extends InMessage
-case class SendCursorUpdate(meetingID: String, xPercent: Double, yPercent: Double) extends InMessage
-case class ResizeAndMoveSlide(meetingID: String, xOffset: Double, yOffset: Double, widthRatio: Double, heightRatio: Double) extends InMessage
-case class GotoSlide(meetingID: String, slide: Int) extends InMessage
-case class SharePresentation(meetingID: String, presentationID: String, share: Boolean) extends InMessage
-case class GetSlideInfo(meetingID: String, requesterID: String) extends InMessage
-case class PreuploadedPresentations(meetingID: String, presentations: Array[Object]) extends InMessage
+
 
 case class SendVoiceUsersRequest(meetingID: String, requesterID: String) extends InMessage
 case class MuteMeetingRequest(meetingID: String, requesterID: String, mute: Boolean) extends InMessage

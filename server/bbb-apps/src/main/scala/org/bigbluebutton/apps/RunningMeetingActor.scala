@@ -52,6 +52,8 @@ class RunningMeetingActor (val pubsub: ActorRef, val session: Session,
     case msg: SetLayoutRequest             => handleSetLayoutRequest(msg)
     case msg: LockLayoutRequest            => handleLockLayoutRequest(msg)
     
+    /** Presentation **/
+    
     case unknown                  => log.error("Unhandled message: [{}", unknown)
   }
  
