@@ -1,21 +1,11 @@
 package org.bigbluebutton.apps.protocol
 
 import org.bigbluebutton.apps.users.data.UserIdAndName
-import org.bigbluebutton.apps.models.ChatApp._
 
 import Protocol._
 
 trait InMessage
 
-
-
-case class GetChatHistoryRequest(meetingID: String, requesterID: String) extends InMessage
-case class SendChatMessageRequest(header: Header, message: ChatMessage) extends InMessage
-
-case class GetCurrentLayoutRequest(meetingID: String, requesterID: String) extends InMessage
-case class SetLayoutRequest(meetingID: String, requesterID: String, layoutID: String) extends InMessage
-case class LockLayoutRequest(meetingID: String, requesterID: String, layoutID: String) extends InMessage
-case class UnlockLayoutRequest(meetingID: String, requesterID: String) extends InMessage
 
 // Poll Messages
 case class PreCreatedPoll(meetingID: String, poll: PollVO) extends InMessage

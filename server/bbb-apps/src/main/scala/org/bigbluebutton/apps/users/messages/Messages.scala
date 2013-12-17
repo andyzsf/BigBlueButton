@@ -107,7 +107,7 @@ case class VoiceUserJoin(userId: String, voiceConfId: String, callerId: CallerId
 /**
  * Message to mute a user.
  */
-case class MuteUser(user: UserIdAndName, mute: Boolean, mutedBy: UserIdAndName)
+case class MuteUser(session: Session, user: UserIdAndName, mute: Boolean, mutedBy: UserIdAndName)
 
 /**
  * Broadcast message that a user will be muted.
@@ -124,3 +124,12 @@ case class UserMuteRequest(session: Session, user: UserIdAndName, mute: Boolean,
  * Message from voice conference server that the user has been muted.
  */
 case class UserMuted(userId: String, muted: Boolean, metadata: Map[String, String])
+
+
+case class UserHasBeenMuted(session: Session, user: UserIdAndName, muted: Boolean)
+
+case class LockUser(session: Session, user: UserIdAndName, lock:Boolean, lockedBy: UserIdAndName)
+
+case class LockedUser(session: Session, user: UserIdAndName, lock: Boolean, lockedBy: UserIdAndName)
+
+case class UserTalking(session: Session, user: UserIdAndName, talking: Boolean)

@@ -30,4 +30,14 @@ object extractorsws {
      case Header1(name, _, _, _, Some(meeting)) => println(meeting)
      case Header1(name, _, _, _, None) => println("no meeting")
   }                                               //> no meeting
+  
+  val from = "abc"                                //> from  : String = abc
+  val to = "abd"                                  //> to  : String = abd
+  val from1 = new scala.collection.immutable.StringOps(from)
+                                                  //> from1  : scala.collection.immutable.StringOps = abc
+  val to1 = new scala.collection.immutable.StringOps(to)
+                                                  //> to1  : scala.collection.immutable.StringOps = abd
+  
+  from1 < to1                                     //> res0: Boolean = true
+  
 }

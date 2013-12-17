@@ -12,7 +12,10 @@ import org.bigbluebutton.apps.models.MeetingDescriptor
 import org.bigbluebutton.apps.users.UsersAppHandler
 import org.bigbluebutton.apps.users._
 import org.bigbluebutton.apps.users.messages._
-
+import org.bigbluebutton.apps.chat.ChatAppHandler
+import org.bigbluebutton.apps.chat.messages._
+import org.bigbluebutton.apps.layout.messages._
+import org.bigbluebutton.apps.layout.LayoutAppHandler
 
 object RunningMeetingActor {
 	def props(pubsub: ActorRef, session: Session, 
@@ -22,20 +25,34 @@ object RunningMeetingActor {
 
 class RunningMeetingActor (val pubsub: ActorRef, val session: Session, 
                     val meeting: MeetingDescriptor) extends Actor with ActorLogging
-                    with UsersAppHandler {
+                    with UsersAppHandler with ChatAppHandler 
+                    with LayoutAppHandler {
   
-  def receive = {                       
-    case rur: RegisterUserRequest => handleRegisterUser(rur)
-    case ujr: UserJoinRequest     => handleUserJoinRequest(ujr)
-    case userLeave: UserLeave     => handleUserLeave(userLeave)
-    case gur: GetUsersRequest     => handleGetUsersRequest(gur)
-    case apm: AssignPresenter     => handleAssignPresenter(apm)
-    case rhm: RaiseHand           => handleRaiseHand(rhm)
-    case lhm: LowerHand           => handleLowerHand(lhm)
-    case vuj: VoiceUserJoin       => handleVoiceUserJoin(vuj)
-    case mum: MuteUser            => handleMuteUser(mum)
-    case mutedUsr: UserMuted      => handleUserMuted(mutedUsr)
-    case _ => None
+  def receive = {    
+    /** Users **/
+    case msg: RegisterUserRequest => handleRegisterUser(msg)
+    case msg: UserJoinRequest     => handleUserJoinRequest(msg)
+    case msg: UserLeave           => handleUserLeave(msg)
+    case msg: GetUsersRequest     => handleGetUsersRequest(msg)
+    case msg: AssignPresenter     => handleAssignPresenter(msg)
+    case msg: RaiseHand           => handleRaiseHand(msg)
+    case msg: LowerHand           => handleLowerHand(msg)
+    case msg: VoiceUserJoin       => handleVoiceUserJoin(msg)
+    case msg: MuteUser            => handleMuteUser(msg)
+    case msg: UserMuted           => handleUserMuted(msg)
+    
+    /** Chat **/
+    case msg: NewPrivateChatMessage  => handlePrivateChatMessage(msg) 
+    case msg: NewPublicChatMessage   => handlePublicChatMessage(msg)
+    case msg: GetPublicChatHistory   => handleGetPublicChatHistory(msg)
+    
+    /** Layout **/
+    case msg: NewLayout                    => handleNewLayout(msg)
+    case msg: GetCurrentLayoutRequest      => handleGetCurrentLayoutRequest(msg)
+    case msg: SetLayoutRequest             => handleSetLayoutRequest(msg)
+    case msg: LockLayoutRequest            => handleLockLayoutRequest(msg)
+    
+    case unknown                  => log.error("Unhandled message: [{}", unknown)
   }
  
 

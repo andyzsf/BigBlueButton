@@ -147,5 +147,8 @@ trait UsersAppHandler {
   
   def handleUserMuted(msg: UserMuted) = {
     val user = usersApp.userMuted(msg.userId, msg.muted)
+    user foreach { u =>
+      pubsub ! UserHasBeenMuted(session, UserIdAndName(u.id, u.user.name), msg.muted)
+    }
   }
 }

@@ -1,15 +1,15 @@
 package org.bigbluebutton.apps.protocol
 
 import spray.json.DefaultJsonProtocol
-import org.bigbluebutton.apps.models.ChatApp._
+import org.bigbluebutton.apps.chat.ChatApp._
 import spray.json.JsValue
 import spray.json.JsObject
    
 object ChatJsonProtocol extends DefaultJsonProtocol {
-  implicit val chatterFormat = jsonFormat2(Chatter)
-  implicit val chatFontFormat = jsonFormat3(ChatFont)
-  implicit val chatTranslationFormat = jsonFormat2(ChatText)
-  implicit val privateChatMessageFormat = jsonFormat5(PrivateChatMessage)
+//  implicit val chatterFormat = jsonFormat2(Chatter)
+ // implicit val chatFontFormat = jsonFormat3(ChatFont)
+//  implicit val chatTranslationFormat = jsonFormat2(ChatText)
+//  implicit val privateChatMessageFormat = jsonFormat5(PrivateChatMessage)
 }
 
 class ChatJsonProtocol {
