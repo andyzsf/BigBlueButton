@@ -30,7 +30,7 @@ trait PresentationAppHandler {
   }
 
   def handleDisplayPage(msg: DisplayPage) = {
-    val page = presApp.displayPage(msg.presentation, msg.page)
+    val page = presApp.displayPage(msg.presentation.id, msg.page) 
     page foreach { p =>
       pubsub ! PageDisplayed(session, msg.presentation, p)
     }

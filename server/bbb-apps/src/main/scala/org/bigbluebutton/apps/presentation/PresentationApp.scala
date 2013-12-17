@@ -28,35 +28,19 @@ class PresentationApp {
     pres foreach { p => currentPresentation = Some(p) }  
     pres
   }
-  
-  def displayPage(presentation: String, page: Int):Option[Page] = {
-    presentations.get(presentation) match {
-      case Some(p) => {
-        p.pages find { x => x.num == page} match {
-          case Some(m) => {
-            val pr = p.copy(currentPage = m.num)
-            savePresentation(pr)
-            Some(m)
-          }
-          case None => None
-        }
-      }
-      case None => None
-    }
-  }
- 
-  def setCurrentPageForPresentation(pres: Presentation, page: Int):Option[Presentation] = {
-    val newPres = pres.copy(currentPage = page)
+   
+  def setCurrentPageForPresentation(pres: Presentation, page: Page):Option[Presentation] = {
+    val newPres = pres.copy(currentPage = page.num)
     savePresentation(newPres)
     Some(newPres)
   }
  
-  def displayPage2(presentation: String, page: Int):Option[Page] = {
+  def displayPage(presentation: String, num: Int):Option[Page] = {
     for { 
-      p <- getPresentation(presentation) 
-      s <-  getPage(p, page) 
-      p2 <- setCurrentPageForPresentation(p, page)
-    } yield s    
+      pres <- getPresentation(presentation) 
+      page <-  getPage(pres, num) 
+      newpres <- setCurrentPageForPresentation(pres, page)
+    } yield page    
   }
   
 
