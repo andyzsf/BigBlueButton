@@ -24,7 +24,7 @@ class MeetingManager private (val pubsub: ActorRef) extends Actor with ActorLogg
     case meetingMessage: MeetingMessage => handleMeetingMessage(meetingMessage)
     
     case registerUser : RegisterUserRequest =>
-           handleRegisterUser(registerUser)
+                                handleRegisterUser(registerUser)
     case "test" => {sender ! "test"; pubsub ! "test"}
     case _ => None
   }

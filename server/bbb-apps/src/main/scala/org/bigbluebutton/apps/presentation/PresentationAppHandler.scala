@@ -14,19 +14,26 @@ trait PresentationAppHandler {
   val presApp = new PresentationApp()
   
   def handleClearPresentation(msg: ClearPresentation) = {
-  //  presApp.clearPresentation(msg.presentation)
+    presApp.clearPresentation(msg.presentation.id)
+    
+    pubsub ! PresentationCleared(session, msg.presentation, msg.clearedBy)    
   }
   
   def handleRemovePresentation(msg : RemovePresentation) = {
-    
+    val pres = presApp.removePresentation(msg.presentation.id)
+    pubsub ! PresentationRemoved(session, msg.presentation, msg.removedBy)
   }
 
   def handleSendCursorUpdate(msg: SendCursorUpdate) = {
-    
+    pubsub ! UpdateCursorPosition(session, msg.xPercent, msg.yPercent)
   }
   
   def handleResizeAndMoveSlide(msg: ResizeAndMovePage) = {
-    
+    val page = presApp.resizeAndMovePage(msg.presentation.id,
+                              msg.page, msg.position)
+    page foreach { p =>
+      pubsub ! PageMoved(session, msg.presentation, p)
+    }
   }
 
   def handleDisplayPage(msg: DisplayPage) = {

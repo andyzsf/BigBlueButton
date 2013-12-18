@@ -16,6 +16,8 @@ import org.bigbluebutton.apps.chat.ChatAppHandler
 import org.bigbluebutton.apps.chat.messages._
 import org.bigbluebutton.apps.layout.messages._
 import org.bigbluebutton.apps.layout.LayoutAppHandler
+import org.bigbluebutton.apps.presentation.messages._
+import org.bigbluebutton.apps.presentation.PresentationAppHandler
 
 object RunningMeetingActor {
 	def props(pubsub: ActorRef, session: Session, 
@@ -26,7 +28,7 @@ object RunningMeetingActor {
 class RunningMeetingActor (val pubsub: ActorRef, val session: Session, 
                     val meeting: MeetingDescriptor) extends Actor with ActorLogging
                     with UsersAppHandler with ChatAppHandler 
-                    with LayoutAppHandler {
+                    with LayoutAppHandler with PresentationAppHandler {
   
   def receive = {    
     /** Users **/
@@ -53,6 +55,14 @@ class RunningMeetingActor (val pubsub: ActorRef, val session: Session,
     case msg: LockLayoutRequest            => handleLockLayoutRequest(msg)
     
     /** Presentation **/
+    case msg: ClearPresentation            => handleClearPresentation(msg)
+    case msg: RemovePresentation           => handleRemovePresentation(msg)
+    case msg: SendCursorUpdate             => handleSendCursorUpdate(msg)
+    case msg: ResizeAndMovePage            => handleResizeAndMoveSlide(msg)
+    case msg: DisplayPage                  => handleDisplayPage(msg)
+    case msg: SharePresentation            => handleSharePresentation(msg)
+    case msg: PreuploadedPresentations     => handlePreuploadedPresentations(msg)
+    case msg: PresentationConverted        => handlePresentationConverted(msg)
     
     case unknown                  => log.error("Unhandled message: [{}", unknown)
   }
