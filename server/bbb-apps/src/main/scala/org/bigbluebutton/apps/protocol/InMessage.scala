@@ -31,16 +31,6 @@ case class PollResponseVO(val pollID: String, val responses: Array[QuestionRespo
 case class ResponderVO(responseID: String, user: Responder)
 case class Responder(val userID: String, name: String)
 
-// Users
-	case class UserJoining(meetingID: String, userID: String, name: String, role: String, extUserID: String) extends InMessage
-	case class UserLeaving(meetingID: String, userID: String) extends InMessage
-	case class GetUsers(meetingID: String, requesterID: String) extends InMessage
-	case class ChangeUserStatus(meetingID: String, userID: String, status: String, value: Object) extends InMessage
-	case class AssignPresenter(meetingID: String, newPresenterID: String, newPresenterName: String, assignedBy: String) extends InMessage  
-
-// Presentation
-
-
 case class SendVoiceUsersRequest(meetingID: String, requesterID: String) extends InMessage
 case class MuteMeetingRequest(meetingID: String, requesterID: String, mute: Boolean) extends InMessage
 case class IsMeetingMutedRequest(meetingID: String, requesterID: String) extends InMessage
@@ -65,14 +55,6 @@ case class VoiceUserMuted(user: String, voiceConfId: String, muted: Boolean) ext
 case class VoiceUserTalking(user: String, voiceConfId: String, talking: Boolean) extends VoiceMessage
 case class VoiceStartedRecording(voiceConfId: String, filename: String, timestamp: String, record: Boolean) extends VoiceMessage
 
-case class AnnotationVO(id: String, status: String, shapeType: String, shape: scala.collection.immutable.Map[String, Object])
-case class SendWhiteboardAnnotationRequest(meetingID: String, requesterID: String, annotation: AnnotationVO) extends InMessage
-case class SetWhiteboardActivePageRequest(meetingID: String, requesterID: String, page: Int) extends InMessage
-case class SendWhiteboardAnnotationHistoryRequest(meetingID: String, requesterID: String, presentationID: String, page: Int) extends InMessage
-case class ClearWhiteboardRequest(meetingID: String, requesterID: String) extends InMessage
-case class UndoWhiteboardRequest(meetingID: String, requesterID: String) extends InMessage
-case class SetActivePresentationRequest(meetingID: String, requesterID: String, presentationID: String, numPages: Int) extends InMessage
-case class EnableWhiteboardRequest(meetingID: String, requesterID: String, enable: Boolean) extends InMessage
-case class IsWhiteboardEnabledRequest(meetingID: String, requesterID: String) extends InMessage
+
 
 
