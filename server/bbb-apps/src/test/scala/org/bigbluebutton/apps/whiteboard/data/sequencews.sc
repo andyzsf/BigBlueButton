@@ -18,8 +18,9 @@ object sequencews1 {
   var desc = new ShapeDescriptor("shape1", "cor1", ShapeTypes.SCRIBBLE, user, 0)
                                                   //> desc  : org.bigbluebutton.apps.whiteboard.data.ShapeDescriptor = ShapeDescri
                                                   //| ptor(shape1,cor1,SCRIBBLE,UserIdAndName(me,me),0)
-  val isShape : PartialFunction[Shape, Option[Shape]] = {
-                    case x @ Scribble(desc, _, _) => if (desc.id == x.descriptor.id) Some(x) else None
-                    }                             //> isShape  : PartialFunction[org.bigbluebutton.apps.whiteboard.data.Shape,Opti
-                                                  //| on[org.bigbluebutton.apps.whiteboard.data.Shape]] = <function1>
+//  val isShape : PartialFunction[Shape, Option[Shape]] = {
+//                    case x @ Scribble(desc, _, _) => if (desc.id == x.descriptor.id) Some(x) else None
+//                    }
+  
+
 }

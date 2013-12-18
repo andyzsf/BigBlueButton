@@ -27,13 +27,16 @@ object LineTypes extends Enumeration {
 	val DASHDOT        = Value("DASHDOT")
 }
 
-sealed abstract class Shape(descriptor: ShapeDescriptor)
+case class Shape(descriptor: ShapeDescriptor, child: WbShape)
 
+sealed trait WbShape
+class PerimeteredShape(coordinate: Coordinate, background: Background,
+                     border: LineDescriptor)
 case class Point(x: Double, y: Double)
                   
-case class Scribble(descriptor: ShapeDescriptor, line: LineDescriptor,
+case class Scribble(line: LineDescriptor,
                     points: Seq[Point]) 
-                     extends Shape(descriptor)
+                     extends WbShape
 
 case class Background(visible: Boolean, color: Int)
 
@@ -41,17 +44,16 @@ case class LineDescriptor(weight: Int, color: Int, lineType: LineTypes.LineType)
 
 case class Coordinate(firstX: Double, firstY: Double, lastX: Double, lastY: Double)
 case class Font(style: String, color: Int, size: Int)
-case class Text(descriptor: ShapeDescriptor, coordinate: Coordinate, 
-                font: Font, background: Background, 
-                border: LineDescriptor, text: String) extends Shape(descriptor)
+case class Text(coordinate: Coordinate, 
+                 background: Background, 
+                border: LineDescriptor, font: Font, text: String) extends WbShape
                 
-case class Rectangle(descriptor: ShapeDescriptor, coordinate: Coordinate, 
+case class Rectangle(coordinate: Coordinate, 
                      background: Background, border: LineDescriptor,
-                     square: Boolean) extends Shape(descriptor)
+                     square: Boolean) extends WbShape
                      
-case class Ellipse(descriptor: ShapeDescriptor, coordinate: Coordinate, 
-                     border: LineDescriptor,
-                     circle: Boolean) extends Shape(descriptor)
+case class Ellipse(
+                     circle: Boolean) extends WbShape
                      
-case class Triangle(descriptor: ShapeDescriptor, coordinate: Coordinate, 
-                     border: LineDescriptor) extends Shape(descriptor)
+case class Triangle(coordinate: Coordinate, background: Background,
+                     border: LineDescriptor) extends WbShape

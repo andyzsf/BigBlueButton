@@ -244,4 +244,40 @@ trait ExampleMessageFixtures {
 	    }
 	}    
   """
+    
+  val wbmsg = """
+{
+    "name": "WhiteboardDraw",
+    "timestamp": 123456,
+    "meeting": {
+        "id": "english_101",
+        "name": "English 101",
+        "sessionID": "183f0bf3a0982a127bdb8161e0c44eb696b3e75c-1383210136298"
+    },
+    "shape": {
+        "id": "user1-shape-1",
+        "correlationId": "q779ogycfmxk-13-1383262166102",
+        "type": "text",
+        "data": {
+            "coordinate": {
+                "firstX": 0.016025641025641028,
+                "firstY": 0.982905982905983,
+                "lastX": 1.33,
+                "lastY": 2.45
+            },
+            "font": {
+                "color": 0,
+                "size": 18
+            },
+            "background": true,
+            "backgroundColor": 16777215,
+            "text": "He"
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """    
 }
