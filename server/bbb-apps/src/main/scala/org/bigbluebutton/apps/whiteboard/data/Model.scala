@@ -4,9 +4,9 @@ import org.bigbluebutton.apps.users.data.UserIdAndName
 
 case class Foo1(bar: String) 
 
-case class ShapeDescriptor(id: String, correlationId: String, 
-                     shapeType: ShapeTypes.ShapeType, by: UserIdAndName,
-                     order: Int = 0)
+case class ShapeDescriptor(whiteboardId: String, shapeId: String, 
+                           shapeType: ShapeTypes.ShapeType, 
+                           by: UserIdAndName)
                      
  
 object ShapeTypes extends Enumeration {
@@ -27,33 +27,27 @@ object LineTypes extends Enumeration {
 	val DASHDOT        = Value("DASHDOT")
 }
 
-case class Shape(descriptor: ShapeDescriptor, child: WbShape)
+case class Shape(descriptor: ShapeDescriptor, 
+                 shape: WhiteboardShape, order: Int)
 
-sealed trait WbShape
-class PerimeteredShape(coordinate: Coordinate, background: Background,
-                     border: LineDescriptor)
+sealed trait WhiteboardShape
+
+class Container(coordinate: Coordinate, background: Background, 
+                border: LineDescriptor)
+
 case class Point(x: Double, y: Double)
                   
-case class Scribble(line: LineDescriptor,
-                    points: Seq[Point]) 
-                     extends WbShape
+case class Scribble(line: LineDescriptor, points: Seq[Point]) 
+                          extends WhiteboardShape
 
-case class Background(visible: Boolean, color: Int)
+case class Background(visible: Boolean, color: Int, alpha: Int)
 
 case class LineDescriptor(weight: Int, color: Int, lineType: LineTypes.LineType)
 
 case class Coordinate(firstX: Double, firstY: Double, lastX: Double, lastY: Double)
 case class Font(style: String, color: Int, size: Int)
-case class Text(coordinate: Coordinate, 
-                 background: Background, 
-                border: LineDescriptor, font: Font, text: String) extends WbShape
+case class Text(container: Container, font: Font, text: String) extends WhiteboardShape
                 
-case class Rectangle(coordinate: Coordinate, 
-                     background: Background, border: LineDescriptor,
-                     square: Boolean) extends WbShape
-                     
-case class Ellipse(
-                     circle: Boolean) extends WbShape
-                     
-case class Triangle(coordinate: Coordinate, background: Background,
-                     border: LineDescriptor) extends WbShape
+case class Rectangle(container: Container, square: Boolean) extends WhiteboardShape                     
+case class Ellipse(container: Container, circle: Boolean) extends WhiteboardShape                  
+case class Triangle(container: Container) extends WhiteboardShape

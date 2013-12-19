@@ -1,17 +1,34 @@
 package org.bigbluebutton.apps.whiteboard.messages
 
 import org.bigbluebutton.apps.whiteboard.data.Foo1
+import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.whiteboard.data._
+import org.bigbluebutton.apps.users.data.UserIdAndName
 
+case class NewWhiteboardShape(session: Session, descriptor: ShapeDescriptor, 
+                              shape: WhiteboardShape)
+case class WhiteboardShapeCreated(session: Session, shape: Shape)
 
+case class UpdateWhiteboardShape(session: Session, descriptor: ShapeDescriptor, 
+                       shape: WhiteboardShape)
+case class WhiteboardShapeUpdated(session: Session, descriptor: ShapeDescriptor, 
+                       shape: WhiteboardShape)                       
+                       
+case class DeleteWhiteboardShape(session: Session, whiteboardId: String, 
+                       shapeId: String, deletedBy: UserIdAndName)
+                       
+case class GetWhiteboardShapes(session: Session, requester: UserIdAndName, 
+                     whiteboardId: String) 
+case class GetWhiteboardShapesResponse(session: Session, requester: UserIdAndName, 
+                     whiteboardId: String, shapes: Seq[Shape])
+                     
+case class ClearWhiteboardShapes(session: Session, requester: UserIdAndName,
+                     whiteboardIds: Seq[String])
+case class DeleteWhiteboard(session: Session, requester: UserIdAndName,
+                     whiteboardIds: Seq[String])
+                     
+case class GetWhiteboardOptions(session: Session, requester: UserIdAndName) 
 
-case class AnnotationVO(id: String, status: String, shapeType: String, shape: scala.collection.immutable.Map[String, Object])
-case class SendWhiteboardAnnotationRequest(meetingID: String, requesterID: String, annotation: AnnotationVO) 
-case class SetWhiteboardActivePageRequest(meetingID: String, requesterID: String, page: Int) 
-case class SendWhiteboardAnnotationHistoryRequest(meetingID: String, requesterID: String, presentationID: String, page: Int) 
-case class ClearWhiteboardRequest(meetingID: String, requesterID: String) 
-case class UndoWhiteboardRequest(meetingID: String, requesterID: String) 
-case class SetActivePresentationRequest(meetingID: String, requesterID: String, presentationID: String, numPages: Int) 
-case class EnableWhiteboardRequest(meetingID: String, requesterID: String, enable: Boolean) 
-case class IsWhiteboardEnabledRequest(meetingID: String, requesterID: String) 
+case class SendWhiteboardOptions(session: Session, requester: UserIdAndName,
+                     options: Map[String, String])
 
-case class WbMsg(fo: Foo1)

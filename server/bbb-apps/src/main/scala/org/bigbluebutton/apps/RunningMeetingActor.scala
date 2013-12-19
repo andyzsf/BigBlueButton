@@ -18,6 +18,8 @@ import org.bigbluebutton.apps.layout.messages._
 import org.bigbluebutton.apps.layout.LayoutAppHandler
 import org.bigbluebutton.apps.presentation.messages._
 import org.bigbluebutton.apps.presentation.PresentationAppHandler
+import org.bigbluebutton.apps.whiteboard.messages._
+import org.bigbluebutton.apps.whiteboard.WhiteboardAppHandler
 
 object RunningMeetingActor {
 	def props(pubsub: ActorRef, session: Session, 
@@ -28,25 +30,26 @@ object RunningMeetingActor {
 class RunningMeetingActor (val pubsub: ActorRef, val session: Session, 
                     val meeting: MeetingDescriptor) extends Actor with ActorLogging
                     with UsersAppHandler with ChatAppHandler 
-                    with LayoutAppHandler with PresentationAppHandler {
+                    with LayoutAppHandler with PresentationAppHandler 
+                    with WhiteboardAppHandler {
   
   def receive = {    
     /** Users **/
-    case msg: RegisterUserRequest => handleRegisterUser(msg)
-    case msg: UserJoinRequest     => handleUserJoinRequest(msg)
-    case msg: UserLeave           => handleUserLeave(msg)
-    case msg: GetUsersRequest     => handleGetUsersRequest(msg)
-    case msg: AssignPresenter     => handleAssignPresenter(msg)
-    case msg: RaiseHand           => handleRaiseHand(msg)
-    case msg: LowerHand           => handleLowerHand(msg)
-    case msg: VoiceUserJoin       => handleVoiceUserJoin(msg)
-    case msg: MuteUser            => handleMuteUser(msg)
-    case msg: UserMuted           => handleUserMuted(msg)
+    case msg: RegisterUserRequest          => handleRegisterUser(msg)
+    case msg: UserJoinRequest              => handleUserJoinRequest(msg)
+    case msg: UserLeave                    => handleUserLeave(msg)
+    case msg: GetUsersRequest              => handleGetUsersRequest(msg)
+    case msg: AssignPresenter              => handleAssignPresenter(msg)
+    case msg: RaiseHand                    => handleRaiseHand(msg)
+    case msg: LowerHand                    => handleLowerHand(msg)
+    case msg: VoiceUserJoin                => handleVoiceUserJoin(msg)
+    case msg: MuteUser                     => handleMuteUser(msg)
+    case msg: UserMuted                    => handleUserMuted(msg)
     
     /** Chat **/
-    case msg: NewPrivateChatMessage  => handlePrivateChatMessage(msg) 
-    case msg: NewPublicChatMessage   => handlePublicChatMessage(msg)
-    case msg: GetPublicChatHistory   => handleGetPublicChatHistory(msg)
+    case msg: NewPrivateChatMessage        => handlePrivateChatMessage(msg) 
+    case msg: NewPublicChatMessage         => handlePublicChatMessage(msg)
+    case msg: GetPublicChatHistory         => handleGetPublicChatHistory(msg)
     
     /** Layout **/
     case msg: NewLayout                    => handleNewLayout(msg)
@@ -63,6 +66,16 @@ class RunningMeetingActor (val pubsub: ActorRef, val session: Session,
     case msg: SharePresentation            => handleSharePresentation(msg)
     case msg: PreuploadedPresentations     => handlePreuploadedPresentations(msg)
     case msg: PresentationConverted        => handlePresentationConverted(msg)
+    
+    /** Whiteboard **/
+    case msg: NewWhiteboardShape           => handleNewWhiteboardShape(msg)
+    case msg: UpdateWhiteboardShape        => handleUpdateWhiteboardShape(msg)
+    case msg: DeleteWhiteboardShape        => handleDeleteWhiteboardShape(msg)
+    case msg: GetWhiteboardShapes          => handleGetWhiteboardShapes(msg)
+    case msg: ClearWhiteboardShapes        => handleClearWhiteboardShapes(msg)
+    case msg: DeleteWhiteboard             => handleDeleteWhiteboard(msg)
+    case msg: GetWhiteboardOptions         => handleGetWhiteboardOptions(msg)
+    
     
     case unknown                  => log.error("Unhandled message: [{}", unknown)
   }

@@ -74,24 +74,14 @@ object whiteboardmsgws {
                                                   //| 16025641025641028,"firstY":0.982905982905983,"lastX":1.33,"lastY":2.45},"fo
                                                   //| nt":{"color":0,"size":18},"background":true,"backgroundColor":16777215,"tex
                                                   //| t":"He"},"by":{"id":"user1","name":"Guga"}}
-  val color = jsonAst.convertTo[Shape]            //> spray.json.DeserializationException: Expected String as JsString, but got {
-                                                  //| "firstX":0.016025641025641028,"firstY":0.982905982905983,"lastX":1.33,"last
-                                                  //| Y":2.45}
-                                                  //| 	at spray.json.package$.deserializationError(package.scala:23)
-                                                  //| 	at spray.json.BasicFormats$StringJsonFormat$.read(BasicFormats.scala:117
-                                                  //| )
-                                                  //| 	at spray.json.BasicFormats$StringJsonFormat$.read(BasicFormats.scala:113
-                                                  //| )
-                                                  //| 	at spray.json.JsValue.convertTo(JsValue.scala:32)
-                                                  //| 	at spray.json.CollectionFormats$$anon$3$$anonfun$read$3.apply(Collection
-                                                  //| Formats.scala:59)
-                                                  //| 	at spray.json.CollectionFormats$$anon$3$$anonfun$read$3.apply(Collection
-                                                  //| Formats.scala:58)
-                                                  //| 	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike
-                                                  //| .scala:244)
-                                                  //| 	at scala.collection.TraversableLike$$anonfun$map$1.apply(TraversableLike
-                                                  //| .scala:244)
-                                                  //| 	at scala.collection.Iterator$class.foreach(Iterator.scala:727)
-                                                  //| 	at scala.collection.AbstractIterator.foreach(It
-                                                  //| Output exceeds cutoff limit.
+  val jsonObj = jsonAst.asJsObject                //> jsonObj  : spray.json.JsObject = {"id":"user1-shape-1","correlationId":"q77
+                                                  //| 9ogycfmxk-13-1383262166102","type":"text","data":{"coordinate":{"firstX":0.
+                                                  //| 016025641025641028,"firstY":0.982905982905983,"lastX":1.33,"lastY":2.45},"f
+                                                  //| ont":{"color":0,"size":18},"background":true,"backgroundColor":16777215,"te
+                                                  //| xt":"He"},"by":{"id":"user1","name":"Guga"}}
+  val typeObj = jsonObj.fields.get("type").get    //> typeObj  : spray.json.JsValue = "text"
+  val dataObj = jsonObj.fields.get("data").get.asJsObject
+                                                  //> dataObj  : spray.json.JsObject = {"coordinate":{"firstX":0.0160256410256410
+                                                  //| 28,"firstY":0.982905982905983,"lastX":1.33,"lastY":2.45},"font":{"color":0,
+                                                  //| "size":18},"background":true,"backgroundColor":16777215,"text":"He"}
 }
