@@ -11,7 +11,10 @@ trait WhiteboardAppHandler {
   val pubsub: ActorRef
   val log: LoggingAdapter
   
+  val wbApp = new WhiteboardApp()
+  
   def handleNewWhiteboardShape(msg: NewWhiteboardShape) = {
+    val shape = wbApp.addNewShape(msg.descriptor, msg.shape)
     
   }
   

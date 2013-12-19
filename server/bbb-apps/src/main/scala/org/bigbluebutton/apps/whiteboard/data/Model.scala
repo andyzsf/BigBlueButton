@@ -51,3 +51,31 @@ case class Text(container: Container, font: Font, text: String) extends Whiteboa
 case class Rectangle(container: Container, square: Boolean) extends WhiteboardShape                     
 case class Ellipse(container: Container, circle: Boolean) extends WhiteboardShape                  
 case class Triangle(container: Container) extends WhiteboardShape
+
+class Whiteboard(id: String) {
+  private var shapes = Seq[Shape]()
+  
+  private var orderCount = 0
+  
+  private def getOrder():Int = {
+    val order = orderCount + 1
+    orderCount = order
+    order
+  }
+  
+  def getShapes:Seq[Shape] = shapes.toSeq
+  
+  private def saveShape(s: Shape) = {
+    shapes :+ s
+  }
+  
+  def newShape(d: ShapeDescriptor, s: WhiteboardShape):Shape = {
+    val order = getOrder()
+    val shape = Shape(d, s, order)
+    saveShape(shape)
+    shape
+  }
+  
+ // def removeShape()
+  
+}
