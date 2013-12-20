@@ -1,0 +1,11 @@
+.settings/org.eclipse.core.resources.prefs
+linker-report.xml
+bundles.txt
+build/
+bin/
+client/
+bbbResources.properties.*
+asdoc/
+hs_err_pid*
+html-templateBackup/
+.gradle/

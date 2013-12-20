@@ -1,0 +1,22 @@
+buildscript {
+        repositories {
+                mavenCentral()
+        }
+        dependencies {
+                classpath group: 'org.gradlefx', name: 'gradlefx', version: '0.7.1'
+        }
+}
+
+apply plugin: 'gradlefx'
+
+version = '1.0-SNAPSHOT'
+type = 'swf'
+
+task compileCss() { 
+  ant.java(jar: project.flexHome + '/lib/mxmlc.jar', 
+           dir: project.flexHome + '/frameworks', fork: true) { 
+              arg(value: "-output=BBBDefaultCss.swf") 
+              arg(value: "-file=${project.file('/src/style').absolutePath}/BBBDefault.css") 
+  } 
+}
+

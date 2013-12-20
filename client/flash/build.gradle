@@ -1,0 +1,27 @@
+buildscript {
+        repositories {
+                mavenCentral()
+        }
+        dependencies {
+                classpath group: 'org.gradlefx', name: 'gradlefx', version: '0.7.1'
+        }
+}
+
+apply plugin: 'gradlefx'
+
+version = '1.0-SNAPSHOT'
+type = 'swf'
+
+mainClass = 'BigBlueButton'
+
+additionalCompilerOptions = [
+  '-compatibility-version=3.0.0',
+  '-swf-version=13'
+]
+
+dependencies {
+  merged files(project.file('libs/flexlib.swc').absolutePath,
+             project.file('libs/as3corelib.swc').absolutePath,
+             project.file('libs/Mate_08_8_1.swc').absolutePath)
+}
+
