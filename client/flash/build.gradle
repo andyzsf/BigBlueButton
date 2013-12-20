@@ -19,6 +19,9 @@ additionalCompilerOptions = [
   '-swf-version=13'
 ]
 
+localeDir = 'src/main/locale'
+locales = ['en_US']
+
 dependencies {
   merged files(project.file('libs/flexlib.swc').absolutePath,
              project.file('libs/as3corelib.swc').absolutePath,
