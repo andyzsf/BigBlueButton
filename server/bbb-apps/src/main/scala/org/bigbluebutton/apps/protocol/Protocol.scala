@@ -4,29 +4,27 @@ import spray.json.JsValue
 import org.bigbluebutton.apps.users.data.{User, JoinedUser}
 import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport
-import Protocol._
-  
-object Protocol {
-	case class Header(event: HeaderEvent, meeting: HeaderMeeting, 
-	                  response: Option[Response] = None)
+
+case class Header(event: HeaderEvent, meeting: HeaderMeeting, 
+                  response: Option[Response] = None)
 	                  
-	case class HeaderEvent(name: String, timestamp: Long, 
-	                       source: String, reply: Option[ReplyHeader])
+case class HeaderEvent(name: String, timestamp: Long, 
+                       source: String, reply: Option[ReplyHeader])
 	                       
-	case class ReplyHeader(to: String, correlationId: String)                       
-	case class HeaderMeeting(name: String, externalId: String, sessionId: Option[String] = None)
-	case class HeaderAndPayload(header: Header, payload: JsValue)
-	case class ReplyStatus(status: String, message: String, error: Option[Int])
+case class ReplyHeader(to: String, correlationId: String)                       
+case class HeaderMeeting(name: String, externalId: String, sessionId: Option[String] = None)
+case class HeaderAndPayload(header: Header, payload: JsValue)
+case class ReplyStatus(status: String, message: String, error: Option[Int])
 	
-	case class StatusCode(code: Int, message: String)
-	case class ErrorCode(code: Int, message: String, details: Option[String] = None)
-	case class Response(status: StatusCode, errors: Option[Seq[ErrorCode]] = None)
+case class StatusCode(code: Int, message: String)
+case class ErrorCode(code: Int, message: String, details: Option[String] = None)
+case class Response(status: StatusCode, errors: Option[Seq[ErrorCode]] = None)
 	
-	case class ResponsePayload(response: Response)
-	case class JsonResponse(header: Header, payload: Option[ResponsePayload] = None)
+case class ResponsePayload(response: Response)
+case class JsonResponse(header: Header, payload: Option[ResponsePayload] = None)
 	
-	case class MessageProcessException(message: String) extends Exception(message)  
-}
+case class MessageProcessException(message: String) extends Exception(message)  
+
 
 
 object InMessageNameContants {
@@ -34,9 +32,7 @@ object InMessageNameContants {
   val RegisterUserRequestMessage = "RegisterUserRequest"
 }
 
-object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {  
-
-  
+object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {    
   implicit val statusCodeFormat = jsonFormat2(StatusCode)  
   implicit val errorCodeFormat = jsonFormat3(ErrorCode)
   implicit val responseFormat = jsonFormat2(Response)

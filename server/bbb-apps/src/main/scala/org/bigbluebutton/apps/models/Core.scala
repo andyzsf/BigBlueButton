@@ -11,14 +11,13 @@ object Role extends Enumeration {
 case class MeetingDescriptor(id: String, name: String,  
                        record: Boolean, welcomeMessage: String, 
                        logoutUrl: String, avatarUrl: String,
-                       users: MaxUsers, duration: MeetingDuration, 
-                       voiceConf: VoiceConfAndPin, phoneNumbers: Seq[PhoneNumber], 
+                       numUsers: Int, duration: MeetingDuration, 
+                       voiceConf: VoiceConference, phoneNumbers: Seq[PhoneNumber], 
                        metadata: Map[String, String])
   
-case class MaxUsers(max: Int, hardLimit: Boolean)
 case class MeetingDuration(lengthInMinutes: Int, allowExtend: Boolean, maxDuration: Int)
-case class VoiceConfAndPin(pin: Int, number: Int)
-case class PhoneNumber(number: String, description: String)  
+case class VoiceConference(pin: Int, number: Int)
+case class PhoneNumber(number: Int, description: String)
 
 case class Session(id: String, meetingId: String, meetingName: String)
-case class IdAndName(id: String, name: String)
+

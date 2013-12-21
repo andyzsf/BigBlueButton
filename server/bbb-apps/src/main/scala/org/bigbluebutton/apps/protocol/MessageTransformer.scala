@@ -12,6 +12,8 @@ import scala.util.Try
 import spray.json.DeserializationException
 import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
 import org.bigbluebutton.apps.protocol.Protocol._
+import org.bigbluebutton.apps.users.unmarshalling.UsersAppMessageHandler
+import org.bigbluebutton.meeting.MeetingMessageHandler
 
 object MessageTransformer extends MeetingMessageHandler 
                           with UsersAppMessageHandler
