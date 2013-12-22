@@ -1,27 +1,20 @@
 package org.bigbluebutton
 
-import akka.actor.Actor
+import akka.actor.{Actor, Props, ActorRef, ActorLogging}
+import akka.event.LoggingAdapter
+import akka.pattern.{ask, pipe}
+import akka.util.Timeout
+import scala.concurrent.duration._
+import scala.util.{Success, Failure}
+import spray.json.{JsObject, JsValue, JsString, DefaultJsonProtocol}
+import spray.httpx.SprayJsonSupport
 import spray.routing._
 import spray.http._
 import MediaTypes._
 import spray.routing.directives.BasicDirectives._
 import spray.routing.Directive.pimpApply
 import shapeless._
-import spray.json.DefaultJsonProtocol
-import akka.actor.ActorRef
-import spray.json.JsObject
-import spray.httpx.SprayJsonSupport
-import spray.json.JsValue
-import akka.actor.Props
-import spray.json.JsString
-import org.bigbluebutton.apps.protocol.MessageTransformer
-import akka.event.LoggingAdapter
-import akka.actor.ActorLogging
-import akka.pattern.{ask, pipe}
-import akka.util.Timeout
-import scala.concurrent.duration._
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
-import scala.util.{Success, Failure}
 import org.bigbluebutton.apps.protocol._
 import org.bigbluebutton.endpoint.spray.MeetingMessageHandler
 import org.bigbluebutton.apps.models._
@@ -37,7 +30,6 @@ class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with Res
 
 
 trait RestEndpointService extends HttpService with MeetingMessageHandler {
-  import MessageTransformer._
   import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
   import org.bigbluebutton.meeting.CreateMeetingRequestJsonProtocol._
   

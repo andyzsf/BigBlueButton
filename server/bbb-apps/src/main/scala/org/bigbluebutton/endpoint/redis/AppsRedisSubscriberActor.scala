@@ -6,7 +6,6 @@ import redis.actors.RedisSubscriberActor
 import redis.api.pubsub.{PMessage, Message}
 import scala.concurrent.duration._
 import akka.actor.ActorRef
-import org.bigbluebutton.apps.protocol.MessageTransformer
 import akka.actor.actorRef2Scala
 import org.bigbluebutton.SystemConfiguration
 
@@ -37,15 +36,6 @@ class AppsRedisSubscriberActor(bbbAppsActor: ActorRef, redisHost: String,
   }
   
   def handleMessage(msg: String) {
-    val transformedMessage = MessageTransformer.transformMessage(msg)
-    
-    /**
-     * TODO: Inspect the message and determine if we should expect a reply
-     * or not. If we need a reply, use Future to send the message and handle
-     * the reply.
-     */
-    if (transformedMessage != None) {
-      bbbAppsActor ! transformedMessage
-    }
+    log.warning("**** TODO: Handle pubsub messages. ****")
   }
 }
