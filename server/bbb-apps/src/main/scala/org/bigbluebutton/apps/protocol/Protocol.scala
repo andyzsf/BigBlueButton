@@ -26,12 +26,6 @@ case class JsonResponse(header: Header, payload: Option[ResponsePayload] = None)
 case class MessageProcessException(message: String) extends Exception(message)  
 
 
-
-object InMessageNameContants {
-  val CreateMeetingRequestMessage = "CreateMeetingRequest"
-  val RegisterUserRequestMessage = "RegisterUserRequest"
-}
-
 object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {    
   implicit val statusCodeFormat = jsonFormat2(StatusCode)  
   implicit val errorCodeFormat = jsonFormat3(ErrorCode)

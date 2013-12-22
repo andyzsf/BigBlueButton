@@ -1,6 +1,6 @@
 package org.bigbluebutton.apps
 
-import org.bigbluebutton.apps.MeetingMessage.CreateMeeting
+import org.bigbluebutton.apps._
 import org.bigbluebutton.apps.models._
 import org.bigbluebutton.apps.users.data._
 
@@ -23,9 +23,9 @@ trait MeetingManagerTestFixtures {
   }
     
   def generateMeetingDescriptor():MeetingDescriptor = {
-    val maxUsers =  MaxUsers(20, true)
+    val maxUsers =  20
     val duration = MeetingDuration(120, true, 160)
-    val pin = VoiceConfAndPin(85115, 1234)
+    val pin = VoiceConference(85115, 1234)
     val phone1 =  PhoneNumber("613-555-7600", "Ottawa")
     val phone2 = PhoneNumber("1-888-555-7890", "NA Toll-Free")
     val metadata = Map("customerId" -> "acme-customer",

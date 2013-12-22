@@ -4,12 +4,11 @@ import org.bigbluebutton.apps.users.data._
 import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.models.MeetingDescriptor
 import spray.json.DefaultJsonProtocol
-import org.bigbluebutton.apps.models.MaxUsers
 import org.bigbluebutton.apps.models.MeetingDuration
-import org.bigbluebutton.apps.models.VoiceConfAndPin
 import org.bigbluebutton.apps.models.PhoneNumber
 import org.bigbluebutton.apps.models.MeetingDescriptor
 
+/*
 object MyJsonProtocol extends DefaultJsonProtocol {
   implicit val sessionFormat = jsonFormat3(Session)
   implicit val usersDefFormat = jsonFormat2(MaxUsers)
@@ -18,7 +17,7 @@ object MyJsonProtocol extends DefaultJsonProtocol {
   implicit val phoneNumberDefFormat = jsonFormat2(PhoneNumber)
   implicit val meetingDefFormat = jsonFormat11(MeetingDescriptor)
 }
-
+*/
 case class CreateMeetingRequestReply(created: Boolean, message: String, session: Session)
 
 

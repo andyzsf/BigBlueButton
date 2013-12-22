@@ -8,7 +8,7 @@ import org.bigbluebutton.apps.protocol.InMessage
 import org.bigbluebutton.apps.protocol._
 
 trait MeetingMessageHandler extends SLF4JLogging {
-  import CreateMeetingRequestJsonProtocol1._
+/*
   
   def handleCreateMeetingRequest(header: Header, 
                                  payload: JsObject):InMessage = {
@@ -26,4 +26,5 @@ trait MeetingMessageHandler extends SLF4JLogging {
       case None => throw MessageProcessException("Malformed message: [" + payload + "]")
     }   
   }
+  */
 }

@@ -2,13 +2,8 @@ package org.bigbluebutton.apps.whiteboard.data
 
 import org.bigbluebutton.apps.users.data.UserIdAndName
 
-case class Foo1(bar: String) 
 
-case class ShapeDescriptor(whiteboardId: String, shapeId: String, 
-                           shapeType: ShapeTypes.ShapeType, 
-                           by: UserIdAndName)
                      
- 
 object ShapeTypes extends Enumeration {
 	type ShapeType     = Value
 	val LINE           = Value("LINE")
@@ -27,6 +22,10 @@ object LineTypes extends Enumeration {
 	val DASHDOT        = Value("DASHDOT")
 }
 
+case class ShapeDescriptor(whiteboardId: String, shapeId: String, 
+                           shapeType: ShapeTypes.ShapeType, 
+                           by: UserIdAndName)
+                           
 case class Shape(descriptor: ShapeDescriptor, 
                  shape: WhiteboardShape, order: Int)
 
@@ -44,7 +43,7 @@ case class Background(visible: Boolean, color: Int, alpha: Int)
 
 case class LineDescriptor(weight: Int, color: Int, lineType: LineTypes.LineType)
 
-case class Coordinate(firstX: Double, firstY: Double, lastX: Double, lastY: Double)
+case class Coordinate(first: Point, last: Point)
 case class Font(style: String, color: Int, size: Int)
 case class Text(container: Container, font: Font, text: String) extends WhiteboardShape
                 

@@ -1,6 +1,5 @@
 package org.bigbluebutton.apps.whiteboard.messages
 
-import org.bigbluebutton.apps.whiteboard.data.Foo1
 import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.whiteboard.data._
 import org.bigbluebutton.apps.users.data.UserIdAndName

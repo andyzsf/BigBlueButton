@@ -17,7 +17,7 @@ case class MeetingDescriptor(id: String, name: String,
   
 case class MeetingDuration(lengthInMinutes: Int, allowExtend: Boolean, maxDuration: Int)
 case class VoiceConference(pin: Int, number: Int)
-case class PhoneNumber(number: Int, description: String)
+case class PhoneNumber(number: String, description: String)
 
 case class Session(id: String, meetingId: String, meetingName: String)
 

@@ -13,8 +13,8 @@ import akka.actor.ActorSystem
 import collection.mutable.Stack
 import akka.actor.Props
 import akka.testkit.TestProbe
-import org.bigbluebutton.apps.MeetingMessage.CreateMeetingResponse
-import org.bigbluebutton.apps.MeetingMessage.MeetingCreated
+import org.bigbluebutton.apps._
+
 
 class MeetingManagerSpec extends 
   TestKit(ActorSystem("MeetingManagerSpec"))

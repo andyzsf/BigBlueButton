@@ -84,4 +84,46 @@ object whiteboardmsgws {
                                                   //> dataObj  : spray.json.JsObject = {"coordinate":{"firstX":0.0160256410256410
                                                   //| 28,"firstY":0.982905982905983,"lastX":1.33,"lastY":2.45},"font":{"color":0,
                                                   //| "size":18},"background":true,"backgroundColor":16777215,"text":"He"}
+  
+  val userJoinMessage = """
+  {
+      "name": "user_join",
+      "timestamp": 123456,
+      "meeting": {
+          "id": "english_101",
+          "name": "English 101",
+          "session": "183f0bf3a0982a127bdb8161e0c44eb696b3e75c-1383210136298"
+      },
+      "payload": {
+          "token": "user1-token-1"
+      }
+  }
+  
+  """                                             //> userJoinMessage  : String = "
+                                                  //|   {
+                                                  //|       "name": "user_join",
+                                                  //|       "timestamp": 123456,
+                                                  //|       "meeting": {
+                                                  //|           "id": "english_101",
+                                                  //|           "name": "English 101",
+                                                  //|           "session": "183f0bf3a0982a127bdb8161e0c44eb696b3e75c-138321013629
+                                                  //| 8"
+                                                  //|       },
+                                                  //|       "payload": {
+                                                  //|           "token": "user1-token-1"
+                                                  //|       }
+                                                  //|   }
+                                                  //|   
+                                                  //|   "
+  val userJoinAst = JsonParser(userJoinMessage).asJsObject
+                                                  //> userJoinAst  : spray.json.JsObject = {"name":"user_join","timestamp":123456
+                                                  //| ,"meeting":{"id":"english_101","name":"English 101","session":"183f0bf3a098
+                                                  //| 2a127bdb8161e0c44eb696b3e75c-1383210136298"},"payload":{"token":"user1-toke
+                                                  //| n-1"}}
+  val userJoinObj = userJoinAst.fields.get("payload").get.asJsObject
+                                                  //> userJoinObj  : spray.json.JsObject = {"token":"user1-token-1"}
+  val token =   userJoinObj.fields.get("token").get
+                                                  //> token  : spray.json.JsValue = "user1-token-1"
+  
+  
 }

@@ -9,7 +9,7 @@ import spray.json.JsString
 import spray.json.JsValue
 import spray.json.JsObject
 import org.bigbluebutton.apps.users.data._
-import org.bigbluebutton.apps.protocol.Protocol._
+import org.bigbluebutton.apps.protocol._
 import org.bigbluebutton.apps.users.data.WebIdentity
 import org.bigbluebutton.apps.users.data.VoiceIdentity
 import org.bigbluebutton.apps.users.data.User
@@ -21,9 +21,8 @@ import org.bigbluebutton.apps.protocol.InMessage
 
 
 trait UsersAppMessageHandler {
-  import UserMessages._
   import UserMessagesProtocol._
-  
+/*  
   def handleRegisterUserRequest(header: Header, payload: JsObject):InMessage = {
 	payload.fields.get("user") match {
       case Some(user) => {
@@ -39,4 +38,5 @@ trait UsersAppMessageHandler {
       case None => throw MessageProcessException("Malformed register user request message.")
     }
   }
+  */
 }

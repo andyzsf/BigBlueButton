@@ -2,7 +2,6 @@ package org.bigbluebutton.apps.protocol
 
 import org.bigbluebutton.apps.users.data.UserIdAndName
 
-import Protocol._
 
 trait InMessage
 
