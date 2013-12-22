@@ -28,7 +28,7 @@ trait ExampleMessageFixtures {
 	        },
 	        "meeting": {
 	            "name": "English 101",
-	            "externalId": "english_101"
+	            "id": "english_101"
 	        }
 	    },
 	    "payload": {
@@ -134,7 +134,7 @@ trait ExampleMessageFixtures {
 	        },
 	        "meeting": {
 	            "name": "English 101",
-	            "externalId": "english_101"
+	            "id": "english_101"
 	        }
 	    },
 	    "payload": {

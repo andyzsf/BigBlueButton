@@ -12,7 +12,7 @@ case class HeaderEvent(name: String, timestamp: Long,
                        source: String, reply: Option[ReplyHeader])
 	                       
 case class ReplyHeader(to: String, correlationId: String)                       
-case class HeaderMeeting(name: String, externalId: String, sessionId: Option[String] = None)
+case class HeaderMeeting(name: String, id: String, session: Option[String] = None)
 case class HeaderAndPayload(header: Header, payload: JsValue)
 case class ReplyStatus(status: String, message: String, error: Option[Int])
 	

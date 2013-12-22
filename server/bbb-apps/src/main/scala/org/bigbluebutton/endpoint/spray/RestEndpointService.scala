@@ -80,7 +80,7 @@ trait RestEndpointService extends HttpService with MeetingMessageHandler {
                VoiceConference(message.payload.meeting.voice_conference.pin,
                                message.payload.meeting.voice_conference.number)
       
-      val mdesc = MeetingDescriptor(message.header.meeting.externalId, 
+      val mdesc = MeetingDescriptor(message.header.meeting.id, 
                                     message.header.meeting.name,
                                     message.payload.meeting.record, 
                                     message.payload.meeting.welcome_message, 

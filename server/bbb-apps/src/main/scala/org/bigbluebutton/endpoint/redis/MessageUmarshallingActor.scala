@@ -11,13 +11,15 @@ import spray.json.DeserializationException
 import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
 import org.bigbluebutton.apps.protocol._
 import scala.util.{Success, Failure}
+import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.users.unmarshalling.UsersMessageUnmarshaller
 
 object MessageUnmarshallingActor {
   def props(pubsub: ActorRef): Props =  Props(classOf[MessageUnmarshallingActor], pubsub)
 }
 
 class MessageUnmarshallingActor private (val pubsub: ActorRef) extends Actor 
-         with ActorLogging {
+         with ActorLogging with UsersMessageUnmarshaller {
 
   def receive = {
     case msg: String => handleMessage(msg)
@@ -33,10 +35,7 @@ class MessageUnmarshallingActor private (val pubsub: ActorRef) extends Actor
 
   def forwardMessage(msg: HeaderAndPayload) = {
     msg.header.event.name match {
-      case create_meeting: String  => // TODO: process message
-//        handleCreateMeetingRequest(header, payload)
-//      case RegisterUserRequestMessage =>
-//        handleRegisterUserRequest(header, payload)
+      case user_join: String  => handleUserJoin(msg)
 	  case unknownMsg => 
 	    log.error("Unknown message name: [{}]", unknownMsg)
 	}    
@@ -86,5 +85,13 @@ class MessageUnmarshallingActor private (val pubsub: ActorRef) extends Actor
     } yield message
   }
   
-
+  def extractSession(header: Header):Option[Session] = {
+    header.meeting.session match {
+      case Some(sessionId) => {
+             Some(Session(sessionId, header.meeting.id,
+                          header.meeting.name))
+        }
+        case None => None
+      }
+  }
 }

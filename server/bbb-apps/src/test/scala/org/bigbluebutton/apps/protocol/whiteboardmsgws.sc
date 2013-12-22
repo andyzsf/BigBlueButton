@@ -95,7 +95,7 @@ object whiteboardmsgws {
           "session": "183f0bf3a0982a127bdb8161e0c44eb696b3e75c-1383210136298"
       },
       "payload": {
-          "token": "user1-token-1"
+          "token1": "user1-token-1"
       }
   }
   
@@ -110,7 +110,7 @@ object whiteboardmsgws {
                                                   //| 8"
                                                   //|       },
                                                   //|       "payload": {
-                                                  //|           "token": "user1-token-1"
+                                                  //|           "token1": "user1-token-1"
                                                   //|       }
                                                   //|   }
                                                   //|   
@@ -118,12 +118,11 @@ object whiteboardmsgws {
   val userJoinAst = JsonParser(userJoinMessage).asJsObject
                                                   //> userJoinAst  : spray.json.JsObject = {"name":"user_join","timestamp":123456
                                                   //| ,"meeting":{"id":"english_101","name":"English 101","session":"183f0bf3a098
-                                                  //| 2a127bdb8161e0c44eb696b3e75c-1383210136298"},"payload":{"token":"user1-toke
-                                                  //| n-1"}}
+                                                  //| 2a127bdb8161e0c44eb696b3e75c-1383210136298"},"payload":{"token1":"user1-tok
+                                                  //| en-1"}}
   val userJoinObj = userJoinAst.fields.get("payload").get.asJsObject
-                                                  //> userJoinObj  : spray.json.JsObject = {"token":"user1-token-1"}
-  val token =   userJoinObj.fields.get("token").get
-                                                  //> token  : spray.json.JsValue = "user1-token-1"
+                                                  //> userJoinObj  : spray.json.JsObject = {"token1":"user1-token-1"}
+  val token =   userJoinObj.fields.get("token")   //> token  : Option[spray.json.JsValue] = None
   
   
 }
