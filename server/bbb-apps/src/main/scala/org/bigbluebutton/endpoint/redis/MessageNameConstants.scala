@@ -6,5 +6,6 @@ object InMsgNameConst {
   val user_join          = "user_join"
   val user_leave         = "user_leave"
   val get_users          = "get_users"
+  val assign_presenter   = "assign_presenter"  
 }
 

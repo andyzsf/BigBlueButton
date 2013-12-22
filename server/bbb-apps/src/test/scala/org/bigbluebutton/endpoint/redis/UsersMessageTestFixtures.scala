@@ -61,4 +61,32 @@ trait UsersMessageTestFixtures {
 	    }
 	}     
   """
+    
+  val assignPresenterMsg = """
+	{
+	    "header": {
+	        "event": {
+	            "name": "assign_presenter",
+	            "timestamp": 123456,
+	            "source": "web-api"
+	        },
+	        "meeting": {
+	            "name": "English 101",
+	            "id": "english_101",
+	            "session": "english_101-12345"
+	        }
+	    },
+	    "payload": {
+	        "presenter": {
+	            "id": "user1",
+	            "name": "Guga"
+	        },
+	        "assigned_by": {
+	            "id": "user2",
+	            "name": "Juan"
+	        }
+	    }
+	}    
+    
+  """
 }

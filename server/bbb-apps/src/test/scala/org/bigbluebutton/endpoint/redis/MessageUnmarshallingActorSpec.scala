@@ -10,6 +10,7 @@ import collection.mutable.Stack
 import org.bigbluebutton.apps.users.messages.UserJoinRequest
 import org.bigbluebutton.apps.users.messages.UserLeave
 import org.bigbluebutton.apps.users.messages.GetUsersRequest
+import org.bigbluebutton.apps.users.messages.AssignPresenter
 
 class MessageUnmarshallingActorSpec extends 
   TestKit(ActorSystem("MessageUnmarshallingActorSpec"))
@@ -57,5 +58,15 @@ class MessageUnmarshallingActorSpec extends
         }            
       }
     }
+    
+    "Send an AssignPresenter message when receiving assign presenter JSON message" in {
+      unmarshallingActor ! assignPresenterMsg
+        
+      bbbAppsProbe.expectMsgPF(500 millis) {
+        case ujr:AssignPresenter => {
+          ujr.presenter.presenter.id == "user1"
+        }            
+      }
+    }    
   }  
 }

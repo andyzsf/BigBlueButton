@@ -16,6 +16,7 @@ case class JoinUserRequest(header: Header, token: String)
 case class JoinUserResponse(response: Response, token: String, joinedUser: Option[JoinedUser])
 case class JoinUserReply(header: Header, payload: JoinUserResponse)  
 
+case class PresenterPayload(presenter: UserIdAndName, assigned_by: UserIdAndName)
 
 object UserMessagesProtocol extends DefaultJsonProtocol {
   import HeaderAndPayloadJsonSupport._
@@ -38,4 +39,7 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
 	
   implicit val joinUserResponseFormat = jsonFormat3(JoinUserResponse)
   implicit val joinUserReplyFormat = jsonFormat2(JoinUserReply)
+  implicit val userIdAndNameFormat = jsonFormat2(UserIdAndName)
+  implicit val presenterFormat = jsonFormat2(PresenterPayload)
 }
+

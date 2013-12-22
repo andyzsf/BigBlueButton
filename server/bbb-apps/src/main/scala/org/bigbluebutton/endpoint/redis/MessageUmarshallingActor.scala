@@ -34,6 +34,8 @@ class MessageUnmarshallingActor private (val bbbAppsActor: ActorRef, val pubsubA
       case InMsgNameConst.user_join      => handleUserJoin(msg)
       case InMsgNameConst.user_leave     => handleUserLeave(msg)
       case InMsgNameConst.get_users      => handleGetUsers(msg)
+      case InMsgNameConst.assign_presenter      => handleAssignPresenter(msg)
+      
 	  case _ => 
 	    log.error("Unknown message name: [{}]", msg.header.event.name)
 	}    
