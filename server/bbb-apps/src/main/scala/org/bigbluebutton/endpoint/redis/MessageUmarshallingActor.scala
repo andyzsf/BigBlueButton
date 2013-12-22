@@ -7,7 +7,7 @@ import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
 import org.bigbluebutton.apps.protocol._
 import scala.util.{Try, Success, Failure}
 import org.bigbluebutton.apps.models.Session
-import org.bigbluebutton.apps.users.unmarshalling.UsersMessageUnmarshaller
+import org.bigbluebutton.apps.users.protocol.UsersMessageUnmarshalling
 
 object MessageUnmarshallingActor {
   def props(bbbAppsActor: ActorRef, pubsubActor: ActorRef): Props =  
@@ -15,7 +15,7 @@ object MessageUnmarshallingActor {
 }
 
 class MessageUnmarshallingActor private (val bbbAppsActor: ActorRef, val pubsubActor: ActorRef) extends Actor 
-         with ActorLogging with UsersMessageUnmarshaller {
+         with ActorLogging with UsersMessageUnmarshalling {
 
   def receive = {
     case msg: String => handleMessage(msg)

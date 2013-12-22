@@ -1,20 +1,19 @@
-package org.bigbluebutton.apps.users.unmarshalling
+package org.bigbluebutton.apps.users.protocol
+
 import akka.actor.ActorRef
 import akka.event.LoggingAdapter
 import org.bigbluebutton.apps.protocol.HeaderAndPayload
 import org.bigbluebutton.endpoint.redis.MessageUnmarshallingActor
 import org.bigbluebutton.apps.models.Session
-import spray.json.JsObject
+import spray.json._
+import spray.json.DefaultJsonProtocol._
 import org.bigbluebutton.apps.protocol.MessageProcessException
-import scala.util.Try
-import spray.json.JsValue
 import org.bigbluebutton.apps.protocol.Header
 import org.bigbluebutton.apps.users.messages._
 import org.bigbluebutton.apps.users.data.Presenter
-import spray.json.DeserializationException
 import org.bigbluebutton.apps.protocol.MessageProcessException
 
-trait UsersMessageUnmarshaller {
+trait UsersMessageUnmarshalling {
   this : MessageUnmarshallingActor =>
   
   val bbbAppsActor: ActorRef
@@ -26,10 +25,20 @@ trait UsersMessageUnmarshaller {
       UserJoinRequest(session, token)
     }
     
+    /**
+     * Need this to convert JsValue to String
+     */
+    def token(payload: JsObject):Option[String] = {
+      payload.fields.get("token") match {
+        case Some(s) => Some(s.convertTo[String])
+        case None => None
+      }
+    }
+    
     val userJoinMsg = for {
-      token <- msg.payload.asJsObject.fields.get("token")
+      token <- token(msg.payload.asJsObject)
       session <- toSession(msg.header)
-      userJoinMsg = message(token.toString, session)
+      userJoinMsg = message(token, session)
     } yield userJoinMsg
     
     userJoinMsg match { 
@@ -44,11 +53,21 @@ trait UsersMessageUnmarshaller {
     def message(userId: String, session: Session):UserLeave = {    
       UserLeave(session, userId)
     }    
-    
+
+    /**
+     * Need this to convert JsValue to String
+     */
+    def userId(payload: JsObject):Option[String] = {
+      payload.fields.get("user_id") match {
+        case Some(s) => Some(s.convertTo[String])
+        case None => None
+      }
+    }
+        
     val userLeaveMsg = for {
-      userId <- msg.payload.asJsObject.fields.get("user_id")
+      userId <- userId(msg.payload.asJsObject)
       session <- toSession(msg.header)
-      userLeaveMsg = message(userId.toString, session)
+      userLeaveMsg = message(userId, session)
     } yield userLeaveMsg
     
     userLeaveMsg match { 
@@ -63,9 +82,19 @@ trait UsersMessageUnmarshaller {
     def message(requesterId: String, session: Session):GetUsersRequest = {    
       GetUsersRequest(session, requesterId)
     }    
+
+    /**
+     * Need this to convert JsValue to String
+     */
+    def requesterId(payload: JsObject):Option[String] = {
+      payload.fields.get("requester_id") match {
+        case Some(s) => Some(s.convertTo[String])
+        case None => None
+      }
+    }
     
     val getUsersMsg = for {
-      requesterId <- msg.payload.asJsObject.fields.get("requester_id")
+      requesterId <- requesterId(msg.payload.asJsObject)
       session <- toSession(msg.header)
       getUsersMsg = message(requesterId.toString, session)
     } yield getUsersMsg

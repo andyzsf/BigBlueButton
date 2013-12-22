@@ -8,12 +8,11 @@ import akka.actor.Props
 import akka.testkit.TestProbe
 import akka.testkit.TestActorRef
 import org.scalatest.FlatSpecLike
-import org.bigbluebutton.apps.protocol.MeetingTestFixtures
 
 class MeetingManagerUnitSpec extends 
           TestKit(ActorSystem("MeetingManagerUnitSpec"))
           with FlatSpecLike with Matchers with BeforeAndAfterAll 
-          with MeetingTestFixtures {
+          with AppsTestFixtures {
 
   val pubsub = TestProbe()
 

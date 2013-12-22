@@ -25,8 +25,8 @@ class RunningMeetingActorSpec extends
   with Matchers with BeforeAndAfterAll with MeetingManagerTestFixtures {
   
   val pubsub = TestProbe()
-  val session = generateMeetingSession()
-  val config = generateMeetingDescriptor()
+  val session = eng101Session
+  val config = eng101Desc
   val runningMeetingActor=  TestActorRef[RunningMeetingActor](RunningMeetingActor.props(pubsub.ref, session, config))
   
   override def afterAll {
@@ -36,7 +36,7 @@ class RunningMeetingActorSpec extends
   "An RunningMeetingActor" should {
     "Respond with 'User has been registered.'" in {
       within(500 millis) {
-        val user = generateUserJuan()
+        val user = userJuan
         
         runningMeetingActor ! RegisterUserRequest(session, user)
         

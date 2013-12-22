@@ -1,14 +1,12 @@
-package org.bigbluebutton.apps.users.unmarshalling
+package org.bigbluebutton.apps.users.protocol
 
-import spray.json.DefaultJsonProtocol
-import spray.json.JsObject
+import spray.json.{DefaultJsonProtocol, JsObject, JsValue, JsString, DeserializationException, JsonFormat}
+
 import org.bigbluebutton.apps.users.data._
 import org.bigbluebutton.apps.protocol._
-import spray.json.JsonFormat
 import org.bigbluebutton.apps.models.Role
-import spray.json.JsValue
-import spray.json.JsString
-import spray.json.DeserializationException
+import org.bigbluebutton.apps.users.messages.UserJoined
+import org.bigbluebutton.apps.models.Session
 
 
 case class RegisterUserRequest(header: Header, payload: User)
@@ -41,5 +39,6 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
   implicit val joinUserReplyFormat = jsonFormat2(JoinUserReply)
   implicit val userIdAndNameFormat = jsonFormat2(UserIdAndName)
   implicit val presenterFormat = jsonFormat2(PresenterPayload)
+
 }
 

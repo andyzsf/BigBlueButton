@@ -34,8 +34,9 @@ class MessageUnmarshallingActorSpec extends
         
       bbbAppsProbe.expectMsgPF(500 millis) {
         case ujr:UserJoinRequest => {
-          ujr.token == "user1-token-1"
-        }            
+          ujr.token should be ("user1-token-1") 
+        }     
+        case _ => fail("Should have returned UserJoinRequest")
       }
     }
     
@@ -44,8 +45,9 @@ class MessageUnmarshallingActorSpec extends
         
       bbbAppsProbe.expectMsgPF(500 millis) {
         case ujr:UserLeave => {
-          ujr.userId == "user1"
-        }            
+          ujr.userId should be ("user1")
+        }        
+        case _ => fail("Should have returned UserLeave")
       }
     }
     
@@ -54,8 +56,9 @@ class MessageUnmarshallingActorSpec extends
         
       bbbAppsProbe.expectMsgPF(500 millis) {
         case ujr:GetUsersRequest => {
-          ujr.requesterId == "user1"
-        }            
+          ujr.requesterId should be ("user1")
+        }       
+        case _ => fail("Should have returned GetUsersRequest")
       }
     }
     
@@ -64,8 +67,9 @@ class MessageUnmarshallingActorSpec extends
         
       bbbAppsProbe.expectMsgPF(500 millis) {
         case ujr:AssignPresenter => {
-          ujr.presenter.presenter.id == "user1"
-        }            
+          ujr.presenter.presenter.id should be ("user1")
+        }     
+        case _ => fail("Should have returned AssignPresenter")
       }
     }    
   }  

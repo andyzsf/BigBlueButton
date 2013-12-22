@@ -1,7 +1,14 @@
 package org.bigbluebutton.endpoint.redis
 
-trait UsersMessageTestFixtures {
+import org.bigbluebutton.apps.users.data._
+import org.bigbluebutton.apps.models.Role
+import org.bigbluebutton.apps.users.messages.UserJoined
+import org.bigbluebutton.apps.AppsTestFixtures
 
+
+trait UsersMessageTestFixtures extends AppsTestFixtures {
+  val userJoinedMessage = UserJoined(eng101Session, joinedUserJuan.token, joinedUserJuan)
+   
   val userJoinMsg = """
 	{
 	    "header": {
@@ -89,4 +96,6 @@ trait UsersMessageTestFixtures {
 	}    
     
   """
+  
+  
 }

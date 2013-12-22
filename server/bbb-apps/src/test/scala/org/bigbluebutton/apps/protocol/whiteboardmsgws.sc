@@ -1,8 +1,8 @@
 package org.bigbluebutton.apps.protocol
 
 import spray.json._
-import spray.json.JsonParser
-import spray.json.DefaultJsonProtocol
+
+
 
 object whiteboardmsgws {
   val wbmsg = """
@@ -95,7 +95,7 @@ object whiteboardmsgws {
           "session": "183f0bf3a0982a127bdb8161e0c44eb696b3e75c-1383210136298"
       },
       "payload": {
-          "token1": "user1-token-1"
+          "token": "user1-token-1"
       }
   }
   
@@ -110,19 +110,37 @@ object whiteboardmsgws {
                                                   //| 8"
                                                   //|       },
                                                   //|       "payload": {
-                                                  //|           "token1": "user1-token-1"
+                                                  //|           "token": "user1-token-1"
                                                   //|       }
                                                   //|   }
                                                   //|   
                                                   //|   "
-  val userJoinAst = JsonParser(userJoinMessage).asJsObject
+  val userJoinAst =  JsonParser(userJoinMessage).asJsObject
                                                   //> userJoinAst  : spray.json.JsObject = {"name":"user_join","timestamp":123456
                                                   //| ,"meeting":{"id":"english_101","name":"English 101","session":"183f0bf3a098
-                                                  //| 2a127bdb8161e0c44eb696b3e75c-1383210136298"},"payload":{"token1":"user1-tok
-                                                  //| en-1"}}
-  val userJoinObj = userJoinAst.fields.get("payload").get.asJsObject
-                                                  //> userJoinObj  : spray.json.JsObject = {"token1":"user1-token-1"}
-  val token =   userJoinObj.fields.get("token")   //> token  : Option[spray.json.JsValue] = None
+                                                  //| 2a127bdb8161e0c44eb696b3e75c-1383210136298"},"payload":{"token":"user1-toke
+                                                  //| n-1"}}
+  val tokenObj =  userJoinAst.fields.get("payload").get.asJsObject
+                                                  //> tokenObj  : spray.json.JsObject = {"token":"user1-token-1"}
+  val tokenVal =  tokenObj.fields.get("token").get.prettyPrint
+                                                  //> tokenVal  : String = "user1-token-1"
   
   
+ // import org.bigbluebutton.apps.users.data.User
+  import org.bigbluebutton.apps.models._
+/*
+  val userJuan = User("userjuan", "Juan Tamad",
+                  Role.MODERATOR, 12345,
+                  "Welcome Juan",
+                  "http://www.umaliska.don",
+                  "http://www.mukhamo.com/unggoy")
+  val juanWebIdentity = WebIdentity(false)
+  val juanCallerId = CallerId("Juan Tamad", "011-63-917-555-1234")
+  val juanVoiceMeta = Map("userid" -> "1", "conference_num" -> "85115")
+  val juanVoiceIdentity = VoiceIdentity(juanCallerId, false,
+                         false, false, juanVoiceMeta)
+                         
+  val joinedUserJuan = JoinedUser("juanid", "juanToken", userJuan,
+                        true, juanWebIdentity, juanVoiceIdentity)
+                        */
 }
