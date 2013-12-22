@@ -10,10 +10,11 @@ import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.users.unmarshalling.UsersMessageUnmarshaller
 
 object MessageUnmarshallingActor {
-  def props(pubsub: ActorRef): Props =  Props(classOf[MessageUnmarshallingActor], pubsub)
+  def props(bbbAppsActor: ActorRef, pubsubActor: ActorRef): Props =  
+        Props(classOf[MessageUnmarshallingActor], bbbAppsActor, pubsubActor)
 }
 
-class MessageUnmarshallingActor private (val pubsub: ActorRef) extends Actor 
+class MessageUnmarshallingActor private (val bbbAppsActor: ActorRef, val pubsubActor: ActorRef) extends Actor 
          with ActorLogging with UsersMessageUnmarshaller {
 
   def receive = {
@@ -22,7 +23,7 @@ class MessageUnmarshallingActor private (val pubsub: ActorRef) extends Actor
   }
   
   def handleMessage(msg: String) = {
-    transformMessage(msg) match {
+    unmarshall(msg) match {
       case Success(validMsg) => forwardMessage(validMsg)
       case Failure(ex) => log.error("Unhandled message: [{}]", ex)
     }
@@ -30,13 +31,14 @@ class MessageUnmarshallingActor private (val pubsub: ActorRef) extends Actor
 
   def forwardMessage(msg: HeaderAndPayload) = {
     msg.header.event.name match {
-      case user_join: String  => handleUserJoin(msg)
-	  case unknownMsg => 
-	    log.error("Unknown message name: [{}]", unknownMsg)
+      case InMsgNameConst.user_join  => handleUserJoin(msg)
+      case InMsgNameConst.user_leave => handleUserLeave(msg)
+	  case _ => 
+	    log.error("Unknown message name: [{}]", msg.header.event.name)
 	}    
   }
     
-  def extractMessageHeader(msg: JsObject):Header = {
+  def header(msg: JsObject):Header = {
     try {
       msg.fields.get("header") match {
         case Some(header) => header.convertTo[Header]
@@ -48,14 +50,14 @@ class MessageUnmarshallingActor private (val pubsub: ActorRef) extends Actor
     }
   }
  
-  def extractPayload(msg: JsObject): JsObject = {
+  def payload(msg: JsObject):JsObject = {
     msg.fields.get("payload") match {
       case Some(payload) => payload.asJsObject
       case None => throw MessageProcessException("Cannot get payload information: [" + msg + "]")
     } 
   }
   
-  def jsonMessageToObject(msg: String): JsObject = {
+  def toJsObject(msg: String):JsObject = {
     log.debug("Converting to json : {}", msg)    
     try {
       JsonParser(msg).asJsObject
@@ -71,22 +73,19 @@ class MessageUnmarshallingActor private (val pubsub: ActorRef) extends Actor
     HeaderAndPayload(header, payload)
   }
     
-  def transformMessage(jsonMsg: String):Try[HeaderAndPayload] = {
+  def unmarshall(jsonMsg: String):Try[HeaderAndPayload] = {
     for {
-      jsonObj <- Try(jsonMessageToObject(jsonMsg))
-      header <- Try(extractMessageHeader(jsonObj))
-      payload <- Try(extractPayload(jsonObj))
+      jsonObj <- Try(toJsObject(jsonMsg))
+      header <- Try(header(jsonObj))
+      payload <- Try(payload(jsonObj))
       message = toHeaderAndPayload(header, payload)
     } yield message
   }
   
-  def extractSession(header: Header):Option[Session] = {
-    header.meeting.session match {
-      case Some(sessionId) => {
-             Some(Session(sessionId, header.meeting.id,
-                          header.meeting.name))
-        }
-        case None => None
-      }
+  def toSession(header: Header):Option[Session] = {
+    for {
+      sessionId <- header.meeting.session
+      session = Session(sessionId, header.meeting.id, header.meeting.name)
+    } yield session
   }
 }

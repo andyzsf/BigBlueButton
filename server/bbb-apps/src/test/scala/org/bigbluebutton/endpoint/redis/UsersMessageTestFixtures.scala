@@ -21,4 +21,24 @@ trait UsersMessageTestFixtures {
 	    }
 	}    
   """
+    
+  val userLeaveMsg = """
+	{
+	    "header": {
+	        "event": {
+	            "name": "user_leave",
+	            "timestamp": 123456,
+	            "source": "web-api"
+	        },
+	        "meeting": {
+	            "name": "English 101",
+	            "id": "english_101",
+	            "session": "english_101-12345"
+	        }
+	    },
+	    "payload": {
+	        "user_id": "user1"
+	    }
+	}    
+  """
 }

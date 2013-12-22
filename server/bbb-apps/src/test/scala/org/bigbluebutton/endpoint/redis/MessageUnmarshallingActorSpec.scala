@@ -8,6 +8,7 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.{WordSpecLike, BeforeAndAfterAll, Matchers}
 import collection.mutable.Stack
 import org.bigbluebutton.apps.users.messages.UserJoinRequest
+import org.bigbluebutton.apps.users.messages.UserLeave
 
 class MessageUnmarshallingActorSpec extends 
   TestKit(ActorSystem("MessageUnmarshallingActorSpec"))
@@ -15,8 +16,11 @@ class MessageUnmarshallingActorSpec extends
           with Matchers with BeforeAndAfterAll 
           with UsersMessageTestFixtures {
 
-  val probe = TestProbe()
-  val unmarshallingActor =  TestActorRef[MessageUnmarshallingActor](MessageUnmarshallingActor.props(probe.ref))
+  val bbbAppsProbe = TestProbe()
+  val pubsubProbe = TestProbe()
+  val unmarshallingActor =  TestActorRef[MessageUnmarshallingActor](
+                                   MessageUnmarshallingActor.props(
+                                   bbbAppsProbe.ref, pubsubProbe.ref))
   
   override def afterAll {
     shutdown(system)
@@ -26,9 +30,19 @@ class MessageUnmarshallingActorSpec extends
     "Send a UserJoinRequest message when receiving a user join JSON message" in {
       unmarshallingActor ! userJoinMsg
         
-      probe.expectMsgPF(500 millis) {
+      bbbAppsProbe.expectMsgPF(500 millis) {
         case ujr:UserJoinRequest => {
           ujr.token == "user1-token-1"
+        }            
+      }
+    }
+    
+    "Send a UserLeave message when receiving a user leave JSON message" in {
+      unmarshallingActor ! userLeaveMsg
+        
+      bbbAppsProbe.expectMsgPF(500 millis) {
+        case ujr:UserLeave => {
+          ujr.userId == "user1"
         }            
       }
     }
