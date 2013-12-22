@@ -9,8 +9,7 @@ import org.bigbluebutton.apps.protocol.MessageProcessException
 import scala.util.Try
 import spray.json.JsValue
 import org.bigbluebutton.apps.protocol.Header
-import org.bigbluebutton.apps.users.messages.UserJoinRequest
-import org.bigbluebutton.apps.users.messages.UserLeave
+import org.bigbluebutton.apps.users.messages.{UserJoinRequest, UserLeave, GetUsersRequest}
 
 trait UsersMessageUnmarshaller {
   this : MessageUnmarshallingActor =>
@@ -54,6 +53,25 @@ trait UsersMessageUnmarshaller {
         bbbAppsActor ! ulm
       }
       case None => log.error("Failed to handle UserLeave message [{}]", msg.payload)
+    }    
+  }
+  
+  def handleGetUsers(msg: HeaderAndPayload) = {
+    def message(requesterId: String, session: Session):GetUsersRequest = {    
+      GetUsersRequest(session, requesterId)
+    }    
+    
+    val getUsersMsg = for {
+      requesterId <- msg.payload.asJsObject.fields.get("requester_id")
+      session <- toSession(msg.header)
+      getUsersMsg = message(requesterId.toString, session)
+    } yield getUsersMsg
+    
+    getUsersMsg match { 
+      case Some(gum) => {
+        bbbAppsActor ! gum
+      }
+      case None => log.error("Failed to handle GetUsers message [{}]", msg.payload)
     }    
   }
 }

@@ -31,8 +31,9 @@ class MessageUnmarshallingActor private (val bbbAppsActor: ActorRef, val pubsubA
 
   def forwardMessage(msg: HeaderAndPayload) = {
     msg.header.event.name match {
-      case InMsgNameConst.user_join  => handleUserJoin(msg)
-      case InMsgNameConst.user_leave => handleUserLeave(msg)
+      case InMsgNameConst.user_join      => handleUserJoin(msg)
+      case InMsgNameConst.user_leave     => handleUserLeave(msg)
+      case InMsgNameConst.get_users      => handleGetUsers(msg)
 	  case _ => 
 	    log.error("Unknown message name: [{}]", msg.header.event.name)
 	}    

@@ -9,6 +9,7 @@ import org.scalatest.{WordSpecLike, BeforeAndAfterAll, Matchers}
 import collection.mutable.Stack
 import org.bigbluebutton.apps.users.messages.UserJoinRequest
 import org.bigbluebutton.apps.users.messages.UserLeave
+import org.bigbluebutton.apps.users.messages.GetUsersRequest
 
 class MessageUnmarshallingActorSpec extends 
   TestKit(ActorSystem("MessageUnmarshallingActorSpec"))
@@ -43,6 +44,16 @@ class MessageUnmarshallingActorSpec extends
       bbbAppsProbe.expectMsgPF(500 millis) {
         case ujr:UserLeave => {
           ujr.userId == "user1"
+        }            
+      }
+    }
+    
+    "Send a GetUsers message when receiving a get users JSON message" in {
+      unmarshallingActor ! getUsersMsg
+        
+      bbbAppsProbe.expectMsgPF(500 millis) {
+        case ujr:GetUsersRequest => {
+          ujr.requesterId == "user1"
         }            
       }
     }

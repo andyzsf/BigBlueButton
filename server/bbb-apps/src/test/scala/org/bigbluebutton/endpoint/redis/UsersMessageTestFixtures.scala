@@ -41,4 +41,24 @@ trait UsersMessageTestFixtures {
 	    }
 	}    
   """
+    
+  val getUsersMsg = """
+	{
+	    "header": {
+	        "event": {
+	            "name": "get_users",
+	            "timestamp": 123456,
+	            "source": "web-api"
+	        },
+	        "meeting": {
+	            "name": "English 101",
+	            "id": "english_101",
+	            "session": "english_101-12345"
+	        }
+	    },
+	    "payload": {
+	        "requester_id": "user1"
+	    }
+	}     
+  """
 }
