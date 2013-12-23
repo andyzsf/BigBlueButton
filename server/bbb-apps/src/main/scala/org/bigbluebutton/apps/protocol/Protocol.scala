@@ -5,7 +5,7 @@ import org.bigbluebutton.apps.users.data.{User, JoinedUser}
 import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport
 
-case class Destination(to: String, correlationId: Option[String])
+case class Destination(to: String, correlation_id: Option[String])
 
 case class Header(destination: Destination, name: String, 
                   timestamp: String, source: String,

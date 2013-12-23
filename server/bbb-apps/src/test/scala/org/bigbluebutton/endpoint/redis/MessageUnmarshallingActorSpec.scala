@@ -7,10 +7,10 @@ import scala.collection.immutable
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.{WordSpecLike, BeforeAndAfterAll, Matchers}
 import collection.mutable.Stack
-import org.bigbluebutton.apps.users.messages.UserJoinRequest
-import org.bigbluebutton.apps.users.messages.UserLeave
-import org.bigbluebutton.apps.users.messages.GetUsersRequest
-import org.bigbluebutton.apps.users.messages.AssignPresenter
+import org.bigbluebutton.apps.users.protocol.UserJoinRequestMessage
+import org.bigbluebutton.apps.users.protocol.UserLeaveMessage
+import org.bigbluebutton.apps.users.protocol.GetUsersRequestMessage
+import org.bigbluebutton.apps.users.protocol.AssignPresenterMessage
 
 class MessageUnmarshallingActorSpec extends 
   TestKit(ActorSystem("MessageUnmarshallingActorSpec"))
@@ -18,10 +18,10 @@ class MessageUnmarshallingActorSpec extends
           with Matchers with BeforeAndAfterAll 
           with UsersMessageTestFixtures {
 
-  val bbbAppsProbe = TestProbe()
+  val messageHandlerProbe = TestProbe()
   val unmarshallingActor =  TestActorRef[MessageUnmarshallingActor](
                                    MessageUnmarshallingActor.props(
-                                   bbbAppsProbe.ref))
+                                   messageHandlerProbe.ref))
   
   override def afterAll {
     shutdown(system)
@@ -31,31 +31,31 @@ class MessageUnmarshallingActorSpec extends
     "Send a UserJoinRequest message when receiving a user join JSON message" in {
       unmarshallingActor ! userJoinMsg
         
-      bbbAppsProbe.expectMsgPF(500 millis) {
-        case ujr:UserJoinRequest => {
-          ujr.token should be ("user1-token-1") 
+      messageHandlerProbe.expectMsgPF(500 millis) {
+        case ujr:UserJoinRequestMessage => {
+          ujr.payload.token should be ("user1-token-1") 
         }     
-        case _ => fail("Should have returned UserJoinRequest")
+        case _ => fail("Should have returned UserJoinRequestMessage")
       }
     }
     
     "Send a UserLeave message when receiving a user leave JSON message" in {
       unmarshallingActor ! userLeaveMsg
         
-      bbbAppsProbe.expectMsgPF(500 millis) {
-        case ujr:UserLeave => {
-          ujr.userId should be ("user1")
+      messageHandlerProbe.expectMsgPF(500 millis) {
+        case ujr:UserLeaveMessage => {
+          ujr.payload.user.id should be ("user1")
         }        
-        case _ => fail("Should have returned UserLeave")
+        case _ => fail("Should have returned UserLeaveMessage")
       }
     }
     
     "Send a GetUsers message when receiving a get users JSON message" in {
       unmarshallingActor ! getUsersMsg
         
-      bbbAppsProbe.expectMsgPF(500 millis) {
-        case ujr:GetUsersRequest => {
-          ujr.requesterId should be ("user1")
+      messageHandlerProbe.expectMsgPF(500 millis) {
+        case ujr:GetUsersRequestMessage => {
+          ujr.payload.requester.id should be ("user1")
         }       
         case _ => fail("Should have returned GetUsersRequest")
       }
@@ -64,9 +64,9 @@ class MessageUnmarshallingActorSpec extends
     "Send an AssignPresenter message when receiving assign presenter JSON message" in {
       unmarshallingActor ! assignPresenterMsg
         
-      bbbAppsProbe.expectMsgPF(500 millis) {
-        case ujr:AssignPresenter => {
-          ujr.presenter.presenter.id should be ("user1")
+      messageHandlerProbe.expectMsgPF(500 millis) {
+        case ujr:AssignPresenterMessage => {
+          ujr.payload.presenter.id should be ("user1")
         }     
         case _ => fail("Should have returned AssignPresenter")
       }

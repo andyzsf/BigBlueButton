@@ -44,7 +44,7 @@ class MeetingManagerSpec extends
         
         pubsub.expectMsgPF(500 millis) {
           case pubMsg:MeetingCreated => {
-            pubMsg.session.id shouldBe createMsg.descriptor.id
+            pubMsg.meeting.id shouldBe createMsg.descriptor.id
           }
         }
       }

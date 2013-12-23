@@ -12,21 +12,26 @@ trait UsersMessageTestFixtures extends AppsTestFixtures {
   val userJoinMsg = """
 	{
 	    "header": {
-	        "event": {
-	            "name": "user_join",
-	            "timestamp": 123456,
-	            "source": "web-api"
+	        "destination": {
+	            "to": "apps_channel"
 	        },
-	        "meeting": {
-	            "name": "English 101",
-	            "id": "english_101",
-	            "session": "english_101-12345"
-	        }
+	        "reply": {
+	            "to": "apps_channel",
+	            "correlation_id": "abc"
+	        },
+	        "name": "user_join_request",
+	        "timestamp": "2013-12-23T08:50Z",
+	        "source": "web-api"
 	    },
 	    "payload": {
+	        "meeting": {
+	            "name": "English 101",
+	            "id": "english_101"
+	        },
+	        "session": "english_101-12345",
 	        "token": "user1-token-1"
 	    }
-	}    
+	}   
   """
 
   val userJoinedJsonMessage = """
@@ -35,12 +40,8 @@ trait UsersMessageTestFixtures extends AppsTestFixtures {
         "destination": {
             "to": "apps_channel"
         },
-        "reply": {
-            "to": "apps_channel",
-            "correlation_id": "abc"
-        },
         "name": "user_joined",
-        "timestamp": 123456,
+        "timestamp": "2013-12-23T08:50Z",
         "source": "web-api"
     },
     "payload": {
@@ -91,42 +92,51 @@ trait UsersMessageTestFixtures extends AppsTestFixtures {
   val userLeaveMsg = """
 	{
 	    "header": {
-	        "event": {
-	            "name": "user_leave",
-	            "timestamp": 123456,
-	            "source": "web-api"
+	        "destination": {
+	            "to": "apps_channel"
 	        },
-	        "meeting": {
-	            "name": "English 101",
-	            "id": "english_101",
-	            "session": "english_101-12345"
-	        }
+	        "name": "user_leave_request",
+	        "timestamp": "2013-12-23T08:50Z",
+	        "source": "web-api"
 	    },
 	    "payload": {
+	        "meeting": {
+	            "name": "English 101",
+	            "id": "english_101"
+	        },
+	        "session": "english_101-12345",
 	        "user": {
 	            "id": "user1",
 	            "name": "Guga"
 	        }
 	    }
-	}   
+	}  
   """
     
   val getUsersMsg = """
 	{
 	    "header": {
-	        "event": {
-	            "name": "get_users",
-	            "timestamp": 123456,
-	            "source": "web-api"
+	        "destination": {
+	            "to": "apps_channel"
 	        },
-	        "meeting": {
-	            "name": "English 101",
-	            "id": "english_101",
-	            "session": "english_101-12345"
-	        }
+	        "reply": {
+	            "to": "apps_channel",
+	            "correlation_id": "abc"
+	        },
+	        "name": "get_users_request",
+	        "timestamp": "2013-12-23T08:50Z",
+	        "source": "web-api"
 	    },
 	    "payload": {
-	        "requester_id": "user1"
+	        "meeting": {
+	            "name": "English 101",
+	            "id": "english_101"
+	        },
+	        "session": "english_101-12345",
+	        "requester": {
+	            "id": "user1",
+	            "name": "Guga"
+	        }
 	    }
 	}     
   """
@@ -134,18 +144,19 @@ trait UsersMessageTestFixtures extends AppsTestFixtures {
   val assignPresenterMsg = """
 	{
 	    "header": {
-	        "event": {
-	            "name": "assign_presenter",
-	            "timestamp": 123456,
-	            "source": "web-api"
+	        "destination": {
+	            "to": "apps_channel"
 	        },
-	        "meeting": {
-	            "name": "English 101",
-	            "id": "english_101",
-	            "session": "english_101-12345"
-	        }
+	        "name": "assign_presenter_request",
+	        "timestamp": "2013-12-23T08:50Z",
+	        "source": "web-api"
 	    },
 	    "payload": {
+	        "meeting": {
+	            "name": "English 101",
+	            "id": "english_101"
+	        },
+	        "session": "english_101-12345",
 	        "presenter": {
 	            "id": "user1",
 	            "name": "Guga"

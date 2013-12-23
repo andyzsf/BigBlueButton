@@ -26,7 +26,7 @@ trait UsersMessageUnmarshalling {
         Some(JsonParser(msg.jsonMessage).asJsObject.convertTo[UserJoinRequestMessage])
       }  catch {
         case e: DeserializationException => {
-          log.error("Failed to deserialize message: [{}]", msg.jsonMessage)
+          log.error("Failed to deserialize UserJoinRequestMessage: [{}]", msg.jsonMessage)
           None
         } 
         case e: ParsingException => {
@@ -49,7 +49,7 @@ trait UsersMessageUnmarshalling {
         Some(JsonParser(msg.jsonMessage).asJsObject.convertTo[UserLeaveMessage])
       }  catch {
         case e: DeserializationException => {
-          log.error("Failed to deserialize message: [{}]", msg.jsonMessage)
+          log.error("Failed to deserialize UserLeaveMessage: [{}]", msg.jsonMessage)
           None
         } 
         case e: ParsingException => {
@@ -71,7 +71,7 @@ trait UsersMessageUnmarshalling {
         Some(JsonParser(msg.jsonMessage).asJsObject.convertTo[GetUsersRequestMessage])
       }  catch {
         case e: DeserializationException => {
-          log.error("Failed to deserialize message: [{}]", msg.jsonMessage)
+          log.error("Failed to deserialize GetUsersRequestMessage: [{}]", msg.jsonMessage)
           None
         } 
         case e: ParsingException => {
@@ -93,7 +93,7 @@ trait UsersMessageUnmarshalling {
         Some(JsonParser(msg.jsonMessage).asJsObject.convertTo[AssignPresenterMessage])
       }  catch {
         case e: DeserializationException => {
-          log.error("Failed to deserialize message: [{}]", msg.jsonMessage)
+          log.error("Failed to deserialize AssignPresenterMessage: [{}]", msg.jsonMessage)
           None
         } 
         case e: ParsingException => {

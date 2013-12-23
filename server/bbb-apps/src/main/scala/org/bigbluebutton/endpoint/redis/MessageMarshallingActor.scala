@@ -16,6 +16,6 @@ class MessageMarshallingActor private (val pubsubActor: ActorRef) extends Actor
   def receive = {
     case msg: UserJoinResponseMessage => marshallUserJoinResponseMessage(msg)
     
-    case unknownMsg => log.error("Cannot marshall unknow message: [{}]", unknownMsg)
+    case unknownMsg => log.error("Cannot marshall unknown message: [{}]", unknownMsg)
   }
 }
