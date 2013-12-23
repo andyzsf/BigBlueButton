@@ -16,7 +16,7 @@ class MessageUnmarshallingActorSpec extends
   TestKit(ActorSystem("MessageUnmarshallingActorSpec"))
           with DefaultTimeout with ImplicitSender with WordSpecLike 
           with Matchers with BeforeAndAfterAll 
-          with UsersMessageTestFixtures {
+          with UsersMessageTestFixtures with UsersMessageJsonTestFixtures {
 
   val messageHandlerProbe = TestProbe()
   val unmarshallingActor =  TestActorRef[MessageUnmarshallingActor](
