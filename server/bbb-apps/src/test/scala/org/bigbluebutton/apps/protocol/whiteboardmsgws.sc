@@ -1,9 +1,10 @@
 package org.bigbluebutton.apps.protocol
 
 import spray.json._
+import org.bigbluebutton.apps.models._
 
 
-
+  
 object whiteboardmsgws {
   val wbmsg = """
 {
@@ -125,22 +126,9 @@ object whiteboardmsgws {
   val tokenVal =  tokenObj.fields.get("token").get.prettyPrint
                                                   //> tokenVal  : String = "user1-token-1"
   
-  
- // import org.bigbluebutton.apps.users.data.User
-  import org.bigbluebutton.apps.models._
-/*
-  val userJuan = User("userjuan", "Juan Tamad",
-                  Role.MODERATOR, 12345,
-                  "Welcome Juan",
-                  "http://www.umaliska.don",
-                  "http://www.mukhamo.com/unggoy")
-  val juanWebIdentity = WebIdentity(false)
-  val juanCallerId = CallerId("Juan Tamad", "011-63-917-555-1234")
-  val juanVoiceMeta = Map("userid" -> "1", "conference_num" -> "85115")
-  val juanVoiceIdentity = VoiceIdentity(juanCallerId, false,
-                         false, false, juanVoiceMeta)
-                         
-  val joinedUserJuan = JoinedUser("juanid", "juanToken", userJuan,
-                        true, juanWebIdentity, juanVoiceIdentity)
-                        */
+
+
+
+
+
 }

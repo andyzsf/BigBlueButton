@@ -10,10 +10,7 @@ import org.bigbluebutton.apps.users.data.CallerId
 
 trait MeetingMessage{def session: Session}  
 
-/**
- * Response status
- */
-case class Response(success:Boolean, message: String)
+case class Result(success:Boolean, message: String)
 
 /**
  * Message from 3rd-party to register a user.
@@ -23,7 +20,7 @@ case class RegisterUserRequest(session: Session, user: User) extends MeetingMess
 /**
  * Reply message for the register user request.
  */
-case class RegisterUserResponse(session: Session, response: Response,
+case class RegisterUserResponse(session: Session, result: Result,
                                 token: String, user: User)
 
 /**
@@ -34,8 +31,8 @@ case class UserJoinRequest(session: Session, token: String)
 /**
  * Reply to the join user request.
  */
-case class UserJoinResponse(session: Session, response: Response,
-                              token: String, user: Option[JoinedUser])
+case class UserJoinResponse(session: Session, result: Result,
+                              user: Option[JoinedUser])
 
 /**
  * Broadcast message to interested parties that a user has joined the meeting.

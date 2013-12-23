@@ -5,14 +5,14 @@ import org.bigbluebutton.apps.users.data.{User, JoinedUser}
 import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport
 
-case class Header(event: HeaderEvent, meeting: HeaderMeeting, 
-                  response: Option[Response] = None)
-	                  
-case class HeaderEvent(name: String, timestamp: Long, 
-                       source: String, reply: Option[ReplyHeader])
-	                       
-case class ReplyHeader(to: String, correlationId: String)                       
-case class HeaderMeeting(name: String, id: String, session: Option[String] = None)
+case class Destination(to: String, correlationId: Option[String])
+
+case class Header(destination: Destination, name: String, 
+                  timestamp: String, source: String,
+                  reply: Option[Destination])
+	                  	                                            
+case class HeaderMeeting(name: String, id: String, session: Option[String])
+
 case class HeaderAndPayload(header: Header, payload: JsValue)
 case class ReplyStatus(status: String, message: String, error: Option[Int])
 	
@@ -30,10 +30,9 @@ object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSup
   implicit val statusCodeFormat = jsonFormat2(StatusCode)  
   implicit val errorCodeFormat = jsonFormat3(ErrorCode)
   implicit val responseFormat = jsonFormat2(Response)
-  implicit val replyHeaderFormat = jsonFormat2(ReplyHeader)
-  implicit val headerEventFormat = jsonFormat4(HeaderEvent)
+  implicit val headerDestinationFormat = jsonFormat2(Destination)
   implicit val headerMeetingFormat = jsonFormat3(HeaderMeeting)
-  implicit val headerFormat = jsonFormat3(Header)  
+  implicit val headerFormat = jsonFormat5(Header)  
   implicit val headerAndPayloadFormat = jsonFormat2(HeaderAndPayload)
   implicit val responsePayloadFormat = jsonFormat1(ResponsePayload)
   implicit val jsonResponseFormat = jsonFormat2(JsonResponse)
@@ -71,15 +70,5 @@ object ErrorCodes extends Enumeration {
 object ErrorCodeBuilder {
   def buildError(codeType: ErrorCodes.ErrorCodeType, details: String):ErrorCode = {
     ErrorCode(codeType.id, codeType.toString(), Some(details))
-  }
-}
-
-object HeaderBuilder {
-  val eventSource = "bbb-apps"
-    
-  def buildResponseHeader(name: String, header: HeaderEvent): HeaderEvent = {
-    header.copy(name = name, 
-                timestamp = System.currentTimeMillis(), 
-                source = eventSource)
   }
 }

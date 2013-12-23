@@ -30,33 +30,41 @@ class MessageUnmarshallingActor private (val bbbAppsActor: ActorRef, val pubsubA
   }
 
   def forwardMessage(msg: HeaderAndPayload) = {
-    msg.header.event.name match {
-      case InMsgNameConst.user_join      => handleUserJoin(msg)
-      case InMsgNameConst.user_leave     => handleUserLeave(msg)
-      case InMsgNameConst.get_users      => handleGetUsers(msg)
-      case InMsgNameConst.assign_presenter      => handleAssignPresenter(msg)
+    msg.header.name match {
+      case InMsgNameConst.UserJoinRequest             => 
+                    handleUserJoin(msg)
+      case InMsgNameConst.UserLeaveEvent              => 
+                    handleUserLeave(msg)
+      case InMsgNameConst.GetUsersRequest             => 
+                    handleGetUsers(msg)
+      case InMsgNameConst.AssignPresenterRequest      => 
+                    handleAssignPresenter(msg)
       
 	  case _ => 
-	    log.error("Unknown message name: [{}]", msg.header.event.name)
+	    log.error("Unknown message name: [{}]", msg.header.name)
 	}    
   }
     
   def header(msg: JsObject):Header = {
     try {
       msg.fields.get("header") match {
-        case Some(header) => header.convertTo[Header]
-        case None => throw MessageProcessException("Cannot get header: [" + msg + "]")
+        case Some(header) => 
+             header.convertTo[Header]
+        case None => 
+             throw MessageProcessException("Cannot get header: [" + msg + "]")
      }
     } catch {
       case e: DeserializationException =>
-        throw MessageProcessException("Failed to deserialize header: [" + msg + "]")
+             throw MessageProcessException("Failed to deserialize header: [" + msg + "]")
     }
   }
  
   def payload(msg: JsObject):JsObject = {
     msg.fields.get("payload") match {
-      case Some(payload) => payload.asJsObject
-      case None => throw MessageProcessException("Cannot get payload information: [" + msg + "]")
+      case Some(payload) => 
+           payload.asJsObject
+      case None => 
+           throw MessageProcessException("Cannot get payload information: [" + msg + "]")
     } 
   }
   

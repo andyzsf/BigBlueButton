@@ -14,4 +14,6 @@ trait SystemConfiguration {
   lazy val redisHost = Try(config.getString("redis.host")).getOrElse("127.0.0.1")
   
   lazy val redisPort = Try(config.getInt("redis.port")).getOrElse(6379)
+  
+  lazy val apiSourceName = Try(config.getString("api.source")).getOrElse("bigbluebutton-apps")
 }

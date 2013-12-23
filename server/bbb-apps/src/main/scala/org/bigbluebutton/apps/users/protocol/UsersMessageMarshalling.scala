@@ -13,7 +13,7 @@ object UserJoinedProtocol extends DefaultJsonProtocol {
   import UserMessagesProtocol._
   
   implicit val sessionFormat = jsonFormat3(Session)
-  implicit val userJoinedFormat = jsonFormat3(UserJoined)  
+//  implicit val userJoinedFormat = jsonFormat3(UserJoined)  
 }
 
 trait UsersMessageMarshalling {
@@ -24,8 +24,8 @@ trait UsersMessageMarshalling {
   
   def marshallUserJoined(msg: UserJoined) = {
     def toJsObject(msg: UserJoined):JsObject = {
-      import UserJoinedProtocol._
-      msg.toJson.asJsObject      
+     import UserJoinedProtocol._
+     msg.toJson.asJsObject      
     }
         
     pubsubActor ! toJsObject(msg) 

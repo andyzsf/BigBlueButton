@@ -1,0 +1,61 @@
+package org.bigbluebutton.apps.users.protocol
+
+import akka.actor.{Actor, Props, ActorRef, ActorLogging}
+import akka.event.LoggingAdapter
+import akka.pattern.{ask, pipe}
+import akka.util.Timeout
+import scala.concurrent.duration._
+import org.bigbluebutton.endpoint.redis.MessageHandlerActor
+import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.users.messages.UserJoinRequest
+import org.bigbluebutton.apps.users.messages.UserJoinResponse
+import org.bigbluebutton.SystemConfiguration
+import org.bigbluebutton.apps.Util
+import org.bigbluebutton.endpoint.redis.InMsgNameConst
+import org.bigbluebutton.apps.protocol.Header
+import org.bigbluebutton.apps.users.messages.Result
+
+trait UsersMessageHandler extends SystemConfiguration {
+  this : MessageHandlerActor =>
+    
+  val bbbAppsActor: ActorRef
+  val messageMarshallingActor: ActorRef
+  val log: LoggingAdapter
+  
+  /** Required for actor request-response (ask pattern) **/
+  implicit def executionContext = actorRefFactory.dispatcher
+  implicit val timeout = Timeout(5 seconds)
+  
+  def handleUserJoinRequestMessage(msg: UserJoinRequestMessage) = {
+    val session = Session(msg.payload.session, msg.payload.meeting)
+    val replyDestination = msg.header.reply
+    
+    replyDestination foreach { replyTo =>
+	  val response = (bbbAppsActor ? UserJoinRequest(session, msg.payload.token))
+	               .mapTo[UserJoinResponse]
+	               .map(result => {
+	                 val header = Header(replyTo, InMsgNameConst.UserJoinResponse, 
+                                   Util.generateTimestamp, apiSourceName, None)
+                     val payload = UserJoinResponsePayload(msg.payload.meeting, 
+                                        msg.payload.session, 
+                                        result.result, None)
+                     val responseMessage = UserJoinResponseMessage(header, payload)
+                     responseMessage
+	                  })
+	                  .recover { case _ =>
+	                    val result = Result(false, "Failed")
+	                 val header = Header(replyTo, InMsgNameConst.UserJoinResponse, 
+                                   Util.generateTimestamp, apiSourceName, None)
+                     val payload = UserJoinResponsePayload(msg.payload.meeting, 
+                                        msg.payload.session, 
+                                        result, None)
+                     val responseMessage = UserJoinResponseMessage(header, payload)
+                     responseMessage
+	                  }      
+      //response.map(resp => messageMarshallingActor ! resp)
+	  response pipeTo messageMarshallingActor
+    }
+                  
+
+  }
+}
