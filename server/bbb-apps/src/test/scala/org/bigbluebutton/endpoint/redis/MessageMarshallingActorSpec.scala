@@ -30,16 +30,14 @@ class MessageMarshallingActorSpec extends
   }
   
   "The MessageMarshallingActor" should {
-    "Send a UserJoined message when receiving a user join JSON message" in {
-      marshallingActor ! userJoinSuccessResponse
+    "Send a UserJoinResponse message when receiving a user join JSON message" in {
+      marshallingActor ! userJoinResponseMessage
         
       pubsubProbe.expectMsgPF(500 millis) {
-        case ujr:JsObject => {
-          val payload = ujr.fields.get("payload").get.asJsObject 
-          val token = payload.fields.get("token")
-         // should equal ("user1-token-1")
+        case ujr:JsonMessage => {
+          ujr.message should include (juanExtUserId)
         }            
-        case _ => fail("Expected a JsObject message.")
+        case _ => fail("Expected a JsonMessage message.")
       }
     }
        

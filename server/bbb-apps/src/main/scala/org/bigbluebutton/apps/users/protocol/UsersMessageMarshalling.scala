@@ -22,7 +22,7 @@ trait UsersMessageMarshalling {
     import UserMessagesProtocol._
     
     val jsonFormatMsg = UserJoinResponseJsonMessage(header, payload).toJson 
-    val jsonMsg = JsonMessage(header.destination.to, jsonFormatMsg.convertTo[String])
+    val jsonMsg = JsonMessage(header.destination.to, jsonFormatMsg.compactPrint)
     pubsubActor ! jsonMsg     
   }
   

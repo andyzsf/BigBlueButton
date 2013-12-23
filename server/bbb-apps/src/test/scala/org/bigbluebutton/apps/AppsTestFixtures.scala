@@ -30,7 +30,8 @@ trait AppsTestFixtures {
                        metadata)
 
   val juanUserId = "juan-user1"
-  val juanUser = User("juan-ext-user1", "Juan Tamad", 
+  val juanExtUserId = "juan-ext-user1"
+  val juanUser = User(juanExtUserId, "Juan Tamad", 
 	                Role.MODERATOR, 12345, "Welcome Juan",
 	                "http://www.umaliska.don", "http://www.mukhamo.com/unggoy")                        
   val juanWebIdentity = WebIdentity(false)
@@ -44,7 +45,8 @@ trait AppsTestFixtures {
 	                      true, juanWebIdentity, juanVoiceIdentity) 
 
   val asyongUserId = "asyong-user1"
-  val asyongUser = User("asyong-ext-user1", "Asyong Aksaya", 
+  val asyongExtUserId = "asyong-ext-user1"
+  val asyongUser = User(asyongExtUserId, "Asyong Aksaya", 
 	                Role.VIEWER, 12346, "Welcome Asyong",
 	                "http://www.bilmoko.nyan", "http://www.mukhamo.com/pera") 	                      
   val asyongWebIdentity = WebIdentity(true)
