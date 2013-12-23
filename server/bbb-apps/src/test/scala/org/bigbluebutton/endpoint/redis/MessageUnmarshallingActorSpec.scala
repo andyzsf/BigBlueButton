@@ -19,10 +19,9 @@ class MessageUnmarshallingActorSpec extends
           with UsersMessageTestFixtures {
 
   val bbbAppsProbe = TestProbe()
-  val pubsubProbe = TestProbe()
   val unmarshallingActor =  TestActorRef[MessageUnmarshallingActor](
                                    MessageUnmarshallingActor.props(
-                                   bbbAppsProbe.ref, pubsubProbe.ref))
+                                   bbbAppsProbe.ref))
   
   override def afterAll {
     shutdown(system)

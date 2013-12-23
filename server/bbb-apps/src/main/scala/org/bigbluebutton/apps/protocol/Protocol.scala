@@ -13,7 +13,7 @@ case class Header(destination: Destination, name: String,
 	                  	                                            
 case class HeaderMeeting(name: String, id: String, session: Option[String])
 
-case class HeaderAndPayload(header: Header, payload: JsValue)
+case class HeaderAndJsonMessage(header: Header, jsonMessage: String)
 case class ReplyStatus(status: String, message: String, error: Option[Int])
 	
 case class StatusCode(code: Int, message: String)
@@ -33,7 +33,7 @@ object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSup
   implicit val headerDestinationFormat = jsonFormat2(Destination)
   implicit val headerMeetingFormat = jsonFormat3(HeaderMeeting)
   implicit val headerFormat = jsonFormat5(Header)  
-  implicit val headerAndPayloadFormat = jsonFormat2(HeaderAndPayload)
+  implicit val headerAndPayloadFormat = jsonFormat2(HeaderAndJsonMessage)
   implicit val responsePayloadFormat = jsonFormat1(ResponsePayload)
   implicit val jsonResponseFormat = jsonFormat2(JsonResponse)
 }

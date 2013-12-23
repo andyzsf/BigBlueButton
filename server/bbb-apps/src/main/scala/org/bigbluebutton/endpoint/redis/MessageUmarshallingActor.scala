@@ -10,11 +10,11 @@ import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.users.protocol.UsersMessageUnmarshalling
 
 object MessageUnmarshallingActor {
-  def props(bbbAppsActor: ActorRef, pubsubActor: ActorRef): Props =  
-        Props(classOf[MessageUnmarshallingActor], bbbAppsActor, pubsubActor)
+  def props(messageHandlerActor: ActorRef): Props =  
+        Props(classOf[MessageUnmarshallingActor], messageHandlerActor)
 }
 
-class MessageUnmarshallingActor private (val bbbAppsActor: ActorRef, val pubsubActor: ActorRef) extends Actor 
+class MessageUnmarshallingActor private (val messageHandlerActor: ActorRef) extends Actor 
          with ActorLogging with UsersMessageUnmarshalling {
 
   def receive = {
@@ -29,7 +29,7 @@ class MessageUnmarshallingActor private (val bbbAppsActor: ActorRef, val pubsubA
     }
   }
 
-  def forwardMessage(msg: HeaderAndPayload) = {
+  def forwardMessage(msg: HeaderAndJsonMessage) = {
     msg.header.name match {
       case InMsgNameConst.UserJoinRequest             => 
                     handleUserJoin(msg)
@@ -68,8 +68,7 @@ class MessageUnmarshallingActor private (val bbbAppsActor: ActorRef, val pubsubA
     } 
   }
   
-  def toJsObject(msg: String):JsObject = {
-    log.debug("Converting to json : {}", msg)    
+  def toJsObject(msg: String):JsObject = {  
     try {
       JsonParser(msg).asJsObject
     } catch {
@@ -80,23 +79,16 @@ class MessageUnmarshallingActor private (val bbbAppsActor: ActorRef, val pubsubA
     }
   }
 
-  def toHeaderAndPayload(header: Header, payload:JsObject):HeaderAndPayload = {
-    HeaderAndPayload(header, payload)
+  def toHeaderAndJsonMessage(header: Header, message:String):HeaderAndJsonMessage = {
+    HeaderAndJsonMessage(header, message)
   }
     
-  def unmarshall(jsonMsg: String):Try[HeaderAndPayload] = {
+  def unmarshall(jsonMsg: String):Try[HeaderAndJsonMessage] = {
     for {
       jsonObj <- Try(toJsObject(jsonMsg))
       header <- Try(header(jsonObj))
-      payload <- Try(payload(jsonObj))
-      message = toHeaderAndPayload(header, payload)
+      message = toHeaderAndJsonMessage(header, jsonMsg)
     } yield message
   }
   
-  def toSession(header: Header):Option[Session] = {
-    for {
-      sessionId <- header.meeting.session
-      session = Session(sessionId, header.meeting.id, header.meeting.name)
-    } yield session
-  }
 }

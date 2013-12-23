@@ -13,7 +13,8 @@ trait AppsTestFixtures {
   val metadata = Map("customerId" -> "acme-customer",
 	                "customerName" -> "ACME")
 
-  val eng101Session = Session("english_101-1234", "english_101", "English 101")  
+  val meetingIdAndName = MeetingIdAndName("english_101", "English 101")
+  val eng101Session = Session("english_101-1234", meetingIdAndName)  
   
   val eng101Desc = MeetingDescriptor("english_101", "English 101",  
                        true, "Welcome to English 101", 

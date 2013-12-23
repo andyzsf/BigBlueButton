@@ -26,7 +26,7 @@ trait UsersAppHandler {
    */
   def handleRegisterUser(msg: RegisterUserRequest) = {
     val user = usersApp.register(msg.user)
-    val response = Response(true, "User has been registered.")
+    val response = Result(true, "User has been registered.")
     sender ! RegisterUserResponse(msg.session, response,
                                   user.token, msg.user)
   }
@@ -62,8 +62,8 @@ trait UsersAppHandler {
     usersApp.join(token) match {
       case Some(juser) => {
         
-        val response = Response(true, "Successfully joined the user.")
-        val jur = UserJoinResponse(msg.session, response, token, Some(juser))
+        val response = Result(true, "Successfully joined the user.")
+        val jur = UserJoinResponse(msg.session, response, Some(juser))
         sender ! jur
         
         // Broadcast that a user has joined.
@@ -81,8 +81,8 @@ trait UsersAppHandler {
         }
       }
       case None => {
-        val response = Response(false, "Invalid token.")
-        val jur = UserJoinResponse(msg.session, response, token, None)
+        val response = Result(false, "Invalid token.")
+        val jur = UserJoinResponse(msg.session, response, None)
         sender ! jur        
       }
     }

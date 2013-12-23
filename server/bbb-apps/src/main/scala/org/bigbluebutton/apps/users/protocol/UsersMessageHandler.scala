@@ -14,6 +14,7 @@ import org.bigbluebutton.apps.Util
 import org.bigbluebutton.endpoint.redis.InMsgNameConst
 import org.bigbluebutton.apps.protocol.Header
 import org.bigbluebutton.apps.users.messages.Result
+import org.bigbluebutton.apps.users.messages.UserJoinResponse
 
 trait UsersMessageHandler extends SystemConfiguration {
   this : MessageHandlerActor =>
@@ -31,28 +32,20 @@ trait UsersMessageHandler extends SystemConfiguration {
     val replyDestination = msg.header.reply
     
     replyDestination foreach { replyTo =>
+	  val header = Header(replyTo, InMsgNameConst.UserJoinResponse, 
+                          Util.generateTimestamp, apiSourceName, None)
+                                   
 	  val response = (bbbAppsActor ? UserJoinRequest(session, msg.payload.token))
-	               .mapTo[UserJoinResponse]
-	               .map(result => {
-	                 val header = Header(replyTo, InMsgNameConst.UserJoinResponse, 
-                                   Util.generateTimestamp, apiSourceName, None)
-                     val payload = UserJoinResponsePayload(msg.payload.meeting, 
-                                        msg.payload.session, 
-                                        result.result, None)
-                     val responseMessage = UserJoinResponseMessage(header, payload)
-                     responseMessage
-	                  })
-	                  .recover { case _ =>
-	                    val result = Result(false, "Failed")
-	                 val header = Header(replyTo, InMsgNameConst.UserJoinResponse, 
-                                   Util.generateTimestamp, apiSourceName, None)
-                     val payload = UserJoinResponsePayload(msg.payload.meeting, 
-                                        msg.payload.session, 
-                                        result, None)
-                     val responseMessage = UserJoinResponseMessage(header, payload)
-                     responseMessage
-	                  }      
-      //response.map(resp => messageMarshallingActor ! resp)
+	        .mapTo[UserJoinResponse]
+	        .map(response => {
+                UserJoinResponseMessage(header, response)	            
+	        })
+	        .recover { case _ => 
+	            val result = Result(false, "Timedout waiting for response.")
+                val response = UserJoinResponse(session, result, None)
+                UserJoinResponseMessage(header, response)
+	        }      
+      
 	  response pipeTo messageMarshallingActor
     }
                   

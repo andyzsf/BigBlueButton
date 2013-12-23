@@ -32,12 +32,13 @@ class AppsRedisPublisherActor(val system: ActorSystem,
   
   Await.result(futurePong, 5 seconds)
   
-  def publish(msg: String) {
-    redis.publish("time", System.currentTimeMillis())
+  def publish(channel: String, msg: String) {
+    println("PUBLISH TO [" + channel + "]: \n [" + msg + "]")
+ //   redis.publish("time", System.currentTimeMillis())
   }
   
   def receive = {
-    case rxMsg => println("PUBLISH TO REDIS " + rxMsg)
+    case msg: JsonMessage => publish(msg.channel, msg.message)
   }
 
 }

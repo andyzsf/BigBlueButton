@@ -42,8 +42,8 @@ class RunningMeetingActorSpec extends
         
         expectMsgPF() {
           case resp:RegisterUserResponse => {
-            resp.response.success shouldBe true
-            resp.response.message shouldBe "User has been registered."
+            resp.result.success shouldBe true
+            resp.result.message shouldBe "User has been registered."
             runningMeetingActor.underlyingActor.usersApp.isRegistered(resp.token) shouldBe true
             runningMeetingActor.underlyingActor.usersApp.registered.length == 1
           }            

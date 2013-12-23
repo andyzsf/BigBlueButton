@@ -5,6 +5,7 @@ import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps._
 import org.bigbluebutton.apps.models.MeetingDescriptor
 import org.bigbluebutton.apps.users.messages._
+import org.bigbluebutton.apps.models.MeetingIdAndName
 
 object MeetingManager {
   	def props(pubsub: ActorRef): Props =  Props(classOf[MeetingManager], pubsub)
@@ -65,7 +66,7 @@ class MeetingManager private (val pubsub: ActorRef) extends Actor with ActorLogg
   }
   
   def createSession(name: String, externalId: String, sessionId: String):Session = {   
-	 Session(sessionId, externalId, name)    
+	 Session(sessionId, MeetingIdAndName(externalId, name))    
   }
   
   def getMeetingUsingSessionId(sessionId: String):Option[RunningMeeting] = {
