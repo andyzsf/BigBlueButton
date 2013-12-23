@@ -2,6 +2,8 @@ package org.bigbluebutton.apps
 
 import org.bigbluebutton.apps.models._
 import org.bigbluebutton.apps.users.data._
+import org.bigbluebutton.apps.protocol.Destination
+
 
 trait AppsTestFixtures {
   
@@ -12,9 +14,12 @@ trait AppsTestFixtures {
   val phone2 = PhoneNumber("1-888-555-7890", "NA Toll-Free")
   val metadata = Map("customerId" -> "acme-customer",
 	                "customerName" -> "ACME")
-
-  val meetingIdAndName = MeetingIdAndName("english_101", "English 101")
-  val eng101Session = Session("english_101-1234", meetingIdAndName)  
+	                
+  val eng101MeetingId = "english_101"
+  val eng101MeetingName = "English 101"
+  val eng101MeetingIdAndName = MeetingIdAndName(eng101MeetingId, eng101MeetingName)
+  val eng101SessionId = "english_101-1234"
+  val eng101Session = Session(eng101SessionId, eng101MeetingIdAndName)  
   
   val eng101Desc = MeetingDescriptor("english_101", "English 101",  
                        true, "Welcome to English 101", 
@@ -24,7 +29,8 @@ trait AppsTestFixtures {
                        voiceConference, Seq(phone1, phone2), 
                        metadata)
 
-  val userJuan = User("userjuan", "Juan Tamad", 
+  val juanUserId = "juan-user1"
+  val juanUser = User("juan-ext-user1", "Juan Tamad", 
 	                Role.MODERATOR, 12345, "Welcome Juan",
 	                "http://www.umaliska.don", "http://www.mukhamo.com/unggoy")                        
   val juanWebIdentity = WebIdentity(false)
@@ -32,11 +38,13 @@ trait AppsTestFixtures {
   val juanVoiceMeta = Map("userid" -> "1", "conference_num" -> "85115")
   val juanVoiceIdentity = VoiceIdentity(juanCallerId, false, 
                          false, false, juanVoiceMeta)
-                         
-  val joinedUserJuan = JoinedUser("juanid", "juanToken", userJuan,
+  
+  val juanUserToken = "juanToken"
+  val joinedUserJuan = JoinedUser(juanUserId, juanUserToken, juanUser,
 	                      true, juanWebIdentity, juanVoiceIdentity) 
 
-  val userAsyong = User("userasyong", "Asyong Aksaya", 
+  val asyongUserId = "asyong-user1"
+  val asyongUser = User("asyong-ext-user1", "Asyong Aksaya", 
 	                Role.VIEWER, 12346, "Welcome Asyong",
 	                "http://www.bilmoko.nyan", "http://www.mukhamo.com/pera") 	                      
   val asyongWebIdentity = WebIdentity(true)
@@ -45,6 +53,8 @@ trait AppsTestFixtures {
   val asyongVoiceIdentity = VoiceIdentity(asyongCallerId, false, 
                          false, false, asyongVoiceMeta)
                          
-  val joinedUserAsyong = JoinedUser("asyongid", "asyongToken", userAsyong,
+  val joinedUserAsyong = JoinedUser("asyongid", "asyongToken", asyongUser,
 	                      true, asyongWebIdentity, asyongVoiceIdentity)
+
+
 }

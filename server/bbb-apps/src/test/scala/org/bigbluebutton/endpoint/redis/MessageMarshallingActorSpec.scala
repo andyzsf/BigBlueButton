@@ -31,7 +31,7 @@ class MessageMarshallingActorSpec extends
   
   "The MessageMarshallingActor" should {
     "Send a UserJoined message when receiving a user join JSON message" in {
-      marshallingActor ! userJoinedMessage
+      marshallingActor ! userJoinSuccessResponse
         
       pubsubProbe.expectMsgPF(500 millis) {
         case ujr:JsObject => {

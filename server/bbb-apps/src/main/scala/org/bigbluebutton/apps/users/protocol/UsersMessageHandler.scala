@@ -15,6 +15,7 @@ import org.bigbluebutton.endpoint.redis.InMsgNameConst
 import org.bigbluebutton.apps.protocol.Header
 import org.bigbluebutton.apps.users.messages.Result
 import org.bigbluebutton.apps.users.messages.UserJoinResponse
+import org.bigbluebutton.apps.protocol.Destination
 
 trait UsersMessageHandler extends SystemConfiguration {
   this : MessageHandlerActor =>
@@ -32,7 +33,8 @@ trait UsersMessageHandler extends SystemConfiguration {
     val replyDestination = msg.header.reply
     
     replyDestination foreach { replyTo =>
-	  val header = Header(replyTo, InMsgNameConst.UserJoinResponse, 
+	  val header = Header(Destination(replyTo.to, Some(replyTo.correlation_id)), 
+	                      InMsgNameConst.UserJoinResponse, 
                           Util.generateTimestamp, apiSourceName, None)
                                    
 	  val response = (bbbAppsActor ? UserJoinRequest(session, msg.payload.token))
@@ -41,7 +43,7 @@ trait UsersMessageHandler extends SystemConfiguration {
                 UserJoinResponseMessage(header, response)	            
 	        })
 	        .recover { case _ => 
-	            val result = Result(false, "Timedout waiting for response.")
+	            val result = Result(false, "Timeout waiting for response.")
                 val response = UserJoinResponse(session, result, None)
                 UserJoinResponseMessage(header, response)
 	        }      

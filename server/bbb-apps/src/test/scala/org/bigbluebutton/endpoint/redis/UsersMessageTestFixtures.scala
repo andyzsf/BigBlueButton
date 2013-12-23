@@ -4,11 +4,32 @@ import org.bigbluebutton.apps.users.data._
 import org.bigbluebutton.apps.models.Role
 import org.bigbluebutton.apps.users.messages.UserJoined
 import org.bigbluebutton.apps.AppsTestFixtures
+import org.bigbluebutton.apps.users.protocol.UserJoinRequestMessage
+import org.bigbluebutton.apps.users.protocol.UserJoinRequestPayload
+import org.bigbluebutton.apps.protocol.Destination
+import org.bigbluebutton.apps.protocol.Header
+import org.bigbluebutton.apps.users.messages.UserJoinResponse
+import org.bigbluebutton.apps.users.messages.Result
+import org.bigbluebutton.apps.protocol.ReplyDestination
 
 
 trait UsersMessageTestFixtures extends AppsTestFixtures {
-  val userJoinedMessage = UserJoined(eng101Session, joinedUserJuan.token, joinedUserJuan)
-   
+  val userJoinSuccessResponse = UserJoinResponse(eng101Session, Result(true, "Success"),
+                              Some(joinedUserJuan))
+  val userJoinFailResponse = UserJoinResponse(eng101Session, Result(false, "Success"),
+                              None)
+                              
+  val userJoinRequestPayload = UserJoinRequestPayload(eng101MeetingIdAndName, 
+                                  eng101SessionId, juanUserToken)
+                                  
+  val destination = Destination("apps_channel", None)
+  val replyTo = ReplyDestination("apps_channel", "abc-corelid")
+  val userJoinedHeader = Header(destination, InMsgNameConst.UserJoinRequest, 
+                  "2013-12-23T08:50Z", "web-api",
+                  Some(replyTo))
+  val userJoinRequestMessage = UserJoinRequestMessage(userJoinedHeader, 
+                                  userJoinRequestPayload)
+  
   val userJoinMsg = """
 	{
 	    "header": {

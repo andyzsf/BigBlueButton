@@ -6,10 +6,11 @@ import spray.json.DefaultJsonProtocol
 import spray.httpx.SprayJsonSupport
 
 case class Destination(to: String, correlation_id: Option[String])
+case class ReplyDestination(to: String, correlation_id: String)
 
 case class Header(destination: Destination, name: String, 
                   timestamp: String, source: String,
-                  reply: Option[Destination])
+                  reply: Option[ReplyDestination])
 	                  	                                            
 case class HeaderMeeting(name: String, id: String, session: Option[String])
 
@@ -32,6 +33,7 @@ object HeaderAndPayloadJsonSupport extends DefaultJsonProtocol with SprayJsonSup
   implicit val responseFormat = jsonFormat2(Response)
   implicit val headerDestinationFormat = jsonFormat2(Destination)
   implicit val headerMeetingFormat = jsonFormat3(HeaderMeeting)
+  implicit val replyDestinationFormat = jsonFormat2(ReplyDestination)
   implicit val headerFormat = jsonFormat5(Header)  
   implicit val headerAndPayloadFormat = jsonFormat2(HeaderAndJsonMessage)
   implicit val responsePayloadFormat = jsonFormat1(ResponsePayload)

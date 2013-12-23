@@ -36,9 +36,8 @@ class RunningMeetingActorSpec extends
   "An RunningMeetingActor" should {
     "Respond with 'User has been registered.'" in {
       within(500 millis) {
-        val user = userJuan
-        
-        runningMeetingActor ! RegisterUserRequest(session, user)
+
+        runningMeetingActor ! RegisterUserRequest(session, juanUser)
         
         expectMsgPF() {
           case resp:RegisterUserResponse => {
