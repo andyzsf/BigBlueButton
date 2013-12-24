@@ -199,7 +199,6 @@ trait UsersMessageJsonTestFixtures extends AppsTestFixtures {
 	            "message": "Success"
 	        },
 	        "user": {
-                "foo": "bar",
 	            "id": "juan-user1",
 	            "external_id": "juan-ext-user1",
 	            "name": "Juan Tamad",
