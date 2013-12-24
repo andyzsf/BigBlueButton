@@ -70,26 +70,25 @@ trait ExampleMessageFixtures {
 	    }
 	}
   """
-
-  val createMeetingMessage = """
+    
+  val createMeetingRequest = """
 	{
 	    "header": {
-	        "event": {
-	            "name": "create_meeting_request",
-	            "timestamp": 123456,
-	            "reply": {
-	                "to": "replyChannel",
-	                "correlation_id": "abc123"
-	            },
-	            "source": "web-api"
+	        "destination": {
+	            "to": "apps_channel"
 	        },
-	        "meeting": {
-	            "name": "English 101",
-	            "id": "english_101"
-	        }
+	        "reply": {
+	            "to": "apps_channel",
+	            "correlation_id": "abc"
+	        },
+	        "name": "create_meeting_request",
+	        "timestamp": "2013-12-23T08:50Z",
+	        "source": "web-api"
 	    },
 	    "payload": {
 	        "meeting": {
+	            "name": "English 101",
+	            "external_id": "english_101",
 	            "record": true,
 	            "welcome_message": "Welcome to English 101",
 	            "logout_url": "http://www.bigbluebutton.org",
@@ -117,60 +116,6 @@ trait ExampleMessageFixtures {
 	            "metadata": {
 	                "customer_id": "acme-customer",
 	                "customer_name": "ACME"
-	            }
-	        }
-	    }
-	}     
-  """
-    
-  val createMeetingRequest = """
-	{
-	    "header": {
-	        "event": {
-	            "name": "CreateMeetingRequest",
-	            "timestamp": 123456,
-	            "reply": {"to": "replyChannel", "correlationId" : "abc123"},
-	            "source": "web-api"
-	        },
-	        "meeting": {
-	            "name": "English 101",
-	            "id": "english_101"
-	        }
-	    },
-	    "payload": {
-	        "meeting": {
-	            "name": "English 101",
-	            "externalId": "english_101",
-	            "record": true,
-	            "welcomeMessage": "Welcome to English 101",
-	            "logoutUrl": "http://www.bigbluebutton.org",
-	            "avatarUrl": "http://www.gravatar.com/bigbluebutton",
-	            "users": {
-	                "max": 20,
-	                "hardLimit": false
-	            },
-	            "duration": {
-	                "length": 120,
-	                "allowExtend": false,
-	                "warnBefore": 30
-	            },
-	            "voiceConf": {
-	                "pin": 123456,
-	                "number": 85115
-	            },
-	            "phoneNumbers": [
-	                {
-	                    "number": "613-520-7600",
-	                    "description": "Ottawa"
-	                },
-	                {
-	                    "number": "1-888-555-7890",
-	                    "description": "NA Toll-Free"
-	                }
-	            ],
-	            "metadata": {
-	                "customerId": "acme-customer",
-	                "customerName": "ACME"
 	            }
 	        }
 	    }

@@ -50,7 +50,5 @@ trait UsersMessageHandler extends SystemConfiguration {
       
 	  response pipeTo messageMarshallingActor
     }
-                  
-
   }
 }

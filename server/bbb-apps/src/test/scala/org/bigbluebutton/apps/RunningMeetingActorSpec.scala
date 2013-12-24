@@ -1,4 +1,4 @@
-package org.bigbluebutton.apps
+ package org.bigbluebutton.apps
 
 import akka.testkit.DefaultTimeout
 import akka.testkit.ImplicitSender
@@ -20,14 +20,17 @@ import akka.testkit.TestActorRef
 import org.bigbluebutton.apps.users.messages._
 
 class RunningMeetingActorSpec extends 
-  TestKit(ActorSystem("MeetingManagerSpec"))
-  with DefaultTimeout with ImplicitSender with WordSpecLike 
-  with Matchers with BeforeAndAfterAll with MeetingManagerTestFixtures {
+               TestKit(ActorSystem("MeetingManagerSpec"))
+               with DefaultTimeout with ImplicitSender with WordSpecLike 
+               with Matchers with BeforeAndAfterAll 
+               with MeetingManagerTestFixtures {
   
   val pubsub = TestProbe()
   val session = eng101Session
   val config = eng101Desc
-  val runningMeetingActor=  TestActorRef[RunningMeetingActor](RunningMeetingActor.props(pubsub.ref, session, config))
+  val runningMeetingActor = TestActorRef[RunningMeetingActor](
+                                RunningMeetingActor.props(
+                                    pubsub.ref, session, config))
   
   override def afterAll {
     shutdown(system)

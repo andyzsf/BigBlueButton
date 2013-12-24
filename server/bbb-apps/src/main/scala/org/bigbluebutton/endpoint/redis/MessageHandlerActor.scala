@@ -18,5 +18,7 @@ class MessageHandlerActor private (val bbbAppsActor: ActorRef,
   
   def receive = {
     case msg: UserJoinRequestMessage => handleUserJoinRequestMessage(msg)
+    
+    case unknownMsg => log.error("Cannot handle unknown message: [{}]", unknownMsg) 
   }
 }

@@ -2,9 +2,6 @@ package org.bigbluebutton.apps.users.protocol
 
 import akka.actor.ActorRef
 import akka.event.LoggingAdapter
-import org.bigbluebutton.apps.protocol.HeaderAndJsonMessage
-import org.bigbluebutton.endpoint.redis.MessageUnmarshallingActor
-import org.bigbluebutton.apps.models.Session
 import spray.json._
 import spray.json.DefaultJsonProtocol._
 import org.parboiled.errors.ParsingException
@@ -12,6 +9,9 @@ import org.bigbluebutton.apps.protocol.Header
 import org.bigbluebutton.apps.users.messages._
 import org.bigbluebutton.apps.users.data.Presenter
 import org.bigbluebutton.apps.protocol.MessageProcessException
+import org.bigbluebutton.apps.protocol.HeaderAndJsonMessage
+import org.bigbluebutton.endpoint.redis.MessageUnmarshallingActor
+import org.bigbluebutton.apps.models.Session
 
 trait UsersMessageUnmarshalling {
   this : MessageUnmarshallingActor =>
@@ -36,10 +36,7 @@ trait UsersMessageUnmarshalling {
       }
     }
         
-    message(msg) foreach { userJoinMsg =>
-      messageHandlerActor ! userJoinMsg
-    }
-
+    message(msg) foreach { ujm => messageHandlerActor ! ujm }
   }
   
   def handleUserLeave(msg: HeaderAndJsonMessage) = {   
@@ -59,9 +56,7 @@ trait UsersMessageUnmarshalling {
       }
     }   
 
-    message(msg) foreach { userLeaveMsg =>
-      messageHandlerActor ! userLeaveMsg
-    }    
+    message(msg) foreach { ulm => messageHandlerActor ! ulm }    
   }
   
   def handleGetUsers(msg: HeaderAndJsonMessage) = {
@@ -81,9 +76,7 @@ trait UsersMessageUnmarshalling {
       }
     }   
 
-    message(msg) foreach { getUsersMsg =>
-      messageHandlerActor ! getUsersMsg
-    }   
+    message(msg) foreach { gum => messageHandlerActor ! gum }   
   }
   
   def handleAssignPresenter(msg: HeaderAndJsonMessage) = {
@@ -103,8 +96,6 @@ trait UsersMessageUnmarshalling {
       }
     }   
 
-    message(msg) foreach { assignPresenterMsg =>
-      messageHandlerActor ! assignPresenterMsg
-    }     
+    message(msg) foreach { apm => messageHandlerActor ! apm }     
   }
 }
