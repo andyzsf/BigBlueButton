@@ -245,42 +245,42 @@ trait ExampleMessageFixtures {
   """
     
   val wbmsg = """
-{
-    "name": "whiteboard_draw",
-    "timestamp": 123456,
-    "meeting": {
-        "id": "english_101",
-        "name": "English 101",
-        "session": "183f0bf3a0982a127bdb8161e0c44eb696b3e75c-1383210136298"
-    },
-    "payload": {
-        "whiteboard_id": "user1-shape-1",
-        "shape_id": "q779ogycfmxk-13-1383262166102",
-        "shape_type": "text",
-        "data": {
-            "coordinate": {
-                "first_x": 0.016025641025641028,
-                "first_y": 0.982905982905983,
-                "last_x": 1.33,
-                "last_y": 2.45
-            },
-            "font": {
-                "style": "arial",
-                "color": 0,
-                "size": 18
-            },
-            "background": {
-                "visible": true,
-                "color": 16777215,
-                "alpha": 0
-            },
-            "text": "He"
-        },
-        "by": {
-            "id": "user1",
-            "name": "Guga"
-        }
-    }
-}
+	{
+	    "name": "whiteboard_draw",
+	    "timestamp": 123456,
+	    "meeting": {
+	        "id": "english_101",
+	        "name": "English 101",
+	        "session": "183f0bf3a0982a127bdb8161e0c44eb696b3e75c-1383210136298"
+	    },
+	    "payload": {
+	        "whiteboard_id": "user1-shape-1",
+	        "shape_id": "q779ogycfmxk-13-1383262166102",
+	        "shape_type": "text",
+	        "data": {
+	            "coordinate": {
+	                "first_x": 0.016025641025641028,
+	                "first_y": 0.982905982905983,
+	                "last_x": 1.33,
+	                "last_y": 2.45
+	            },
+	            "font": {
+	                "style": "arial",
+	                "color": 0,
+	                "size": 18
+	            },
+	            "background": {
+	                "visible": true,
+	                "color": 16777215,
+	                "alpha": 0
+	            },
+	            "text": "He"
+	        },
+	        "by": {
+	            "id": "user1",
+	            "name": "Guga"
+	        }
+	    }
+	}
   """    
 }

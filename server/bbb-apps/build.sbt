@@ -38,7 +38,7 @@ libraryDependencies ++= {
 	  "io.spray"            %   "spray-routing"   % sprayVersion,
 	  "io.spray"            %   "spray-testkit"   % sprayVersion % "test",
 	  "io.spray"            %%  "spray-json"      % "1.2.5",
-      "com.github.sstone"   %%  "amqp-client"     % "1.3-ML1", 
+    "com.github.sstone"   %%  "amqp-client"     % "1.3-ML1", 
 	  "com.typesafe.akka"   %%  "akka-camel"      % akkaVersion,
 	  "com.typesafe.akka"   %%  "akka-actor"      % akkaVersion,
 	  "com.typesafe.akka"   %%  "akka-testkit"    % akkaVersion % "test",
@@ -50,7 +50,8 @@ libraryDependencies ++= {
 	  "junit" 				      %   "junit"           % "4.11",
 	  "com.etaty.rediscala" %% "rediscala"        % "1.3",
 	  "commons-codec"       %   "commons-codec"   % "1.8",
-	  "joda-time"           %   "joda-time"       % "2.3"
+	  "joda-time"           %   "joda-time"       % "2.3",
+	  "net.virtual-void" %%  "json-lenses" % "0.5.4"
 	)}
 
 

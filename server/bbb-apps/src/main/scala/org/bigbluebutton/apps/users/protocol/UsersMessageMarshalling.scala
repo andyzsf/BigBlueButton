@@ -30,7 +30,7 @@ trait UsersMessageMarshalling {
     if (msg.response.result.success) {
       msg.response.user match {
         case Some(usr) => {
-          val user = UserFormat(usr.user.externalId, usr.user.name, 
+          val user = UserFormat(usr.id, usr.user.externalId, usr.user.name, 
 	            usr.user.role, usr.user.pin, usr.user.welcomeMessage,
 	            usr.user.logoutUrl, usr.user.avatarUrl)
 	      val payload = UserJoinResponseJsonPayload(

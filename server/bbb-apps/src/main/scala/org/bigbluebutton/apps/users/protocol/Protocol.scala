@@ -51,7 +51,7 @@ case class UserJoinResponseJsonPayload(meeting: MeetingIdAndName,
                        session: String, result: Result, 
                        user: Option[UserFormat])
                        
-case class UserFormat(external_id: String, name: String, 
+case class UserFormat(id: String, external_id: String, name: String, 
 	            role: Role.RoleType, pin: Int, welcome_message: String,
 	            logout_url: String, avatar_url: String)
 
@@ -71,7 +71,7 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
   implicit val webIdentityFormat = jsonFormat1(WebIdentity)
   implicit val callerIdFormat = jsonFormat2(CallerId)
   implicit val voiceIdentityFormat = jsonFormat5(VoiceIdentity)	  
-  implicit val userFormat = jsonFormat7(UserFormat)
+  implicit val userFormat = jsonFormat8(UserFormat)
   implicit val userIdAndNameFormat = jsonFormat2(UserIdAndName)
   implicit val meetingIdAndNameFormat = jsonFormat2(MeetingIdAndName)
   implicit val userJoinRequestPayloadFormat = jsonFormat3(UserJoinRequestPayload)

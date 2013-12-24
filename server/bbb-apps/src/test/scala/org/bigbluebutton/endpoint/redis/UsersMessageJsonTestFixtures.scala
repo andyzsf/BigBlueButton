@@ -177,5 +177,39 @@ trait UsersMessageJsonTestFixtures extends AppsTestFixtures {
     
   """
   
-  
+  val user_join_response_Message = """
+	{
+	    "header": {
+	        "destination": {
+	            "to": "apps_channel",
+	            "correlation_id": "abc-corelid"
+	        },
+	        "name": "user_join_response",
+	        "timestamp": "2013-12-23T08:50Z",
+	        "source": "web-api"
+	    },
+	    "payload": {
+	        "meeting": {
+	            "id": "english_101",
+	            "name": "English 101"
+	        },
+	        "session": "english_101-1234",
+	        "result": {
+	            "success": true,
+	            "message": "Success"
+	        },
+	        "user": {
+                "foo": "bar",
+	            "id": "juan-user1",
+	            "external_id": "juan-ext-user1",
+	            "name": "Juan Tamad",
+	            "role": "MODERATOR",
+	            "pin": 12345,
+	            "welcome_message": "Welcome Juan",
+	            "logout_url": "http://www.umaliska.don",
+	            "avatar_url": "http://www.mukhamo.com/unggoy"
+	        }
+	    }
+	}     
+  """
 }
