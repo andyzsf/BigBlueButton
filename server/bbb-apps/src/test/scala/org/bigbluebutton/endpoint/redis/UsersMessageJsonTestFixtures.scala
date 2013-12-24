@@ -26,7 +26,7 @@ trait UsersMessageJsonTestFixtures extends AppsTestFixtures {
 	            "to": "apps_channel",
 	            "correlation_id": "abc"
 	        },
-	        "name": "user_join_request",
+	         "name": "user_join_request",
 	        "timestamp": "2013-12-23T08:50Z",
 	        "source": "web-api"
 	    },
