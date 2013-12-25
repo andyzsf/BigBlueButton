@@ -102,7 +102,7 @@ trait UsersMessageJsonTestFixtures extends AppsTestFixtures {
 	        "destination": {
 	            "to": "apps_channel"
 	        },
-	        "name": "user_leave_request",
+	        "name": "user_leave_event",
 	        "timestamp": "2013-12-23T08:50Z",
 	        "source": "web-api"
 	    },

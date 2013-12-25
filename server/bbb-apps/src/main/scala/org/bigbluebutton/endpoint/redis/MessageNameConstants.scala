@@ -38,5 +38,11 @@ object InMsgNameConst {
   val EjectUserFromVoiceRequest = "eject_user_from_voice_request"
   val EjectVoiceUserRequest    = "eject_voice_user_request"
   val VoiceUserEjectedEvent    = "voice_user_ejected_event"
+  val LockUserRequest          = "lock_user_request"
+  val LockVoiceUserRequest     = "lock_voice_user_request"
+  val VoiceUserLockedEvent     = "voice_user_locked_event"
+  val UserLockedEvent          = "user_locked_event"
+  val LockAllUsersRequest      = "lock_all_users_request"
+  val AllUsersLockedEvent      = "all_users_locked_event"
 }
 
