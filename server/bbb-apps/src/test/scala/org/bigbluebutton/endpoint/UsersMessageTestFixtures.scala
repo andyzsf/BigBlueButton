@@ -8,7 +8,6 @@ import org.bigbluebutton.apps.users.messages.UserJoinResponse
 import org.bigbluebutton.apps.users.messages.Result
 import org.bigbluebutton.apps.protocol.ReplyDestination
 
-
 trait UsersMessageTestFixtures extends AppsTestFixtures {
   val userJoinSuccessResponse = UserJoinResponse(eng101Session, Result(true, "Success"),
                               Some(joinedUserJuan))

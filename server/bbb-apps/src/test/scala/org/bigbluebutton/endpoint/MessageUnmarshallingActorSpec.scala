@@ -3,12 +3,14 @@ import akka.actor.ActorSystem
 import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit, TestProbe, TestActorRef}
 import scala.concurrent.duration._
 import org.scalatest.{WordSpecLike, BeforeAndAfterAll, Matchers}
+import org.bigbluebutton.apps.AppsTestFixtures
 
 class MessageUnmarshallingActorSpec extends 
   TestKit(ActorSystem("MessageUnmarshallingActorSpec"))
           with DefaultTimeout with ImplicitSender with WordSpecLike 
           with Matchers with BeforeAndAfterAll 
-          with UsersMessageTestFixtures with UsersMessageJsonTestFixtures {
+          with UsersMessageTestFixtures 
+          with JsonMessagesFixtures with AppsTestFixtures {
 
   val messageHandlerProbe = TestProbe()
   val unmarshallingActor =  TestActorRef[MessageUnmarshallingActor](
@@ -21,7 +23,7 @@ class MessageUnmarshallingActorSpec extends
   
   "The MessageUnmarshallingActor" should {
     "Send a UserJoinRequest message when receiving a user join JSON message" in {
-      unmarshallingActor ! userJoinMsg
+      unmarshallingActor ! UserJoinRequestJson
         
       messageHandlerProbe.expectMsgPF(500 millis) {
         case ujr:UserJoinRequestMessage => {
@@ -32,29 +34,29 @@ class MessageUnmarshallingActorSpec extends
     }
     
     "Send a UserLeave message when receiving a user leave JSON message" in {
-      unmarshallingActor ! userLeaveMsg
+      unmarshallingActor ! UserLeaveEventJson
         
       messageHandlerProbe.expectMsgPF(500 millis) {
         case ujr:UserLeaveMessage => {
-          ujr.payload.user.id should be ("user1")
+          ujr.payload.user.id should be ("juanid")
         }        
         case _ => fail("Should have returned UserLeaveMessage")
       }
     }
     
     "Send a GetUsers message when receiving a get users JSON message" in {
-      unmarshallingActor ! getUsersMsg
+      unmarshallingActor ! GetUsersRequestJson
         
       messageHandlerProbe.expectMsgPF(500 millis) {
         case ujr:GetUsersRequestMessage => {
-          ujr.payload.requester.id should be ("user1")
+          ujr.payload.requester.id should be ("juanid")
         }       
         case _ => fail("Should have returned GetUsersRequest")
       }
     }
     
     "Send an AssignPresenter message when receiving assign presenter JSON message" in {
-      unmarshallingActor ! assignPresenterMsg
+      unmarshallingActor ! AssignPresenterRequestJson
         
       messageHandlerProbe.expectMsgPF(500 millis) {
         case ujr:AssignPresenterMessage => {

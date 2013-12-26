@@ -2,7 +2,7 @@ package org.bigbluebutton.endpoint
 
 trait JsonMessagesFixtures {
   
-  val CreateMeetingRequest     = 
+  val CreateMeetingRequestJson     = 
 """
 	{
 	    "header": {
@@ -54,7 +54,7 @@ trait JsonMessagesFixtures {
 	}     
 """
     
-  val CreateMeetingResponse    = 
+  val CreateMeetingResponseJson    = 
 """
 {
     "header": {
@@ -164,7 +164,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val EndMeetingRequest        = """
+  val EndMeetingRequestJson        = """
 {
     "header": {
         "destination": {
@@ -190,7 +190,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val EndMeetingResponse       = """
+  val EndMeetingResponseJson       = """
 {
     "header": {
         "destination": {
@@ -215,7 +215,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val EndMeetingWarningEvent          = """
+  val EndMeetingWarningEventJson          = """
 {
     "header": {
         "destination": {
@@ -238,7 +238,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val MeetingEndedEvent        = """
+  val MeetingEndedEventJson        = """
 {
     "header": {
         "destination": {
@@ -258,7 +258,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val RegisterUserRequest      = """
+  val RegisterUserRequestJson      = """
 {
     "header": {
         "destination": {
@@ -291,7 +291,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val RegisterUserResponse     = """
+  val RegisterUserResponseJson     = """
 {
     "header": {
         "destination": {
@@ -326,7 +326,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val UserRegisteredEvent      = """
+  val UserRegisteredEventJson      = """
 {
     "header": {
         "destination": {
@@ -355,7 +355,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val UserJoinRequest          = """
+  val UserJoinRequestJson          = """
 {
     "header": {
         "destination": {
@@ -380,7 +380,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val UserJoinResponse         = """
+  val UserJoinResponseJson         = """
 {
     "header": {
         "destination": {
@@ -415,7 +415,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val UserJoinedEvent          = """
+  val UserJoinedEventJson          = """
 {
     "header": {
         "destination": {
@@ -470,7 +470,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val UserLeaveEvent           = """
+  val UserLeaveEventJson           = """
 {
     "header": {
         "destination": {
@@ -494,7 +494,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val UserLeftEvent            = """
+  val UserLeftEventJson            = """
 {
     "header": {
         "destination": {
@@ -518,7 +518,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val GetUsersRequest          = """
+  val GetUsersRequestJson          = """
 {
     "header": {
         "destination": {
@@ -546,7 +546,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val GetUsersResponse         = """
+  val GetUsersResponseJson         = """
 {
     "header": {
         "destination": {
@@ -603,7 +603,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val RaiseUserHandRequest     = """
+  val RaiseUserHandRequestJson     = """
 {
     "header": {
         "destination": {
@@ -628,7 +628,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val UserRaisedHandEvent      = """
+  val UserRaisedHandEventJson      = """
 {
     "header": {
         "destination": {
@@ -653,7 +653,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val AssignPresenterRequest   = """
+  val AssignPresenterRequestJson   = """
 {
     "header": {
         "destination": {
@@ -681,7 +681,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val PresenterAssignedEvent   = """
+  val PresenterAssignedEventJson   = """
 {
     "header": {
         "destination": {
@@ -709,7 +709,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val MuteUserRequest          = """
+  val MuteUserRequestJson          = """
 {
     "header": {
         "destination": {
@@ -738,7 +738,7 @@ trait JsonMessagesFixtures {
 }    
     """
     
-  val MuteUserRequestEvent     = """
+  val MuteUserRequestEventJson     = """
 {
     "header": {
         "destination": {
@@ -767,7 +767,7 @@ trait JsonMessagesFixtures {
 }    
     """
 
-  val MuteVoiceUserRequest   = """
+  val MuteVoiceUserRequestJson   = """
 {
     "header": {
         "destination": {
@@ -798,7 +798,7 @@ trait JsonMessagesFixtures {
 }    
     """
 
-    val VoiceUserMutedEvent   = """
+    val VoiceUserMutedEventJson   = """
 {
     "header": {
         "destination": {
@@ -829,7 +829,7 @@ trait JsonMessagesFixtures {
 }   
     """
         
-  val UserMutedEvent           = """
+  val UserMutedEventJson           = """
 {
     "header": {
         "destination": {
