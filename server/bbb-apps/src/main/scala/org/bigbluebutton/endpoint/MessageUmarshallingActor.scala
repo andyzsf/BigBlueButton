@@ -7,7 +7,6 @@ import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
 import org.bigbluebutton.apps.protocol._
 import scala.util.{Try, Success, Failure}
 import org.bigbluebutton.apps.users.protocol.UsersMessageUnmarshalling
-import org.bigbluebutton.endpoint.InMsgNameConst
 
 object MessageUnmarshallingActor {
   def props(messageHandlerActor: ActorRef): Props =  

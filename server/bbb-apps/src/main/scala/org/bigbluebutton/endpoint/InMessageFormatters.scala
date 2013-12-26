@@ -6,6 +6,8 @@ import org.bigbluebutton.apps.users.data.UserIdAndName
 
 sealed abstract class InMsgFormatter
 
+case class CreateMeetingRequestMessage(header: Header,
+                  payload: CreateMeetingRequestPayload) extends InMsgFormatter
 
 case class RegisterUserRequestMessage(header: Header, 
                   payload: UserFormat) extends InMsgFormatter

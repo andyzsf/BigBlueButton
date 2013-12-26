@@ -10,13 +10,23 @@ import org.bigbluebutton.apps.users.messages.Result
 import org.bigbluebutton.apps.users.messages.UserJoinResponse
 
 case class ResultFormat(success: Boolean, message: String)
+case class UserFormat(id: String, external_id: String, name: String, 
+	            role: Role.RoleType, pin: Int, welcome_message: String,
+	            logout_url: String, avatar_url: String)	        
+case class Duration(length: Int, allow_extend: Boolean, max: Int)
+case class VoiceConference(pin: Int, number: Int)
+case class PhoneNumber(number: String, description: String)
+case class MeetingDescriptor(name: String, external_id: String, record: Boolean,
+                welcome_message: String, logout_url: String,
+                avatar_url: String, max_users: Int, 
+                duration: Duration, voice_conference: VoiceConference,
+                phone_numbers: Seq[PhoneNumber],
+                metadata: Map[String, String])
+case class CreateMeetingRequestPayload(meeting_descriptor: MeetingDescriptor)
 
 case class UserJoinResponseMessage(header: Header, response: UserJoinResponse)
 case class JoinUserResponse(response: Response, token: String, joinedUser: Option[JoinedUser])
-case class JoinUserReply(header: Header, payload: JoinUserResponse)                    
-case class UserFormat(id: String, external_id: String, name: String, 
-	            role: Role.RoleType, pin: Int, welcome_message: String,
-	            logout_url: String, avatar_url: String)
+case class JoinUserReply(header: Header, payload: JoinUserResponse)  
 	            
 case class UserJoinRequestPayload(meeting: MeetingIdAndName, 
                                   session: String, token: String)

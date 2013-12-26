@@ -12,7 +12,7 @@ import org.bigbluebutton.apps.AppsTestFixtures
 class UsersMessageJsonConversionSpec extends UnitSpec 
        with JsonMessagesFixtures with AppsTestFixtures {
    
-  "A user_join_response Message" should "have a user field" in {
+  "A user_join_response Message" should "be un/marshalled" in {
     val ujrm = JsonParser(UserJoinResponseJson)
     val message = ujrm.convertTo[UserJoinResponseFormat]
     
@@ -28,5 +28,17 @@ class UsersMessageJsonConversionSpec extends UnitSpec
     userId should be (juanUserId)
   }
 
+  "A CreateMeetingRequestJson Message" should "be un/marshalled" in {
+    val ujrm = JsonParser(CreateMeetingRequestJson)
+    val message = ujrm.convertTo[CreateMeetingRequestMessage]
+    
+    message.payload.meeting_descriptor.external_id should be (eng101MeetingId)
+
+    import spray.json.DefaultJsonProtocol._
+    val jsonMessage = message.toJson
+    val meetingIdLens = ("payload" /"meeting_descriptor" / "external_id")
+    val meetingId = jsonMessage.extract[String](meetingIdLens)
+    meetingId should be (eng101MeetingId)
+  }
   
 }
