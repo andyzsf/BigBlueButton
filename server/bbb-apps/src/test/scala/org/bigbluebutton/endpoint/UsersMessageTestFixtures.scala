@@ -1,21 +1,12 @@
-package org.bigbluebutton.endpoint.redis
+package org.bigbluebutton.endpoint
 
 import org.bigbluebutton.apps.users.data._
-import org.bigbluebutton.apps.models.Role
-import org.bigbluebutton.apps.users.messages.UserJoined
 import org.bigbluebutton.apps.AppsTestFixtures
-import org.bigbluebutton.endpoint.UserJoinRequestMessage
-import org.bigbluebutton.endpoint.UserJoinRequestPayload
 import org.bigbluebutton.apps.protocol.Destination
 import org.bigbluebutton.apps.protocol.Header
 import org.bigbluebutton.apps.users.messages.UserJoinResponse
 import org.bigbluebutton.apps.users.messages.Result
 import org.bigbluebutton.apps.protocol.ReplyDestination
-import org.bigbluebutton.endpoint.UserJoinResponseMessage
-import org.bigbluebutton.endpoint.UserFormat
-import org.bigbluebutton.endpoint.UserJoinResponseFormatPayload
-import org.bigbluebutton.endpoint.InMsgNameConst
-import org.bigbluebutton.endpoint.ResultFormat
 
 
 trait UsersMessageTestFixtures extends AppsTestFixtures {

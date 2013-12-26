@@ -1,8 +1,7 @@
-package org.bigbluebutton.endpoint.redis
+package org.bigbluebutton.endpoint
 
 import org.bigbluebutton.apps.UnitSpec
 import spray.json.JsonParser
-import org.bigbluebutton.endpoint.UserJoinResponseFormat
 import spray.json._
 import spray.json.DefaultJsonProtocol._
 import spray.json.lenses.JsonLenses._

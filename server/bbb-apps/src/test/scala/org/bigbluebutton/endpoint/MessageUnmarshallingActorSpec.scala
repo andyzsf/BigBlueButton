@@ -1,17 +1,8 @@
-package org.bigbluebutton.endpoint.redis
-
-import akka.actor.{ActorSystem, Props}
+package org.bigbluebutton.endpoint
+import akka.actor.ActorSystem
 import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit, TestProbe, TestActorRef}
 import scala.concurrent.duration._
-import scala.collection.immutable
-import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.{WordSpecLike, BeforeAndAfterAll, Matchers}
-import collection.mutable.Stack
-import org.bigbluebutton.endpoint.UserJoinRequestMessage
-import org.bigbluebutton.endpoint.UserLeaveMessage
-import org.bigbluebutton.endpoint.GetUsersRequestMessage
-import org.bigbluebutton.endpoint.AssignPresenterMessage
-import org.bigbluebutton.endpoint.MessageUnmarshallingActor
 
 class MessageUnmarshallingActorSpec extends 
   TestKit(ActorSystem("MessageUnmarshallingActorSpec"))

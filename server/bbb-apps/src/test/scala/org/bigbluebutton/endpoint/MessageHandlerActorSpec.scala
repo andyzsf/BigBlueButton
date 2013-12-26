@@ -1,15 +1,9 @@
-package org.bigbluebutton.endpoint.redis
-
-import akka.actor.{ActorSystem, Props}
+package org.bigbluebutton.endpoint
+import akka.actor.ActorSystem
 import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit, TestProbe, TestActorRef}
 import scala.concurrent.duration._
-import scala.collection.immutable
-import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.{WordSpecLike, BeforeAndAfterAll, Matchers}
-import collection.mutable.Stack
 import org.bigbluebutton.apps.users.messages.UserJoinRequest
-import org.bigbluebutton.endpoint.UserJoinResponseMessage
-import org.bigbluebutton.endpoint.MessageHandlerActor
 
 class MessageHandlerActorSpec extends 
   TestKit(ActorSystem("MessageHandlerActorSpec")) with DefaultTimeout with ImplicitSender with WordSpecLike with Matchers with BeforeAndAfterAll with UsersMessageTestFixtures {

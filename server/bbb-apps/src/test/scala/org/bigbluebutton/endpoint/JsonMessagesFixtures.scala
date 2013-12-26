@@ -1,4 +1,4 @@
-package org.bigbluebutton.endpoint.redis
+package org.bigbluebutton.endpoint
 
 trait JsonMessagesFixtures {
   
