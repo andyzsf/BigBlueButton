@@ -13,8 +13,9 @@ import org.bigbluebutton.apps.users.messages.Result
 import org.bigbluebutton.apps.protocol.ReplyDestination
 import org.bigbluebutton.endpoint.UserJoinResponseMessage
 import org.bigbluebutton.endpoint.UserFormat
-import org.bigbluebutton.endpoint.UserJoinResponseJsonPayload
+import org.bigbluebutton.endpoint.UserJoinResponseFormatPayload
 import org.bigbluebutton.endpoint.InMsgNameConst
+import org.bigbluebutton.endpoint.ResultFormat
 
 
 trait UsersMessageTestFixtures extends AppsTestFixtures {
@@ -40,9 +41,9 @@ trait UsersMessageTestFixtures extends AppsTestFixtures {
   val userFormat = UserFormat(juanUserId, juanUser.externalId, juanUser.name, 
 	            juanUser.role, juanUser.pin, juanUser.welcomeMessage,
 	            juanUser.logoutUrl, juanUser.avatarUrl)
-  val userJoinResponseJsonPayload = UserJoinResponseJsonPayload(
+  val userJoinResponseJsonPayload = UserJoinResponseFormatPayload(
 	                      eng101MeetingIdAndName, 
 	                      eng101SessionId,
-	                      Result(true, "Success"), Some(userFormat))
+	                      ResultFormat(true, "Success"), Some(userFormat))
 	                      
 }

@@ -2,19 +2,18 @@ package org.bigbluebutton.endpoint.redis
 
 import org.bigbluebutton.apps.UnitSpec
 import spray.json.JsonParser
-import org.bigbluebutton.endpoint.UserJoinResponseJsonMessage
+import org.bigbluebutton.endpoint.UserJoinResponseFormat
 import spray.json._
 import spray.json.DefaultJsonProtocol._
-import org.bigbluebutton.apps.users.protocol.UserMessagesProtocol._
-import org.bigbluebutton.endpoint.UserJoinResponseJsonMessage
 import spray.json.lenses.JsonLenses._
 import spray.json.lenses._
+import org.bigbluebutton.endpoint.UserMessagesProtocol._
 
 class UsersMessageJsonConversionSpec extends UnitSpec with UsersMessageJsonTestFixtures {
    
   "A user_join_response Message" should "have a user field" in {
     val ujrm = JsonParser(user_join_response_Message)
-    val message = ujrm.convertTo[UserJoinResponseJsonMessage]
+    val message = ujrm.convertTo[UserJoinResponseFormat]
     
     message.payload.user match {
       case Some(u) => u.id should be (juanUserId)

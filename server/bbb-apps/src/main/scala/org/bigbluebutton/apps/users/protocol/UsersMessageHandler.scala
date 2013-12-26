@@ -3,8 +3,7 @@ package org.bigbluebutton.apps.users.protocol
 import akka.actor.{Actor, Props, ActorRef, ActorLogging}
 import akka.event.LoggingAdapter
 import akka.pattern.{ask, pipe}
-import akka.util.Timeout
-import scala.concurrent.duration._
+
 import org.bigbluebutton.endpoint.MessageHandlerActor
 import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.users.messages.UserJoinRequest
@@ -27,9 +26,6 @@ trait UsersMessageHandler extends SystemConfiguration {
   val messageMarshallingActor: ActorRef
   val log: LoggingAdapter
   
-  /** Required for actor request-response (ask pattern) **/
-  implicit def executionContext = actorRefFactory.dispatcher
-  implicit val timeout = Timeout(5 seconds)
   
   def handleUserJoinRequestMessage(msg: UserJoinRequestMessage) = {
     val session = Session(msg.payload.session, msg.payload.meeting)
@@ -39,8 +35,9 @@ trait UsersMessageHandler extends SystemConfiguration {
 	  val header = Header(Destination(replyTo.to, Some(replyTo.correlation_id)), 
 	                      InMsgNameConst.UserJoinResponse, 
                           Util.generateTimestamp, apiSourceName, None)
-                                   
-	  val response = (bbbAppsActor ? UserJoinRequest(session, msg.payload.token))
+      
+      val userJoinRequest = UserJoinRequest(session, msg.payload.token)
+	  val response = (bbbAppsActor ? userJoinRequest)
 	        .mapTo[UserJoinResponse]
 	        .map(response => {
                 UserJoinResponseMessage(header, response)	            
