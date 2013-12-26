@@ -22,32 +22,59 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
 	}
   }
 
-  implicit val webIdentityFormat = jsonFormat1(WebIdentity)
-  implicit val callerIdFormat = jsonFormat2(CallerId)
-  implicit val voiceIdentityFormat = jsonFormat5(VoiceIdentity)	  
-  implicit val userFormat = jsonFormat8(UserFormat)
-  implicit val userIdAndNameFormat = jsonFormat2(UserIdAndName)
-  implicit val meetingIdAndNameFormat = jsonFormat2(MeetingIdAndName)
-  implicit val userJoinRequestPayloadFormat = jsonFormat3(UserJoinRequestPayload)
-  implicit val userJoinRequestMessageFormat = jsonFormat2(UserJoinRequestMessage)
-  implicit val resultFormat = jsonFormat2(ResultFormat)
-  implicit val userJoinResponsePayloadFormat = jsonFormat4(UserJoinResponseFormatPayload)
-  implicit val userJoinResponseJsonMessageFormat = jsonFormat2(UserJoinResponseFormat)  
-  implicit val userLeavePayloadFormat = jsonFormat3(UserLeavePayload)
-  implicit val userLeaveMessageFormat = jsonFormat2(UserLeaveMessage)
-  implicit val getUsersRequestPayloadFormat = jsonFormat3(GetUsersRequestPayload)
-  implicit val getUsersRequestMessageFormat = jsonFormat2(GetUsersRequestMessage) 
-  implicit val assignPresenterPayloadFormat = jsonFormat4(AssignPresenterPayload)
-  implicit val assignPresenterMessageFormat = jsonFormat2(AssignPresenterMessage)
-  
-  implicit val durationFormat = jsonFormat3(Duration)
-  implicit val voiceConferenceFormat = jsonFormat2(VoiceConference)
-  implicit val phoneNumberFormat = jsonFormat2(PhoneNumber)
-  implicit val meetingDescriptorFormat = jsonFormat11(MeetingDescriptor)
-  implicit val createMeetingRequestPayloadFormat = jsonFormat1(CreateMeetingRequestPayload)
-  implicit val createMeetingRequestMessageFormat = jsonFormat2(CreateMeetingRequestMessage)   
-  implicit val createMeetingResponsePayloadFormat = jsonFormat3(CreateMeetingResponsePayload)
-  implicit val createMeetingResponseFormat = jsonFormat2(CreateMeetingResponseFormat)
-  
+  implicit val webIdentityFormat = 
+                  jsonFormat1(WebIdentity)
+  implicit val callerIdFormat = 
+                  jsonFormat2(CallerId)
+  implicit val voiceIdentityFormat = 
+                  jsonFormat5(VoiceIdentity)	  
+  implicit val userFormat = 
+                  jsonFormat8(UserFormat)
+  implicit val userIdAndNameFormat = 
+                  jsonFormat2(UserIdAndName)
+  implicit val meetingIdAndNameFormat = 
+                  jsonFormat2(MeetingIdAndName)
+  implicit val userJoinRequestPayloadFormat = 
+                  jsonFormat3(UserJoinRequestPayload)
+  implicit val userJoinRequestMessageFormat = 
+                  jsonFormat2(UserJoinRequestMessage)
+  implicit val resultFormat = 
+                  jsonFormat2(ResultFormat)
+  implicit val userJoinResponsePayloadFormat = 
+                  jsonFormat4(UserJoinResponseFormatPayload)
+  implicit val userJoinResponseJsonMessageFormat = 
+                  jsonFormat2(UserJoinResponseFormat)  
+  implicit val userLeavePayloadFormat = 
+                  jsonFormat3(UserLeavePayload)
+  implicit val userLeaveMessageFormat = 
+                  jsonFormat2(UserLeaveMessage)
+  implicit val getUsersRequestPayloadFormat = 
+                  jsonFormat3(GetUsersRequestPayload)
+  implicit val getUsersRequestMessageFormat = 
+                  jsonFormat2(GetUsersRequestMessage) 
+  implicit val assignPresenterPayloadFormat = 
+                  jsonFormat4(AssignPresenterPayload)
+  implicit val assignPresenterMessageFormat = 
+                  jsonFormat2(AssignPresenterMessage)
+  implicit val durationFormat = 
+                  jsonFormat3(Duration)
+  implicit val voiceConferenceFormat = 
+                  jsonFormat2(VoiceConference)
+  implicit val phoneNumberFormat = 
+                  jsonFormat2(PhoneNumber)
+  implicit val meetingDescriptorFormat = 
+                  jsonFormat11(MeetingDescriptor)
+  implicit val createMeetingRequestPayloadFormat = 
+                  jsonFormat1(CreateMeetingRequestPayload)
+  implicit val createMeetingRequestMessageFormat = 
+                  jsonFormat2(CreateMeetingRequestMessage)   
+  implicit val createMeetingResponsePayloadFormat = 
+                  jsonFormat3(CreateMeetingResponsePayload)
+  implicit val createMeetingResponseFormat = 
+                  jsonFormat2(CreateMeetingResponseFormat)
+  implicit val meetingCreatedEventPayloadFormat = 
+                  jsonFormat3(MeetingCreatedEventPayloadFormat)
+  implicit val meetingCreatedEventFormat = 
+                  jsonFormat2(MeetingCreatedEventFormat)
 }
 

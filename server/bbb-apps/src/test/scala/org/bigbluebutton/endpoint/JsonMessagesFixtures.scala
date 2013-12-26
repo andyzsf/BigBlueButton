@@ -112,7 +112,7 @@ trait JsonMessagesFixtures {
 }
 """
     
-  val MeetingCreatedEvent      = """
+  val MeetingCreatedEventJson      = """
 {
     "header": {
         "destination": {
@@ -127,7 +127,7 @@ trait JsonMessagesFixtures {
             "name": "English 101",
             "id": "english_101"
         },
-        "session": "english_101-12345",
+        "session": "english_101-1234",
         "meeting_descriptor": {
             "name": "English 101",
             "external_id": "english_101",
