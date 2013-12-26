@@ -1,4 +1,4 @@
-package org.bigbluebutton.endpoint.spray
+package org.bigbluebutton.endpoint.rest
 
 import org.bigbluebutton.apps.CreateMeetingResponse
 import org.bigbluebutton.meeting._

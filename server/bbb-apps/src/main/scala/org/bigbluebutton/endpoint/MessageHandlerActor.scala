@@ -1,7 +1,7 @@
-package org.bigbluebutton.endpoint.redis
+package org.bigbluebutton.endpoint
 
 import akka.actor.{Actor, ActorRef, ActorLogging, Props}
-import org.bigbluebutton.apps.users.protocol.UserJoinRequestMessage
+import org.bigbluebutton.endpoint.UserJoinRequestMessage
 import org.bigbluebutton.apps.users.protocol.UsersMessageHandler
 
 object MessageHandlerActor {

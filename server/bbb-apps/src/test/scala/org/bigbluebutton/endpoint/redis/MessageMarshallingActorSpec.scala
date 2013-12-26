@@ -13,6 +13,7 @@ import org.bigbluebutton.apps.users.messages.GetUsersRequest
 import org.bigbluebutton.apps.users.messages.AssignPresenter
 import spray.json._
 import spray.json.DefaultJsonProtocol._
+import org.bigbluebutton.endpoint.MessageMarshallingActor
 
 class MessageMarshallingActorSpec extends 
   TestKit(ActorSystem("MessageMarshallingActorSpec"))

@@ -5,17 +5,20 @@ import akka.event.LoggingAdapter
 import akka.pattern.{ask, pipe}
 import akka.util.Timeout
 import scala.concurrent.duration._
-import org.bigbluebutton.endpoint.redis.MessageHandlerActor
+import org.bigbluebutton.endpoint.MessageHandlerActor
 import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.users.messages.UserJoinRequest
 import org.bigbluebutton.apps.users.messages.UserJoinResponse
 import org.bigbluebutton.SystemConfiguration
 import org.bigbluebutton.apps.Util
-import org.bigbluebutton.endpoint.redis.InMsgNameConst
+import org.bigbluebutton.endpoint.InMsgNameConst
 import org.bigbluebutton.apps.protocol.Header
 import org.bigbluebutton.apps.users.messages.Result
 import org.bigbluebutton.apps.users.messages.UserJoinResponse
 import org.bigbluebutton.apps.protocol.Destination
+import org.bigbluebutton.endpoint.InMsgNameConst
+import org.bigbluebutton.endpoint.UserJoinResponseMessage
+import org.bigbluebutton.endpoint.UserJoinRequestMessage
 
 trait UsersMessageHandler extends SystemConfiguration {
   this : MessageHandlerActor =>

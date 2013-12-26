@@ -1,13 +1,13 @@
-package org.bigbluebutton.endpoint.redis
+package org.bigbluebutton.endpoint
 
 import akka.actor.{Actor, ActorRef, ActorLogging, Props}
-import spray.json.{JsObject, JsValue, DefaultJsonProtocol, JsonParser, DeserializationException}
+import spray.json.{JsObject, JsonParser, DeserializationException}
 import org.parboiled.errors.ParsingException
 import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
 import org.bigbluebutton.apps.protocol._
 import scala.util.{Try, Success, Failure}
-import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.users.protocol.UsersMessageUnmarshalling
+import org.bigbluebutton.endpoint.InMsgNameConst
 
 object MessageUnmarshallingActor {
   def props(messageHandlerActor: ActorRef): Props =  

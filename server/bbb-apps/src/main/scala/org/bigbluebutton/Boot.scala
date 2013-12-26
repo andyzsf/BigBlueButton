@@ -10,6 +10,7 @@ import scala.concurrent.{Future, Await}
 import scala.concurrent.ExecutionContext.Implicits.global
 import org.bigbluebutton.apps.MeetingManager
 import org.bigbluebutton.endpoint.redis.AppsRedisPublisherActor
+import org.bigbluebutton.endpoint.rest.RestEndpointServiceActor
 
 object Boot extends App with SystemConfiguration {
 

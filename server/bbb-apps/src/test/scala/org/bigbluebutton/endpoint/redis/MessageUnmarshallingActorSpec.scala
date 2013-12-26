@@ -7,10 +7,11 @@ import scala.collection.immutable
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.{WordSpecLike, BeforeAndAfterAll, Matchers}
 import collection.mutable.Stack
-import org.bigbluebutton.apps.users.protocol.UserJoinRequestMessage
-import org.bigbluebutton.apps.users.protocol.UserLeaveMessage
-import org.bigbluebutton.apps.users.protocol.GetUsersRequestMessage
-import org.bigbluebutton.apps.users.protocol.AssignPresenterMessage
+import org.bigbluebutton.endpoint.UserJoinRequestMessage
+import org.bigbluebutton.endpoint.UserLeaveMessage
+import org.bigbluebutton.endpoint.GetUsersRequestMessage
+import org.bigbluebutton.endpoint.AssignPresenterMessage
+import org.bigbluebutton.endpoint.MessageUnmarshallingActor
 
 class MessageUnmarshallingActorSpec extends 
   TestKit(ActorSystem("MessageUnmarshallingActorSpec"))

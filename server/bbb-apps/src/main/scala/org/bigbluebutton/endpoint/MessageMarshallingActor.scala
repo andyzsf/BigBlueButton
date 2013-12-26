@@ -1,9 +1,8 @@
-package org.bigbluebutton.endpoint.redis
+package org.bigbluebutton.endpoint
 
 import akka.actor.{Actor, ActorRef, ActorLogging, Props}
-import spray.json.{JsObject, JsValue, DefaultJsonProtocol, JsonParser, DeserializationException}
 import org.bigbluebutton.apps.users.protocol.UsersMessageMarshalling
-import org.bigbluebutton.apps.users.protocol.UserJoinResponseMessage
+import org.bigbluebutton.endpoint.UserJoinResponseMessage
 
 object MessageMarshallingActor {
   def props(pubsubActor: ActorRef): Props =  

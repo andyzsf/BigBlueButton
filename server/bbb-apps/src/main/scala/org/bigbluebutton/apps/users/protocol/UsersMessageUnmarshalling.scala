@@ -10,8 +10,13 @@ import org.bigbluebutton.apps.users.messages._
 import org.bigbluebutton.apps.users.data.Presenter
 import org.bigbluebutton.apps.protocol.MessageProcessException
 import org.bigbluebutton.apps.protocol.HeaderAndJsonMessage
-import org.bigbluebutton.endpoint.redis.MessageUnmarshallingActor
+import org.bigbluebutton.endpoint.MessageUnmarshallingActor
 import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.endpoint.UserMessagesProtocol
+import org.bigbluebutton.endpoint.UserLeaveMessage
+import org.bigbluebutton.endpoint.UserJoinRequestMessage
+import org.bigbluebutton.endpoint.GetUsersRequestMessage
+import org.bigbluebutton.endpoint.AssignPresenterMessage
 
 trait UsersMessageUnmarshalling {
   this : MessageUnmarshallingActor =>

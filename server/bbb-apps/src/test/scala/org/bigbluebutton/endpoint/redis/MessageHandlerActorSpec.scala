@@ -8,7 +8,8 @@ import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.{WordSpecLike, BeforeAndAfterAll, Matchers}
 import collection.mutable.Stack
 import org.bigbluebutton.apps.users.messages.UserJoinRequest
-import org.bigbluebutton.apps.users.protocol.UserJoinResponseMessage
+import org.bigbluebutton.endpoint.UserJoinResponseMessage
+import org.bigbluebutton.endpoint.MessageHandlerActor
 
 class MessageHandlerActorSpec extends 
   TestKit(ActorSystem("MessageHandlerActorSpec")) with DefaultTimeout with ImplicitSender with WordSpecLike with Matchers with BeforeAndAfterAll with UsersMessageTestFixtures {

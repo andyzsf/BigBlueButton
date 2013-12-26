@@ -1,4 +1,4 @@
-package org.bigbluebutton
+package org.bigbluebutton.endpoint.rest
 
 import akka.actor.{Actor, Props, ActorRef, ActorLogging}
 import akka.event.LoggingAdapter
@@ -16,12 +16,12 @@ import spray.routing.Directive.pimpApply
 import shapeless._
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.protocol._
-import org.bigbluebutton.endpoint.spray.MeetingMessageHandler
 import org.bigbluebutton.apps.models._
 import org.bigbluebutton.meeting.CreateMeetingRequestMessage
 import org.bigbluebutton.apps._
 
-class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor with RestEndpointService with ActorLogging {
+class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor 
+         with RestEndpointService with ActorLogging {
 
   def actorRefFactory = context
 

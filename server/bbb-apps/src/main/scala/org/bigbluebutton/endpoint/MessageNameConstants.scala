@@ -1,4 +1,4 @@
-package org.bigbluebutton.endpoint.redis
+package org.bigbluebutton.endpoint
 
 object InMsgNameConst {
   val CreateMeetingRequest     = "create_meeting_request"
