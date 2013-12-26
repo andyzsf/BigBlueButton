@@ -9,6 +9,9 @@ sealed abstract class InMsgFormatter
 case class CreateMeetingRequestMessage(header: Header,
                   payload: CreateMeetingRequestPayload) extends InMsgFormatter
 
+case class CreateMeetingResponseFormat(header: Header,
+                  payload: CreateMeetingResponsePayload) extends InMsgFormatter
+                  
 case class RegisterUserRequestMessage(header: Header, 
                   payload: UserFormat) extends InMsgFormatter
 

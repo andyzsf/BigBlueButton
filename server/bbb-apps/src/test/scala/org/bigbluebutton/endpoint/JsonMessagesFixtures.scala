@@ -71,7 +71,7 @@ trait JsonMessagesFixtures {
             "name": "English 101",
             "id": "english_101"
         },
-        "session": "english_101-12345",
+        "session": "english_101-1234",
         "result": {
             "success": true,
             "message": "Success"

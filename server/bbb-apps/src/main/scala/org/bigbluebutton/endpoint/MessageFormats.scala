@@ -24,6 +24,9 @@ case class MeetingDescriptor(name: String, external_id: String, record: Boolean,
                 metadata: Map[String, String])
 case class CreateMeetingRequestPayload(meeting_descriptor: MeetingDescriptor)
 
+case class CreateMeetingResponsePayload(meeting: MeetingIdAndName,
+                session: String, meeting_descriptor: MeetingDescriptor)
+
 case class UserJoinResponseMessage(header: Header, response: UserJoinResponse)
 case class JoinUserResponse(response: Response, token: String, joinedUser: Option[JoinedUser])
 case class JoinUserReply(header: Header, payload: JoinUserResponse)  

@@ -40,5 +40,18 @@ class UsersMessageJsonConversionSpec extends UnitSpec
     val meetingId = jsonMessage.extract[String](meetingIdLens)
     meetingId should be (eng101MeetingId)
   }
-  
+
+  "A CreateMeetingResponseJson Message" should "be un/marshalled" in {
+    val ujrm = JsonParser(CreateMeetingResponseJson)
+    val message = ujrm.convertTo[CreateMeetingResponseFormat]
+    
+    message.payload.session should be (eng101SessionId)
+
+    import spray.json.DefaultJsonProtocol._
+    val jsonMessage = message.toJson
+    val sessionIdLens = ("payload" /"session")
+    val sessionId = jsonMessage.extract[String](sessionIdLens)
+    sessionId should be (eng101SessionId)
+  }
+    
 }
