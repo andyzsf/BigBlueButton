@@ -29,6 +29,14 @@ case class CreateMeetingResponsePayload(meeting: MeetingIdAndName,
 
 case class MeetingCreatedEventPayloadFormat(meeting: MeetingIdAndName,
                 session: String, meeting_descriptor: MeetingDescriptor)
+
+case class UserDescriptorFormat(external_id: String, name: String, 
+                role: Role.RoleType, pin: Int,
+                welcome_message: String,
+                logout_url: String, avatar_url: String)
+
+case class RegisterUserRequestPayloadFormat(meeting: MeetingIdAndName,
+                session: String, user_descriptor: UserDescriptorFormat)
                 
 case class UserJoinResponseMessage(header: Header, response: UserJoinResponse)
 case class JoinUserResponse(response: Response, token: String, joinedUser: Option[JoinedUser])
