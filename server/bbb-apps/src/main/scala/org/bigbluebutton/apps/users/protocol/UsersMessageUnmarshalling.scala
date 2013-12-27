@@ -14,7 +14,7 @@ import org.bigbluebutton.endpoint.MessageUnmarshallingActor
 import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.endpoint.UserMessagesProtocol
 import org.bigbluebutton.endpoint.UserLeaveMessage
-import org.bigbluebutton.endpoint.UserJoinRequestMessage
+import org.bigbluebutton.endpoint.UserJoinRequestFormat
 import org.bigbluebutton.endpoint.GetUsersRequestMessage
 import org.bigbluebutton.endpoint.AssignPresenterMessage
 
@@ -25,10 +25,10 @@ trait UsersMessageUnmarshalling {
   val log: LoggingAdapter
   
   def handleUserJoin(msg: HeaderAndJsonMessage) = {
-    def message(msg: HeaderAndJsonMessage):Option[UserJoinRequestMessage] = {    
+    def message(msg: HeaderAndJsonMessage):Option[UserJoinRequestFormat] = {    
       import UserMessagesProtocol._
       try {
-        Some(JsonParser(msg.jsonMessage).asJsObject.convertTo[UserJoinRequestMessage])
+        Some(JsonParser(msg.jsonMessage).asJsObject.convertTo[UserJoinRequestFormat])
       }  catch {
         case e: DeserializationException => {
           log.error("Failed to deserialize UserJoinRequestMessage: [{}]", msg.jsonMessage)

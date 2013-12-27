@@ -22,12 +22,14 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
 	}
   }
 
+/*  
   implicit val webIdentityFormat = 
                   jsonFormat1(WebIdentity)
   implicit val callerIdFormat = 
                   jsonFormat2(CallerId)
   implicit val voiceIdentityFormat = 
                   jsonFormat5(VoiceIdentity)	  
+*/  
   implicit val userFormat = 
                   jsonFormat8(UserFormat)
   implicit val userIdAndNameFormat = 
@@ -35,9 +37,9 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
   implicit val meetingIdAndNameFormat = 
                   jsonFormat2(MeetingIdAndName)
   implicit val userJoinRequestPayloadFormat = 
-                  jsonFormat3(UserJoinRequestPayload)
+                  jsonFormat3(UserJoinRequestPayloadFormat)
   implicit val userJoinRequestMessageFormat = 
-                  jsonFormat2(UserJoinRequestMessage)
+                  jsonFormat2(UserJoinRequestFormat)
   implicit val resultFormat = 
                   jsonFormat2(ResultFormat)
   implicit val userJoinResponsePayloadFormat = 
@@ -57,19 +59,19 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
   implicit val assignPresenterMessageFormat = 
                   jsonFormat2(AssignPresenterMessage)
   implicit val durationFormat = 
-                  jsonFormat3(Duration)
+                  jsonFormat3(DurationFormat)
   implicit val voiceConferenceFormat = 
-                  jsonFormat2(VoiceConference)
+                  jsonFormat2(VoiceConferenceFormat)
   implicit val phoneNumberFormat = 
-                  jsonFormat2(PhoneNumber)
+                  jsonFormat2(PhoneNumberFormat)
   implicit val meetingDescriptorFormat = 
-                  jsonFormat11(MeetingDescriptor)
+                  jsonFormat11(MeetingDescriptorFormat)
   implicit val createMeetingRequestPayloadFormat = 
-                  jsonFormat1(CreateMeetingRequestPayload)
+                  jsonFormat1(CreateMeetingRequestPayloadFormat)
   implicit val createMeetingRequestMessageFormat = 
-                  jsonFormat2(CreateMeetingRequestMessage)   
+                  jsonFormat2(CreateMeetingRequestFormat)   
   implicit val createMeetingResponsePayloadFormat = 
-                  jsonFormat3(CreateMeetingResponsePayload)
+                  jsonFormat3(CreateMeetingResponsePayloadFormat)
   implicit val createMeetingResponseFormat = 
                   jsonFormat2(CreateMeetingResponseFormat)
   implicit val meetingCreatedEventPayloadFormat = 
@@ -82,5 +84,17 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
                   jsonFormat3(RegisterUserRequestPayloadFormat)
   implicit val registerUserRequestFormat =
                   jsonFormat2(RegisterUserRequestFormat)
+  implicit val statusFormat = 
+                  jsonFormat4(StatusFormat)
+  implicit val callerIdFormat = 
+                  jsonFormat2(CallerIdFormat)
+  implicit val mediaStreamFormat = 
+                  jsonFormat2(MediaStreamFormat)
+  implicit val joinedUserFormat = 
+                  jsonFormat12(JoinedUserFormat)
+  implicit val userJoinedEventPayloadFormat = 
+                  jsonFormat3(UserJoinedEventPayloadFormat)
+  implicit val userJoinedEventFormat = jsonFormat2(UserJoinedEventFormat)
+
 }
 

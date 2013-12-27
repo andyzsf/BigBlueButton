@@ -26,7 +26,7 @@ class MessageUnmarshallingActorSpec extends
       unmarshallingActor ! UserJoinRequestJson
         
       messageHandlerProbe.expectMsgPF(500 millis) {
-        case ujr:UserJoinRequestMessage => {
+        case ujr:UserJoinRequestFormat => {
           ujr.payload.token should be ("user1-token-1") 
         }     
         case _ => fail("Should have returned UserJoinRequestMessage")

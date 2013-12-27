@@ -25,7 +25,7 @@ class MessageHandlerActor private (val bbbAppsActor: ActorRef,
   implicit val timeout = Timeout(5 seconds)
   
   def receive = {
-    case msg: UserJoinRequestMessage => handleUserJoinRequestMessage(msg)
+    case msg: UserJoinRequestFormat => handleUserJoinRequestMessage(msg)
     
     case unknownMsg => log.error("Cannot handle unknown message: [{}]", unknownMsg) 
   }

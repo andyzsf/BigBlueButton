@@ -17,7 +17,7 @@ import org.bigbluebutton.apps.users.messages.UserJoinResponse
 import org.bigbluebutton.apps.protocol.Destination
 import org.bigbluebutton.endpoint.InMsgNameConst
 import org.bigbluebutton.endpoint.UserJoinResponseMessage
-import org.bigbluebutton.endpoint.UserJoinRequestMessage
+import org.bigbluebutton.endpoint.UserJoinRequestFormat
 
 trait UsersMessageHandler extends SystemConfiguration {
   this : MessageHandlerActor =>
@@ -27,7 +27,7 @@ trait UsersMessageHandler extends SystemConfiguration {
   val log: LoggingAdapter
   
   
-  def handleUserJoinRequestMessage(msg: UserJoinRequestMessage) = {
+  def handleUserJoinRequestMessage(msg: UserJoinRequestFormat) = {
     val session = Session(msg.payload.session, msg.payload.meeting)
     val replyDestination = msg.header.reply
     

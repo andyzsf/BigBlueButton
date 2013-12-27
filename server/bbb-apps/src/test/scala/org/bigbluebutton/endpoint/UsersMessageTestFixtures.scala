@@ -13,14 +13,14 @@ trait UsersMessageTestFixtures extends AppsTestFixtures {
                               Some(joinedUserJuan))
   val userJoinFailResponse = UserJoinResponse(eng101Session, Result(false, "Success"), None)
                               
-  val userJoinRequestPayload = UserJoinRequestPayload(eng101MeetingIdAndName, eng101SessionId, juanUserToken)
+  val userJoinRequestPayload = UserJoinRequestPayloadFormat(eng101MeetingIdAndName, eng101SessionId, juanUserToken)
                                   
   val destination = Destination("apps_channel", None)
   val replyTo = ReplyDestination("apps_channel", "abc-corelid")
   val userJoinReqHeader = Header(destination, InMsgNameConst.UserJoinRequest, 
                   "2013-12-23T08:50Z", "web-api",
                   Some(replyTo))
-  val userJoinRequestMessage = UserJoinRequestMessage(userJoinReqHeader, userJoinRequestPayload)
+  val userJoinRequestMessage = UserJoinRequestFormat(userJoinReqHeader, userJoinRequestPayload)
 
   val userJoinRespHeader = Header(Destination(replyTo.to,
                            Some(replyTo.correlation_id)), 
