@@ -16,6 +16,7 @@ import spray.routing.Directive.pimpApply
 import shapeless._
 import org.bigbluebutton.endpoint.CreateMeetingRequestFormat
 import scala.util.Success
+import org.bigbluebutton.endpoint.RegisterUserRequestFormat
 
 class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor 
          with RestEndpointService with ActorLogging {
@@ -61,8 +62,17 @@ trait RestEndpointService extends HttpService with MeetingMessageHandler {
 	        }
         }
       }
-    }
-        
+    } ~
+    path("user") {
+      post {
+        respondWithMediaType(`application/json`) {
+	        entity(as[RegisterUserRequestFormat]) { message => 
+              val response = sendRegisterUserRequestMessage(message)
+              complete(response)
+	        }
+        }
+      }
+    }        
 
   
 }

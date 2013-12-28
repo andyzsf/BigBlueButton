@@ -48,7 +48,7 @@ class UsersApp private {
   /**
    * Joins a user in the meeting.
    */
-  private def add(token: String, ruser: User):JoinedUser = {
+  private def add(token: String, ruser: RegisterUser):JoinedUser = {
     val userId = generateValidUserId
     val webIdent = WebIdentity()
     val voceIdent = VoiceIdentity(callerId = CallerId(ruser.name, ruser.name), 
@@ -100,7 +100,7 @@ class UsersApp private {
     if (! exist(userId)) userId else generateValidUserId
   }
   
-  def register(user: User):RegisteredUser = {
+  def register(user: RegisterUser):RegisteredUser = {
     val token = generateValidToken    
     val u = RegisteredUser(token, user)
     add(u)
@@ -189,7 +189,7 @@ class UsersApp private {
       case None => {
         val uid = generateValidUserId
         val token = generateValidToken
-        val usr = User(uid, voiceIdent.callerId.name, 
+        val usr = RegisterUser(uid, voiceIdent.callerId.name, 
 	            Role.VIEWER, meeting.voiceConf.pin, 
 	            welcomeMessage = meeting.welcomeMessage,
 	            logoutUrl = meeting.logoutUrl, 

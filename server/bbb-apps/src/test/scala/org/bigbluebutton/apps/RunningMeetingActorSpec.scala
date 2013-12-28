@@ -14,7 +14,7 @@ import collection.mutable.Stack
 import akka.actor.Props
 import akka.testkit.TestProbe
 import org.bigbluebutton.apps._
-import org.bigbluebutton.apps.users.data.User
+import org.bigbluebutton.apps.users.data.RegisterUser
 import org.bigbluebutton.apps.users._
 import akka.testkit.TestActorRef
 import org.bigbluebutton.apps.users.messages._

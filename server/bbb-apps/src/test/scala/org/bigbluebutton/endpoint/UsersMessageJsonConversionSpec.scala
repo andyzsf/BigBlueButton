@@ -70,7 +70,7 @@ class UsersMessageJsonConversionSpec extends UnitSpec
     val message = ujrm.convertTo[RegisterUserResponseFormat]
     
     val userToken = "guga-token"
-    message.payload.user_token should be (userToken)
+    message.payload.user_token should be (Some(userToken))
 
     import spray.json.DefaultJsonProtocol._
     val jsonMessage = message.toJson

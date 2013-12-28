@@ -17,6 +17,8 @@ class MeetingManager private (val pubsub: ActorRef) extends Actor with ActorLogg
   def receive = {
     case createMeetingRequest: CreateMeeting => 
            handleCreateMeetingRequest(createMeetingRequest)
+    case msg:RegisterUserRequest => handleRegisterUserRequest(msg)
+    
     case meetingMessage: MeetingMessage => handleMeetingMessage(meetingMessage)
     
 //    case registerUser : RegisterUserRequest =>
@@ -70,9 +72,10 @@ class MeetingManager private (val pubsub: ActorRef) extends Actor with ActorLogg
     for { meeting <- meetings.get(sessionId) } yield meeting    
   }
     
-  def handleRegisterUser(msg: RegisterUserRequest) = {
+  def handleRegisterUserRequest(msg: RegisterUserRequest) = {
+    val internalId = Util.toInternalMeetingId(msg.session.meeting.id)
     val meeting = for {
-      meeting <- getMeetingUsingSessionId(msg.session.id)
+      meeting <- getMeeting(internalId)
     } yield meeting
     
     meeting.map {m => m.actorRef forward msg}

@@ -46,7 +46,7 @@ case class RegisterUserRequestPayloadFormat(meeting: MeetingIdAndName,
                 session: String, user_descriptor: UserDescriptorFormat)
 
 case class RegisterUserResponsePayloadFormat(meeting: MeetingIdAndName,
-                  session: String, user_token: String,
+                  session: String, user_token: Option[String],
                   result: ResultFormat, user_descriptor: UserDescriptorFormat)
 
 case class UserRegisteredEventPayloadFormat(meeting: MeetingIdAndName,

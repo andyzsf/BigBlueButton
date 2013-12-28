@@ -13,14 +13,14 @@ case class UserIdAndName(id: String, name: String)
 	
 object SystemUser extends UserIdAndName(id = "system", name = "System")
 	  
-case class JoinedUser(id: String, token: String, user: User,
+case class JoinedUser(id: String, token: String, user: RegisterUser,
 	                      isPresenter: Boolean = false,
 	                      webIdentity: WebIdentity, 
 	                      voiceIdentity: VoiceIdentity)
 		
-case class RegisteredUser(token: String, user: User)
+case class RegisteredUser(token: String, user: RegisterUser)
 	  
-case class User(externalId: String, name: String, 
+case class RegisterUser(externalId: String, name: String, 
 	            role: Role.RoleType, pin: Int, welcomeMessage: String,
 	            logoutUrl: String, avatarUrl: String)  
 

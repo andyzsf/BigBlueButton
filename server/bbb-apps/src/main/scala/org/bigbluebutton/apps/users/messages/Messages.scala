@@ -1,7 +1,7 @@
 package org.bigbluebutton.apps.users.messages
 
 import org.bigbluebutton.apps.Session
-import org.bigbluebutton.apps.users.data.User
+import org.bigbluebutton.apps.users.data.RegisterUser
 import org.bigbluebutton.apps.users.data.Presenter
 import org.bigbluebutton.apps.users.data.JoinedUser
 import org.bigbluebutton.apps.users.data.UserIdAndName
@@ -15,13 +15,13 @@ case class Result(success:Boolean, message: String)
 /**
  * Message from 3rd-party to register a user.
  */
-case class RegisterUserRequest(session: Session, user: User) extends MeetingMessage
+case class RegisterUserRequest(session: Session, user: RegisterUser) extends MeetingMessage
 
 /**
  * Reply message for the register user request.
  */
 case class RegisterUserResponse(session: Session, result: Result,
-                                token: String, user: User)
+                                token: String, user: RegisterUser)
 
 /**
  * Message from 3rd-party for a user joining the meeting.
