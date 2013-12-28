@@ -10,9 +10,10 @@ import org.bigbluebutton.apps.protocol._
 import org.bigbluebutton.apps._
 import scala.concurrent.Future
 import org.bigbluebutton.endpoint._
+import org.bigbluebutton.SystemConfiguration
 
 
-trait MeetingMessageHandler {
+trait MeetingMessageHandler extends SystemConfiguration {
   this : RestEndpointServiceActor =>
   
   val msgReceiver: ActorRef
@@ -24,13 +25,21 @@ trait MeetingMessageHandler {
                            message.payload.meeting_descriptor.name)
     val descriptor = message.payload.meeting_descriptor  
 
+    val replyDestination = message.header.reply
+    
+
+	val header = Header(Destination(apiChannel, None), 
+	                      InMsgNameConst.CreateMeetingResponse, 
+                          Util.generateTimestamp, apiSourceName, None)
+    
+    
     def buildJsonFailedResponse():CreateMeetingResponseFormat = {
       val result = ResultFormat(false, "Failed to get a response.")
       
 	  val payload = CreateMeetingResponsePayloadFormat(meeting, None, 
 	                      result, descriptor)
 
-	  CreateMeetingResponseFormat(message.header, payload)   
+	  CreateMeetingResponseFormat(header, payload)   
     }
     
     def buildJsonResponse(response: CreateMeetingResponse):
@@ -39,7 +48,7 @@ trait MeetingMessageHandler {
       
 	  val payload = CreateMeetingResponsePayloadFormat(meeting, 
 	                   Some(response.session.id), result, descriptor)
-      CreateMeetingResponseFormat(message.header, payload)       
+      CreateMeetingResponseFormat(header, payload)       
     }
         
     val duration = Duration(descriptor.duration.length,

@@ -1,38 +1,35 @@
 	{
 	    "header": {
-	        "event": {
-	            "name": "CreateMeetingRequest",
-	            "timestamp": 123456,
-	            "reply": {"to": "replyChannel", "correlationId" : "abc123"},
-	            "source": "web-api"
+	        "destination": {
+	            "to": "apps_channel"
 	        },
-	        "meeting": {
-	            "name": "English 101",
-	            "externalId": "english_101"
-	        }
+	        "reply": {
+	            "to": "apps_channel",
+	            "correlation_id": "abc"
+	        },
+	        "name": "create_meeting_request",
+	        "timestamp": "2013-12-23T08:50Z",
+	        "source": "web-api"
 	    },
 	    "payload": {
-	        "meeting": {
+	        "meeting_descriptor": {
 	            "name": "English 101",
-	            "id": "english_101",
+	            "external_id": "english_101",
 	            "record": true,
-	            "welcomeMessage": "Welcome to English 101",
-	            "logoutUrl": "http://www.bigbluebutton.org",
-	            "avatarUrl": "http://www.gravatar.com/bigbluebutton",
-	            "users": {
-	                "max": 20,
-	                "hardLimit": false
-	            },
+	            "welcome_message": "Welcome to English 101",
+	            "logout_url": "http://www.bigbluebutton.org",
+	            "avatar_url": "http://www.gravatar.com/bigbluebutton",
+	            "max_users": 20,
 	            "duration": {
-	                "lengthInMinutes": 120,
-	                "allowExtend": false,
-	                "maxDuration": 150
+	                "length": 120,
+	                "allow_extend": false,
+	                "max": 240
 	            },
-	            "voiceConf": {
+	            "voice_conference": {
 	                "pin": 123456,
 	                "number": 85115
 	            },
-	            "phoneNumbers": [
+	            "phone_numbers": [
 	                {
 	                    "number": "613-520-7600",
 	                    "description": "Ottawa"
@@ -43,9 +40,10 @@
 	                }
 	            ],
 	            "metadata": {
-	                "customerId": "acme-customer",
-	                "customerName": "ACME"
+	                "customer_id": "acme-customer",
+	                "customer_name": "ACME"
 	            }
 	        }
 	    }
-	} 
+	}   
+

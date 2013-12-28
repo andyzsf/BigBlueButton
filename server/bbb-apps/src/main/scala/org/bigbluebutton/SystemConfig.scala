@@ -16,4 +16,5 @@ trait SystemConfiguration {
   lazy val redisPort = Try(config.getInt("redis.port")).getOrElse(6379)
   
   lazy val apiSourceName = Try(config.getString("api.source")).getOrElse("bigbluebutton-apps")
+  lazy val apiChannel = Try(config.getString("api.channel")).getOrElse("bbb-apps-channel")
 }
