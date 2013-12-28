@@ -15,6 +15,9 @@ case class CreateMeetingResponseFormat(header: Header,
 case class RegisterUserRequestFormat(header: Header, 
                   payload: RegisterUserRequestPayloadFormat) extends InMsgFormatter
 
+case class RegisterUserResponseFormat(header: Header, 
+                  payload: RegisterUserResponsePayloadFormat) extends InMsgFormatter                  
+                  
 case class UserJoinRequestFormat(header: Header, 
                   payload: UserJoinRequestPayloadFormat) extends InMsgFormatter                                  
 

@@ -84,6 +84,10 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
                   jsonFormat3(RegisterUserRequestPayloadFormat)
   implicit val registerUserRequestFormat =
                   jsonFormat2(RegisterUserRequestFormat)
+  implicit val registerUserResponsePayloadFormat = 
+                  jsonFormat5(RegisterUserResponsePayloadFormat)
+  implicit val registerUserResponseFormat = 
+                  jsonFormat2(RegisterUserResponseFormat)
   implicit val statusFormat = 
                   jsonFormat4(StatusFormat)
   implicit val callerIdFormat = 

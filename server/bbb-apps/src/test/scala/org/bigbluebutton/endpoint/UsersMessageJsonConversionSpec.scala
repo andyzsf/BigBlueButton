@@ -64,6 +64,20 @@ class UsersMessageJsonConversionSpec extends UnitSpec
     val userId = jsonMessage.extract[String](userIdLens)
     userId should be (user1Id)
   }
+   
+  "A RegisterUserResponseJson Message" should "be un/marshalled" in {
+    val ujrm = JsonParser(RegisterUserResponseJson)
+    val message = ujrm.convertTo[RegisterUserResponseFormat]
+    
+    val userToken = "guga-token"
+    message.payload.user_token should be (userToken)
+
+    import spray.json.DefaultJsonProtocol._
+    val jsonMessage = message.toJson
+    val userTokenLens = ("payload" / "user_token")
+    val userId = jsonMessage.extract[String](userTokenLens)
+    userId should be (userToken)
+  }  
   
   "A UserJoinResponseJson Message" should "be un/marshalled" in {
     val ujrm = JsonParser(UserJoinResponseJson)

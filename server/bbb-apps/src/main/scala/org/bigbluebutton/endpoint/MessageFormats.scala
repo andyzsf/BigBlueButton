@@ -44,6 +44,10 @@ case class UserDescriptorFormat(external_id: String, name: String,
 case class RegisterUserRequestPayloadFormat(meeting: MeetingIdAndName,
                 session: String, user_descriptor: UserDescriptorFormat)
 
+case class RegisterUserResponsePayloadFormat(meeting: MeetingIdAndName,
+                  session: String, user_token: String,
+                  result: ResultFormat, user_descriptor: UserDescriptorFormat)
+
 case class StatusFormat(hand_raised: Boolean, muted: Boolean,
                   locked: Boolean, talking: Boolean)
                   
