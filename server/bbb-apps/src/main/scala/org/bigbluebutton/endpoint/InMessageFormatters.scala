@@ -17,6 +17,9 @@ case class RegisterUserRequestFormat(header: Header,
 
 case class RegisterUserResponseFormat(header: Header, 
                   payload: RegisterUserResponsePayloadFormat) extends InMsgFormatter                  
+
+case class UserRegisteredEventFormat(header: Header, 
+                  payload: UserRegisteredEventPayloadFormat) extends InMsgFormatter
                   
 case class UserJoinRequestFormat(header: Header, 
                   payload: UserJoinRequestPayloadFormat) extends InMsgFormatter                                  
