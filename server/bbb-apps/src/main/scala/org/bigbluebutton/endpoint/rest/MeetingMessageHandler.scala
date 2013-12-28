@@ -4,12 +4,9 @@ import akka.actor.{Actor, Props, ActorRef, ActorLogging}
 import akka.event.LoggingAdapter
 import akka.pattern.{ask, pipe}
 import akka.util.Timeout
-import scala.concurrent.duration._
 import org.bigbluebutton.apps.CreateMeetingResponse
-import org.bigbluebutton.meeting._
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
 import org.bigbluebutton.apps.protocol._
-import org.bigbluebutton.apps._
 import org.bigbluebutton.apps._
 import scala.concurrent.Future
 import org.bigbluebutton.endpoint._
@@ -19,66 +16,63 @@ trait MeetingMessageHandler {
   this : RestEndpointServiceActor =>
   
   val msgReceiver: ActorRef
+   
+  def sendCreateMeetingMessage(message: CreateMeetingRequestFormat):
+               Future[CreateMeetingResponseFormat] = {
+    
+    val meeting = MeetingIdAndName(message.payload.meeting_descriptor.external_id,
+                           message.payload.meeting_descriptor.name)
+    val descriptor = message.payload.meeting_descriptor  
 
-  def buildJsonResponse(message: CreateMeetingRequestMessage, 
-                        response: CreateMeetingResponse):
-                        CreateMeetingResponseFormat = {
+    def buildJsonFailedResponse():CreateMeetingResponseFormat = {
+      val result = ResultFormat(false, "Failed to get a response.")
+      
+	  val payload = CreateMeetingResponsePayloadFormat(meeting, None, 
+	                      result, descriptor)
 
-    val desc = response.descriptor
-    
-    val duration = DurationFormat(desc.duration.lengthInMinutes, 
-                       desc.duration.allowExtend, desc.duration.maxDuration)
-    val vc = VoiceConferenceFormat(desc.voiceConf.pin, desc.voiceConf.number)    
-    
-    val pns = desc.phoneNumbers map { 
-       pn => PhoneNumberFormat(pn.number, pn.description) 
-    }        
-    
-    val descriptor = MeetingDescriptorFormat(desc.name, desc.id, desc.record,
-                       desc.welcomeMessage, desc.logoutUrl, desc.avatarUrl,
-                       desc.numUsers, duration, vc, pns, desc.metadata)
-    val meeting = MeetingIdAndName(message.payload.meeting.id, message.payload.meeting.name)
-	val payload = CreateMeetingResponsePayloadFormat(meeting, 
-	                   response.session.id, descriptor)
-    CreateMeetingResponseFormat(message.header, payload)       
-  }
-    
-    def buildJsonFailedResponse(message: CreateMeetingRequestMessage):CreateMeetingResponseFormat = {
-	      val meeting = MeetingIdAndName(message.payload.meeting.id, message.payload.meeting.name)
-	      val payload = CreateMeetingResponsePayloadFormat(meeting, "Some exception was thrown", message.payload.meeting.)
-
-		   CreateMeetingResponseFormat(message.header, payload)   
+	  CreateMeetingResponseFormat(message.header, payload)   
     }
     
-    def sendCreateMeetingMessage(message: CreateMeetingRequestFormat):Future[CreateMeetingResponseFormat] = {   
-      val meetingDuration = 
-               MeetingDuration(message.payload.meeting.duration.length,
-                               message.payload.meeting.duration.allow_extend,
-                               message.payload.meeting.duration.max)
-      val voiceConf = 
-               VoiceConference(message.payload.meeting.voice_conference.pin,
-                               message.payload.meeting.voice_conference.number)
+    def buildJsonResponse(response: CreateMeetingResponse):
+                        CreateMeetingResponseFormat = {
+      val result = ResultFormat(response.success, response.message)
       
-      val mdesc = MeetingDescriptor(message.payload.meeting.id, 
-                                    message.payload.meeting.name,
-                                    message.payload.meeting.record, 
-                                    message.payload.meeting.welcome_message, 
-                                    message.payload.meeting.logout_url, 
-                                    message.payload.meeting.avatar_url,
-                                    message.payload.meeting.max_users,
-                                    meetingDuration, 
-                                    voiceConf, 
-                                    message.payload.meeting.phone_numbers,
-                                    message.payload.meeting.metadata)
+	  val payload = CreateMeetingResponsePayloadFormat(meeting, 
+	                   Some(response.session.id), result, descriptor)
+      CreateMeetingResponseFormat(message.header, payload)       
+    }
+        
+    val duration = Duration(descriptor.duration.length,
+                            descriptor.duration.allow_extend,
+                            descriptor.duration.max)
+                            
+    val voiceConf = VoiceConference(descriptor.voice_conference.pin,
+                            descriptor.voice_conference.number)
+    
+    val phoneNumbers = descriptor.phone_numbers map { pn =>
+      PhoneNumber(pn.number, pn.description)
+    }
+    
+    val mdesc = MeetingDescriptor(meeting.id, 
+                                  meeting.name,
+                                  descriptor.record, 
+                                  descriptor.welcome_message, 
+                                  descriptor.logout_url, 
+                                  descriptor.avatar_url,
+                                  descriptor.max_users,
+                                  duration, 
+                                  voiceConf, 
+                                  phoneNumbers,
+                                  descriptor.metadata)
                                     
       val createMeetingMessage = CreateMeeting(mdesc)
 	  val response = (msgReceiver ? createMeetingMessage)
 	                 .mapTo[CreateMeetingResponse]
 	                 .map(result => {
-                        buildJsonResponse(message, result)                  
+                        buildJsonResponse(result)                  
 	                  })
 	                  .recover { case _ =>
-                         buildJsonFailedResponse(message)
+                         buildJsonFailedResponse()
 	                  }
 	  
 	  response

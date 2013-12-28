@@ -15,6 +15,7 @@ import spray.routing.directives.BasicDirectives._
 import spray.routing.Directive.pimpApply
 import shapeless._
 import org.bigbluebutton.endpoint.CreateMeetingRequestFormat
+import scala.util.Success
 
 class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor 
          with RestEndpointService with ActorLogging {

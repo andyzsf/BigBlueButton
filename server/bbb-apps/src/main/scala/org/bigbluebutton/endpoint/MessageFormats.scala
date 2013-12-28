@@ -31,7 +31,8 @@ case class MeetingDescriptorFormat(name: String, external_id: String,
 case class CreateMeetingRequestPayloadFormat(meeting_descriptor: MeetingDescriptorFormat)
 
 case class CreateMeetingResponsePayloadFormat(meeting: MeetingIdAndName,
-                session: String, meeting_descriptor: MeetingDescriptorFormat)
+                session: Option[String], result: ResultFormat,
+                meeting_descriptor: MeetingDescriptorFormat)
 
 case class MeetingCreatedEventPayloadFormat(meeting: MeetingIdAndName,
                 session: String, meeting_descriptor: MeetingDescriptorFormat)

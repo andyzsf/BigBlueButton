@@ -8,7 +8,7 @@ import org.bigbluebutton.apps.protocol.Destination
 trait AppsTestFixtures {
   
   val maxUsers =  20
-  val duration = MeetingDuration(120, true, 160)
+  val duration = Duration(120, true, 160)
   val voiceConference = VoiceConference(85115, 1234)
   val phone1 =  PhoneNumber("613-555-7600", "Ottawa")
   val phone2 = PhoneNumber("1-888-555-7890", "NA Toll-Free")

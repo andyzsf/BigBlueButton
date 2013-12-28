@@ -71,7 +71,7 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
   implicit val createMeetingRequestMessageFormat = 
                   jsonFormat2(CreateMeetingRequestFormat)   
   implicit val createMeetingResponsePayloadFormat = 
-                  jsonFormat3(CreateMeetingResponsePayloadFormat)
+                  jsonFormat4(CreateMeetingResponsePayloadFormat)
   implicit val createMeetingResponseFormat = 
                   jsonFormat2(CreateMeetingResponseFormat)
   implicit val meetingCreatedEventPayloadFormat = 

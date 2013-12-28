@@ -1,7 +1,6 @@
 package org.bigbluebutton.apps
 
 import akka.actor.Actor
-import org.bigbluebutton.meeting._
 import akka.actor.ActorRef
 import akka.actor.ActorLogging
 import akka.actor.Props

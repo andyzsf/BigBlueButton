@@ -29,7 +29,7 @@ class UsersMessageJsonConversionSpec extends UnitSpec
     val ujrm = JsonParser(CreateMeetingResponseJson)
     val message = ujrm.convertTo[CreateMeetingResponseFormat]
     
-    message.payload.session should be (eng101SessionId)
+    message.payload.session should be (Some(eng101SessionId))
 
     import spray.json.DefaultJsonProtocol._
     val jsonMessage = message.toJson
