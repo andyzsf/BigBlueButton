@@ -2,7 +2,7 @@ package org.bigbluebutton.apps.users
 
 import akka.actor.{ActorRef, actorRef2Scala}
 import akka.event.LoggingAdapter
-import org.bigbluebutton.apps.models.Role
+import org.bigbluebutton.apps.Role
 import org.bigbluebutton.apps.RunningMeetingActor
 import org.bigbluebutton.apps.protocol.StatusCodes
 import org.bigbluebutton.apps.protocol.ErrorCodes

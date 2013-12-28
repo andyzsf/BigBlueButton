@@ -6,9 +6,7 @@ import akka.actor.ActorRef
 import akka.actor.ActorLogging
 import akka.actor.Props
 import org.bigbluebutton.apps.users.UsersApp
-import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
-import org.bigbluebutton.apps.models.MeetingDescriptor
 import org.bigbluebutton.apps.users.UsersAppHandler
 import org.bigbluebutton.apps.users._
 import org.bigbluebutton.apps.users.messages._

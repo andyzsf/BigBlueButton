@@ -1,8 +1,7 @@
 package org.bigbluebutton.apps
-import org.bigbluebutton.apps.models.Session
+
 import akka.actor.ActorRef
 import akka.actor.ActorContext
-import org.bigbluebutton.apps.models.MeetingDescriptor
 
 object RunningMeeting {  
   def apply(session: Session, pubsub: ActorRef, config: MeetingDescriptor)

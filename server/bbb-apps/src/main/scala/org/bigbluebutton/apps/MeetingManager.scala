@@ -1,11 +1,8 @@
 package org.bigbluebutton.apps
 
 import akka.actor.{Actor, ActorRef, ActorLogging, Props}
-import org.bigbluebutton.apps.models.Session
 import org.bigbluebutton.apps._
-import org.bigbluebutton.apps.models.MeetingDescriptor
 import org.bigbluebutton.apps.users.messages._
-import org.bigbluebutton.apps.models.MeetingIdAndName
 
 object MeetingManager {
   	def props(pubsub: ActorRef): Props =  Props(classOf[MeetingManager], pubsub)
@@ -104,7 +101,7 @@ class MeetingManager private (val pubsub: ActorRef) extends Actor with ActorLogg
     getMeeting(internalId) match {
       case Some(runningMeeting) => {
 	      log.info("Meeting [{}] : [{}] is already running.", meetingId, name) 
-	      sender ! CreateMeetingResponse(true, descriptor, "Meeting already exists.", Some(runningMeeting.session))         
+	      sender ! CreateMeetingResponse(true, descriptor, "Meeting already exists.", runningMeeting.session)         
       }
       case None => {
 	      log.info("Creating meeting [{}] : [{}]", meetingId, name)
@@ -112,7 +109,7 @@ class MeetingManager private (val pubsub: ActorRef) extends Actor with ActorLogg
 	      	      
 	      log.debug("Replying to create meeting request. [{}] : [{}]", meetingId, name)
 	      
-	      sender ! CreateMeetingResponse(true, descriptor, "Meeting successfully created.",  Some(runningMeeting.session))	
+	      sender ! CreateMeetingResponse(true, descriptor, "Meeting successfully created.",  runningMeeting.session)	
 	      pubsub ! MeetingCreated(runningMeeting.session, descriptor)         
       }
     } 

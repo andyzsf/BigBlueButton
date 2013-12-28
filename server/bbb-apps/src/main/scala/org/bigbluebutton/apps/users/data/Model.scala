@@ -1,6 +1,6 @@
 package org.bigbluebutton.apps.users.data
 
-import org.bigbluebutton.apps.models.Role
+import org.bigbluebutton.apps.Role
 
 case class WebIdentity(handRaised: Boolean = false)
 

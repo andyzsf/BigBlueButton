@@ -1,7 +1,7 @@
 package org.bigbluebutton.endpoint
 
 import org.bigbluebutton.apps.protocol.Header
-import org.bigbluebutton.apps.models.MeetingIdAndName
+import org.bigbluebutton.apps.MeetingIdAndName
 import org.bigbluebutton.apps.users.data.UserIdAndName
 
 sealed abstract class InMsgFormatter

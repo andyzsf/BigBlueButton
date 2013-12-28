@@ -1,6 +1,6 @@
 package org.bigbluebutton.apps.users.messages
 
-import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.Session
 import org.bigbluebutton.apps.users.data.User
 import org.bigbluebutton.apps.users.data.Presenter
 import org.bigbluebutton.apps.users.data.JoinedUser

@@ -4,8 +4,8 @@ import spray.json.{DefaultJsonProtocol, JsValue, JsString, DeserializationExcept
 import spray.json.DefaultJsonProtocol._
 import org.bigbluebutton.apps.users.data._
 import org.bigbluebutton.apps.protocol._
-import org.bigbluebutton.apps.models.Role
-import org.bigbluebutton.apps.models.MeetingIdAndName
+import org.bigbluebutton.apps.Role
+import org.bigbluebutton.apps.MeetingIdAndName
 import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport.headerFormat
 
 

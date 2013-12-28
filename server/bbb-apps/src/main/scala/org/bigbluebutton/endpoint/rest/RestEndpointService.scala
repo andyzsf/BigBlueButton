@@ -14,11 +14,7 @@ import MediaTypes._
 import spray.routing.directives.BasicDirectives._
 import spray.routing.Directive.pimpApply
 import shapeless._
-import org.bigbluebutton.apps.protocol.CreateMeetingRequestReply
-import org.bigbluebutton.apps.protocol._
-import org.bigbluebutton.apps.models._
-import org.bigbluebutton.meeting.CreateMeetingRequestMessage
-import org.bigbluebutton.apps._
+import org.bigbluebutton.endpoint.CreateMeetingRequestFormat
 
 class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor 
          with RestEndpointService with ActorLogging {
@@ -30,8 +26,10 @@ class RestEndpointServiceActor(val msgReceiver: ActorRef) extends Actor
 
 
 trait RestEndpointService extends HttpService with MeetingMessageHandler {
+  this: RestEndpointServiceActor =>
+    
   import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._
-  import org.bigbluebutton.meeting.CreateMeetingRequestJsonProtocol._
+  import org.bigbluebutton.endpoint.UserMessagesProtocol._
   
   val msgReceiver: ActorRef
   implicit def executionContext = actorRefFactory.dispatcher
@@ -56,47 +54,15 @@ trait RestEndpointService extends HttpService with MeetingMessageHandler {
     path("meeting") {
       post {
         respondWithMediaType(`application/json`) {
-	        entity(as[CreateMeetingRequestMessage]) { message => 
-              sendCreateMeetingMessage(message)
+	        entity(as[CreateMeetingRequestFormat]) { message => 
+              val response = sendCreateMeetingMessage(message)
+              complete(response)
 	        }
         }
       }
     }
         
-    def sendCreateMeetingMessage(message: CreateMeetingRequestMessage) = {   
-      val meetingDuration = 
-               MeetingDuration(message.payload.meeting.duration.length,
-                               message.payload.meeting.duration.allow_extend,
-                               message.payload.meeting.duration.max)
-      val voiceConf = 
-               VoiceConference(message.payload.meeting.voice_conference.pin,
-                               message.payload.meeting.voice_conference.number)
-      
-      val mdesc = MeetingDescriptor(message.payload.meeting.id, 
-                                    message.payload.meeting.name,
-                                    message.payload.meeting.record, 
-                                    message.payload.meeting.welcome_message, 
-                                    message.payload.meeting.logout_url, 
-                                    message.payload.meeting.avatar_url,
-                                    message.payload.meeting.max_users,
-                                    meetingDuration, 
-                                    voiceConf, 
-                                    message.payload.meeting.phone_numbers,
-                                    message.payload.meeting.metadata)
-                                    
-      val createMeetingMessage = CreateMeeting(mdesc)
-	  val response = (msgReceiver ? createMeetingMessage)
-	                 .mapTo[CreateMeetingResponse]
-	                 .map(result => {
-                        buildJsonResponse(message, result)                  
-	                  })
-	                  .recover { case _ =>
-                         buildJsonFailedResponse(message)
-	                  }
-	  
-	  complete(response)
 
-    }
   
 }
 

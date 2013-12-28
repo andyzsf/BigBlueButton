@@ -11,7 +11,7 @@ import org.bigbluebutton.apps.users.data.Presenter
 import org.bigbluebutton.apps.protocol.MessageProcessException
 import org.bigbluebutton.apps.protocol.HeaderAndJsonMessage
 import org.bigbluebutton.endpoint.MessageUnmarshallingActor
-import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.Session
 import org.bigbluebutton.endpoint.UserMessagesProtocol
 import org.bigbluebutton.endpoint.UserLeaveMessage
 import org.bigbluebutton.endpoint.UserJoinRequestFormat

@@ -3,7 +3,7 @@ package org.bigbluebutton.meeting
 import spray.httpx.SprayJsonSupport
 import spray.json.DefaultJsonProtocol
 import org.bigbluebutton.apps.protocol._
-import org.bigbluebutton.apps.models._
+import org.bigbluebutton.apps._
 
 object CreateMeetingRequestJsonProtocol extends DefaultJsonProtocol {
   import org.bigbluebutton.apps.protocol.HeaderAndPayloadJsonSupport._

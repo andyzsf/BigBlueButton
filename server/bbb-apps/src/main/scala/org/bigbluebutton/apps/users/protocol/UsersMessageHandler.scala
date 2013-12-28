@@ -5,7 +5,7 @@ import akka.event.LoggingAdapter
 import akka.pattern.{ask, pipe}
 
 import org.bigbluebutton.endpoint.MessageHandlerActor
-import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.Session
 import org.bigbluebutton.apps.users.messages.UserJoinRequest
 import org.bigbluebutton.apps.users.messages.UserJoinResponse
 import org.bigbluebutton.SystemConfiguration

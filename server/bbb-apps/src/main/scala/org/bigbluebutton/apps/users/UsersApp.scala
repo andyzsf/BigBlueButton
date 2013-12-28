@@ -1,9 +1,9 @@
 package org.bigbluebutton.apps.users
 
 import org.bigbluebutton.apps.utils.RandomStringGenerator
-import org.bigbluebutton.apps.models.Role
+import org.bigbluebutton.apps.Role
 import org.bigbluebutton.apps.users.data._
-import org.bigbluebutton.apps.models.MeetingDescriptor
+import org.bigbluebutton.apps.MeetingDescriptor
 
 object UsersApp {               
   def apply() = new UsersApp()

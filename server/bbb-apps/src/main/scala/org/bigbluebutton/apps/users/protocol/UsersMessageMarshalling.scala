@@ -6,7 +6,7 @@ import spray.json._
 import spray.json.DefaultJsonProtocol._
 import org.bigbluebutton.apps.users.messages.UserJoined
 import org.bigbluebutton.endpoint.MessageMarshallingActor
-import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.Session
 import org.bigbluebutton.apps.users.messages.UserJoinResponse
 import org.bigbluebutton.endpoint.redis.JsonMessage
 import org.bigbluebutton.apps.protocol.Header

@@ -1,4 +1,5 @@
 package org.bigbluebutton.endpoint
+
 import akka.actor.ActorSystem
 import akka.testkit.{DefaultTimeout, ImplicitSender, TestKit, TestProbe, TestActorRef}
 import scala.concurrent.duration._

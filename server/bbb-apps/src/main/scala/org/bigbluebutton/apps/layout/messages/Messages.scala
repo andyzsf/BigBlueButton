@@ -1,6 +1,6 @@
 package org.bigbluebutton.apps.layout.messages
 
-import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.Session
 import org.bigbluebutton.apps.users.data.UserIdAndName
 
 case class NewLayout(session: Session, layoutId: String, 

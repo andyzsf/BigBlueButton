@@ -1,7 +1,7 @@
 package org.bigbluebutton.apps.chat.messages
 
 import org.bigbluebutton.apps.chat.data.Text
-import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.Session
 import org.bigbluebutton.apps.users.data.UserIdAndName
 import org.bigbluebutton.apps.chat.data._
 

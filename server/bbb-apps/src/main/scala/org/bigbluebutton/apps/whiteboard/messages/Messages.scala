@@ -1,6 +1,6 @@
 package org.bigbluebutton.apps.whiteboard.messages
 
-import org.bigbluebutton.apps.models.Session
+import org.bigbluebutton.apps.Session
 import org.bigbluebutton.apps.whiteboard.data._
 import org.bigbluebutton.apps.users.data.UserIdAndName
 

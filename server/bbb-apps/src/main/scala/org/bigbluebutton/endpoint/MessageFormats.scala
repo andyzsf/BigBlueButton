@@ -2,10 +2,10 @@ package org.bigbluebutton.endpoint
 
 import org.bigbluebutton.apps.users.data._
 import org.bigbluebutton.apps.protocol._
-import org.bigbluebutton.apps.models.Role
+import org.bigbluebutton.apps.Role
 import org.bigbluebutton.apps.users.messages.UserJoined
-import org.bigbluebutton.apps.models.Session
-import org.bigbluebutton.apps.models.MeetingIdAndName
+import org.bigbluebutton.apps.Session
+import org.bigbluebutton.apps.MeetingIdAndName
 import org.bigbluebutton.apps.users.messages.Result
 import org.bigbluebutton.apps.users.messages.UserJoinResponse
 
