@@ -47,9 +47,9 @@ trait MeetingMessageHandler extends SystemConfiguration {
       CreateMeetingResponseFormat(header, payload)       
     }
         
-    val duration = Duration(descriptor.duration.length,
+    val duration = Duration(descriptor.duration.length_in_minutes,
                             descriptor.duration.allow_extend,
-                            descriptor.duration.max)
+                            descriptor.duration.max_minutes)
                             
     val voiceConf = VoiceConference(descriptor.voice_conference.pin,
                             descriptor.voice_conference.number)

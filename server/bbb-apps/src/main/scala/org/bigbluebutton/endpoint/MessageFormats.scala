@@ -15,7 +15,7 @@ case class UserFormat(id: String, external_id: String, name: String,
 	            role: Role.RoleType, pin: Int, welcome_message: String,
 	            logout_url: String, avatar_url: String)	      
 	            
-case class DurationFormat(length: Int, allow_extend: Boolean, max: Int)
+case class DurationFormat(length_in_minutes: Int, allow_extend: Boolean, max_minutes: Int)
 
 case class VoiceConferenceFormat(pin: Int, number: Int)
 

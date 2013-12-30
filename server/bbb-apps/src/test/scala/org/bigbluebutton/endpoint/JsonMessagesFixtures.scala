@@ -1,7 +1,15 @@
 package org.bigbluebutton.endpoint
 
+/**
+ * This file contains messages received and sent from/to pubsub by bbb-apps.
+ */
 trait JsonMessagesFixtures {
-  
+
+/**
+ *  Message received from pubsub to create a meeting. 
+ *  
+ *  meeting_descriptor: different default values for features of the meeting.
+ */  
   val CreateMeetingRequestJson     = 
 """
 	{
@@ -27,9 +35,9 @@ trait JsonMessagesFixtures {
 	            "avatar_url": "http://www.gravatar.com/bigbluebutton",
 	            "max_users": 20,
 	            "duration": {
-	                "length": 120,
+	                "length_in_minutes": 120,
 	                "allow_extend": false,
-	                "max": 240
+	                "max_minutes": 240
 	            },
 	            "voice_conference": {
 	                "pin": 123456,
@@ -53,6 +61,15 @@ trait JsonMessagesFixtures {
 	    }
 	}     
 """
+
+/**
+ * Message response to the create meeting request.
+ * 
+ * session: the session id for this newly created meeting.
+ * result: the result of the request and relevant message.
+ * meeting_descriptor: the meeting_descriptor passed on the create request.
+ * 
+ */
     
   val CreateMeetingResponseJson    = 
 """
@@ -85,9 +102,9 @@ trait JsonMessagesFixtures {
             "avatar_url": "http://www.gravatar.com/bigbluebutton",
             "max_users": 20,
             "duration": {
-                "length": 120,
+                "length_in_minutes": 120,
                 "allow_extend": false,
-                "max": 240
+                "max_minutes": 240
             },
             "voice_conference": {
                 "pin": 123456,
@@ -111,7 +128,14 @@ trait JsonMessagesFixtures {
     }
 }
 """
-    
+
+/**
+ * Broadcast message to pubsub about the newly created meeting. 
+ * Interested parties who keep track of running meeting listen for this
+ * event and initialize their own data in preparation for users joining
+ * the meeting. 
+ *
+ */    
   val MeetingCreatedEventJson      = """
 {
     "header": {
@@ -137,9 +161,9 @@ trait JsonMessagesFixtures {
             "avatar_url": "http://www.gravatar.com/bigbluebutton",
             "max_users": 20,
             "duration": {
-                "length": 120,
+                "length_in_minutes": 120,
                 "allow_extend": false,
-                "max": 240
+                "max_minutes": 240
             },
             "voice_conference": {
                 "pin": 123456,
@@ -163,7 +187,14 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ *  Message received from the pubsub to end the meeting.
+ *  
+ *  force: true/false - kick everyone out and end the meeting
+ *  warn_users: true/false - notify users and wait for a few seconds
+ *                           before kicking everyone out. 
+ */    
   val EndMeetingRequestJson        = """
 {
     "header": {
@@ -189,7 +220,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Response to the end meeting request.    
+ */    
   val EndMeetingResponseJson       = """
 {
     "header": {
@@ -209,12 +243,21 @@ trait JsonMessagesFixtures {
         "session": "english_101-12345",
         "result": {
             "success": true,
-            "message": "Success"
+            "message": "Ending the meeting. Please wait several seconds to complete the request."
         }
     }
 }    
     """
-    
+
+/**
+ * Notify users that the meeting is about to end. This message gets sent when
+ * an end meeting request is received and as a notice that a meeting is about
+ * to reach its duration.
+ * 
+ * time_left, time_unit: time left before the users will be kicked out.
+ * allow_extend: allow moderators to extend the meeting up to max duration.
+ * 
+ */    
   val EndMeetingWarningEventJson          = """
 {
     "header": {
@@ -237,7 +280,12 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Broadcast message that the meeting has ended and that all users have been
+ * kicked out. Interested parties should clean up their data.
+ * 
+ */    
   val MeetingEndedEventJson        = """
 {
     "header": {
@@ -257,7 +305,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Received from the pubsub that a user is about to join the meeting.     
+ */    
   val RegisterUserRequestJson      = """
 {
     "header": {
@@ -290,7 +341,13 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Response to the register user request.
+ * 
+ * user_token: auth token the user needs to pass when joining the meeting.
+ * 
+ */    
   val RegisterUserResponseJson     = """
 {
     "header": {
@@ -325,7 +382,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Broadcast to pubsub that a user is about to join the meeting.
+ */    
   val UserRegisteredEventJson      = """
 {
     "header": {
@@ -354,7 +414,12 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Received when a user joins the meeting.
+ * 
+ * token: auth token returned on the register user response.
+ */    
   val UserJoinRequestJson          = """
 {
     "header": {
@@ -379,7 +444,12 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Response to the user join request when the token is valid.
+ * 
+ * The information about the user is returned with the user id.
+ */    
   val UserJoinResponseJson         = """
 {
     "header": {
@@ -414,7 +484,11 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Broadcast message to interested parties that a user has joined the meeting.
+ * 
+ */    
   val UserJoinedEventJson          = """
 {
     "header": {
@@ -469,7 +543,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Received message that a user has left the meeting.
+ */    
   val UserLeaveEventJson           = """
 {
     "header": {
@@ -493,7 +570,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Broadcast message that a user has left the meeting.
+ */    
   val UserLeftEventJson            = """
 {
     "header": {
@@ -517,7 +597,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Received messages to get all the users in a meeting.
+ */    
   val GetUsersRequestJson          = """
 {
     "header": {
@@ -545,7 +628,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Response to the get users request.
+ */    
   val GetUsersResponseJson         = """
 {
     "header": {
@@ -602,7 +688,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Received message that a user has raised hand.
+ */    
   val RaiseUserHandRequestJson     = """
 {
     "header": {
@@ -627,7 +716,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Broadcast message that a user has raise her/his hand.
+ */    
   val UserRaisedHandEventJson      = """
 {
     "header": {
@@ -652,7 +744,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Received message to assign a user as a presenter.
+ */    
   val AssignPresenterRequestJson   = """
 {
     "header": {
@@ -680,7 +775,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Broadcast message that a new presenter has been assigned.
+ */    
   val PresenterAssignedEventJson   = """
 {
     "header": {
@@ -708,7 +806,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Received message to mute a user.
+ */    
   val MuteUserRequestJson          = """
 {
     "header": {
@@ -737,7 +838,10 @@ trait JsonMessagesFixtures {
     }
 }    
     """
-    
+
+/**
+ * Broadcast message that a request to mute a user has been received.
+ */
   val MuteUserRequestEventJson     = """
 {
     "header": {
@@ -767,6 +871,10 @@ trait JsonMessagesFixtures {
 }    
     """
 
+/**
+ * Broadcast message to the voice conference provider (FreeSWITCH) to mute
+ * a user.
+ */    
   val MuteVoiceUserRequestJson   = """
 {
     "header": {
@@ -798,6 +906,9 @@ trait JsonMessagesFixtures {
 }    
     """
 
+/**
+ * Message from FreeSWITCH that the user has been muted.
+ */    
     val VoiceUserMutedEventJson   = """
 {
     "header": {
@@ -828,7 +939,10 @@ trait JsonMessagesFixtures {
     }
 }   
     """
-        
+
+/**
+ * Broadcast messages to interested parties that the user is now muted.
+ */      
   val UserMutedEventJson           = """
 {
     "header": {
