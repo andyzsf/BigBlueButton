@@ -20,34 +20,16 @@ class UsersApp private {
   
   private var presenterAssignedBy = SystemUser
   
-  /**
-   * Returns the registered users of the meeting.
-   */
   def registered:Array[RegisteredUser] = registeredUsers.values toArray
   
-  /**
-   * Returns the joined users.
-   */
   def joined:Array[JoinedUser] = joinedUsers.values toArray 
   
-  /**
-   * Returns true if user with a given token is registered.
-   * 
-   * @param  the token of the user
-   */
   def isRegistered(token: String) = registeredUsers.get(token) != None
   
   def getRegisteredUser(token: String) = registeredUsers.get(token)
   
-  /**
-   * Registers a user in the meeting.
-   * 
-   */
   private def add(user: RegisteredUser) = registeredUsers += user.token -> user
   
-  /**
-   * Joins a user in the meeting.
-   */
   private def add(token: String, ruser: RegisterUser):JoinedUser = {
     val userId = generateValidUserId
     val webIdent = WebIdentity()
@@ -66,13 +48,6 @@ class UsersApp private {
   private def addJoinedUser(user:JoinedUser) = joinedUsers += (user.id -> user)
   private def save(user: JoinedUser) = joinedUsers += (user.id -> user)
   
-  /** 
-   *  Removes the user from the joined users.
-   *
-   *  @param  the id of the user that left the meeting.
-   *  @return user that left or None if user does not exist.     
-   *               
-   */
   private def remove(id: String):Option[JoinedUser] = {
     joinedUsers get (id) match {
       case Some(user) => {
@@ -83,11 +58,6 @@ class UsersApp private {
     }
   }
   
-  /**
-   * Returns true if the user is in the meeting.
-   * 
-   * @param  the user id
-   */
   def exist(id: String):Boolean = joinedUsers.get(id) != None
   
   private def generateValidToken: String = {
@@ -130,15 +100,9 @@ class UsersApp private {
     joinedUsers += (user.id -> user) 
   }
     
-  /**
-   * Returns the moderators in the meeting.
-   */
   def moderators:Array[JoinedUser] = 
         joinedUsers.values filter(p => p.user.role == Role.MODERATOR) toArray  
         
-  /**
-   * Returns the viewers in the meeting.
-   */
   def viewers:Array[JoinedUser] = 
         joinedUsers.values filter (p => p.user.role == Role.VIEWER) toArray
   
@@ -148,10 +112,7 @@ class UsersApp private {
       case Some(p) => true
     }
   }
-  
-  /**
-   * Returns the current presenter in the meeting.
-   */      
+       
   def currentPresenter:Option[JoinedUser] = 
         joinedUsers.values find (p => p.isPresenter)
   
@@ -189,17 +150,12 @@ class UsersApp private {
       case None => {
         val uid = generateValidUserId
         val token = generateValidToken
-        val usr = RegisterUser(uid, voiceIdent.callerId.name, 
-	            Role.VIEWER, meeting.voiceConf.pin, 
-	            welcomeMessage = meeting.welcomeMessage,
-	            logoutUrl = meeting.logoutUrl, 
-	            avatarUrl = meeting.avatarUrl)
+        val usr = RegisterUser(uid, voiceIdent.callerId.name, Role.VIEWER, 
+                       meeting.voiceConf.pin, meeting.welcomeMessage,
+                       meeting.logoutUrl, meeting.avatarUrl)
 	            
 	    val webIdent = WebIdentity()
-	    val juser = JoinedUser(uid, token, usr,
-	                      false,
-	                      webIdent, 
-	                      voiceIdent)
+	    val juser = JoinedUser(uid, token, usr, false, webIdent, voiceIdent)
 	    addJoinedUser(juser)
 	    juser
       }

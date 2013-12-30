@@ -16,12 +16,10 @@ object Boot extends App with SystemConfiguration {
 
   implicit val system = ActorSystem("bigbluebutton-apps-system")
  
-
   val redisPublisherActor = system.actorOf(
                             AppsRedisPublisherActor.props(system), 
                             "redis-publisher")
-                                
-  
+                                  
   val meetingManager = system.actorOf(MeetingManager.props(redisPublisherActor), "meeting-manager")
   
   // create and start our service actor

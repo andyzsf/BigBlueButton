@@ -38,7 +38,8 @@ class AppsRedisPublisherActor(val system: ActorSystem,
   }
   
   def receive = {
-    case msg: JsonMessage => publish(msg.channel, msg.message)
+    //case msg: JsonMessage => publish(msg.channel, msg.message)
+    case msg:String => println("PUBLISH TO [channel]: \n [" + msg + "]")
   }
 
 }
