@@ -40,7 +40,8 @@ case class MeetingCreatedEventPayloadFormat(meeting: MeetingIdAndName,
 case class UserDescriptorFormat(external_id: String, name: String, 
                 role: Role.RoleType, pin: Int,
                 welcome_message: String,
-                logout_url: String, avatar_url: String)
+                logout_url: String, avatar_url: String,
+                metadata: Map[String, String])
 
 case class RegisterUserRequestPayloadFormat(meeting: MeetingIdAndName,
                 session: String, user_descriptor: UserDescriptorFormat)

@@ -153,7 +153,7 @@ trait JsonMessagesFixtures {
         },
         "session": "english_101-1234",
         "meeting_descriptor": {
-            "name": "English 101",
+            "name": "English 101", 
             "external_id": "english_101",
             "record": true,
             "welcome_message": "Welcome to English 101",
@@ -336,7 +336,11 @@ trait JsonMessagesFixtures {
             "pin": 12345,
             "welcome_message": "Welcome to English 101",
             "logout_url": "http://www.example.com",
-            "avatar_url": "http://www.example.com/avatar.png"
+            "avatar_url": "http://www.example.com/avatar.png",
+            "metadata": {
+	           "student_id": "54321",
+	           "program": "engineering"
+	        }
         }
     }
 }    
@@ -377,7 +381,11 @@ trait JsonMessagesFixtures {
             "pin": 12345,
             "welcome_message": "Welcome to English 101",
             "logout_url": "http://www.example.com",
-            "avatar_url": "http://www.example.com/avatar.png"
+            "avatar_url": "http://www.example.com/avatar.png",
+            "metadata": {
+	           "student_id": "54321",
+	           "program": "engineering"
+	        }
         }
     }
 }    
@@ -409,7 +417,11 @@ trait JsonMessagesFixtures {
             "pin": 12345,
             "welcome_message": "Welcome to English 101",
             "logout_url": "http://www.example.com",
-            "avatar_url": "http://www.example.com/avatar.png"
+            "avatar_url": "http://www.example.com/avatar.png",
+            "metadata": {
+	           "student_id": "54321",
+	           "program": "engineering"
+	        }
         }
     }
 }    
@@ -479,7 +491,11 @@ trait JsonMessagesFixtures {
             "pin": 12345,
             "welcome_message": "Welcome Juan",
             "logout_url": "http://www.umaliska.don",
-            "avatar_url": "http://www.mukhamo.com/unggoy"
+            "avatar_url": "http://www.mukhamo.com/unggoy",
+            "metadata": {
+	           "student_id": "54321",
+	           "program": "engineering"
+	        }
         }
     }
 }    
@@ -538,7 +554,11 @@ trait JsonMessagesFixtures {
                     "media_type": "screen",
                     "uri": "http://cdn.bigbluebutton.org/stream/s1234"
                 }
-            ]
+            ],
+            "metadata": {
+	           "student_id": "54321",
+	           "program": "engineering"
+	        }
         }
     }
 }    
@@ -682,7 +702,11 @@ trait JsonMessagesFixtures {
                         "media_type": "screen",
                         "uri": "http://cdn.bigbluebutton.org/stream/s1234"
                     }
-                ]
+                ],
+                "metadata": {
+	              "student_id": "54321",
+	              "program": "engineering"
+	            }
             }
         ]
     }
@@ -967,6 +991,182 @@ trait JsonMessagesFixtures {
     }
 }       
     """
-    
 
+val UserPublishStreamRequestJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "reply": {
+            "to": "apps_channel",
+            "correlation_id": "abc"
+        },
+        "name": "user_publish_stream_request",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "fs-esl"
+    },
+    "payload": {
+        "meeting": {
+            "name": "English 101",
+            "id": "english_101"
+        },
+        "session": "english_101-12345",
+        "media": {
+            "media_type": "video"
+        },
+        "user": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """
+
+val PublishStreamRequestJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "reply": {
+            "to": "apps_channel",
+            "correlation_id": "abc"
+        },
+        "name": "publish_stream_request",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "fs-esl"
+    },
+    "payload": {
+        "meeting": {
+            "name": "English 101",
+            "id": "english_101"
+        },
+        "session": "english_101-12345",
+        "media": {
+            "media_type": "video"
+        },
+        "user": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """  
+
+val PublishStreamResponseJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel",
+            "correlation_id": "abc"
+        },
+        "name": "publish_stream_response",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "fs-esl"
+    },
+    "payload": {
+        "meeting": {
+            "name": "English 101",
+            "id": "english_101"
+        },
+        "session": "english_101-12345",
+        "media": {
+            "media_type": "video",
+            "uri": "http://cdn.bigbluebutton.org/stream/v1234"
+        },
+        "user": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """   
+  
+val UserPublishStreamResponseJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel",
+            "correlation_id": "abc"
+        },
+        "name": "user_publish_stream_response",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "fs-esl"
+    },
+    "payload": {
+        "meeting": {
+            "name": "English 101",
+            "id": "english_101"
+        },
+        "session": "english_101-12345",
+        "media": {
+            "media_type": "video",
+            "uri": "http://cdn.bigbluebutton.org/stream/v1234"
+        },
+        "user": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """
+  
+val PublishedStreamEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "published_stream_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "fs-esl"
+    },
+    "payload": {
+        "meeting": {
+            "name": "English 101",
+            "id": "english_101"
+        },
+        "session": "english_101-12345",
+        "media": {
+            "media_type": "video",
+            "uri": "http://cdn.bigbluebutton.org/stream/v1234"
+        },
+        "user": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """  
+  
+val UserPublishedStreamEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "user_published_stream_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "fs-esl"
+    },
+    "payload": {
+        "meeting": {
+            "name": "English 101",
+            "id": "english_101"
+        },
+        "session": "english_101-12345",
+        "media": {
+            "media_type": "video",
+            "uri": "http://cdn.bigbluebutton.org/stream/v1234"
+        },
+        "user": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """   
+  
+  
 }
