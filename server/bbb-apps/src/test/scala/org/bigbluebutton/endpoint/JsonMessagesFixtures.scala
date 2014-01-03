@@ -1087,7 +1087,7 @@ val PublishStreamResponseJson = """
         },
         "name": "publish_stream_response",
         "timestamp": "2013-12-23T08:50Z",
-        "source": "fs-esl"
+        "source": "bbb-api"
     },
     "payload": {
         "meeting": {
@@ -1119,7 +1119,7 @@ val UserPublishStreamResponseJson = """
         },
         "name": "user_publish_stream_response",
         "timestamp": "2013-12-23T08:50Z",
-        "source": "fs-esl"
+        "source": "bbb-apps"
     },
     "payload": {
         "meeting": {
@@ -1150,7 +1150,7 @@ val PublishedStreamEventJson = """
         },
         "name": "published_stream_event",
         "timestamp": "2013-12-23T08:50Z",
-        "source": "fs-esl"
+        "source": "media-server"
     },
     "payload": {
         "meeting": {
@@ -1181,7 +1181,7 @@ val UserPublishedStreamEventJson = """
         },
         "name": "user_published_stream_event",
         "timestamp": "2013-12-23T08:50Z",
-        "source": "fs-esl"
+        "source": "bbb-apps"
     },
     "payload": {
         "meeting": {
@@ -1204,5 +1204,383 @@ val UserPublishedStreamEventJson = """
 }
   """   
   
+val UnpublishedStreamEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "unpublished_stream_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "media-server"
+    },
+    "payload": {
+        "meeting": {
+            "name": "English 101",
+            "id": "english_101"
+        },
+        "session": "english_101-12345",
+        "media": {
+            "media_type": "video",
+            "uri": "http://cdn.bigbluebutton.org/stream/v1234",
+            "metadata": {
+               "foo": "bar"
+            }
+        },
+        "user": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """  
   
+val UserUnpublishedStreamEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "user_unpublished_stream_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "meeting": {
+            "name": "English 101",
+            "id": "english_101"
+        },
+        "session": "english_101-12345",
+        "media": {
+            "media_type": "video",
+            "uri": "http://cdn.bigbluebutton.org/stream/v1234",
+            "metadata": {
+               "foo": "bar"
+            }
+        },
+        "user": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """  
+  
+val PublicChatMessageEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "public_chat_message_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "chat_message": {
+            "correlation_id": "user1-msg1",
+            "timestamp": "2013-12-23T08:50Z",
+            "from": {
+                "id": "user1",
+                "name": "Richard"
+            },
+            "message": {
+                "text": "Hello world!",
+                "lang": "en_US"
+            },
+            "font": {
+                "color": 16711680,
+                "size": 14,
+                "font_type": "Arial"
+            }
+        }
+    }
+}    
+  """
+
+val BroadcastPublicChatMessageEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "broadcast_public_chat_message_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "chat_message": {
+            "id": "msg1234",
+            "server_timestamp": "2013-12-23T08:50Z",
+            "correlation_id": "user1-msg1",
+            "user_timestamp": "2013-12-23T08:50Z",
+            "from": {
+                "id": "user1",
+                "name": "Richard"
+            },
+            "message": {
+                "text": "Hello world!",
+                "lang": "en_US"
+            },
+            "font": {
+                "color": 16711680,
+                "size": 14,
+                "font_type": "Arial"
+            },
+            "translations": [
+                {
+                    "lang": "es_LA",
+                    "text": "Hola Mundo!"
+                }
+            ]
+        }
+    }
+}  
+  """  
+  
+val PrivateChatMessageEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "private_chat_message_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "chat_message": {
+            "correlation_id": "user1-msg1",
+            "timestamp": "2013-12-23T08:50Z",
+            "from": {
+                "id": "user1",
+                "name": "Richard"
+            },
+            "to": {
+                "id": "user2",
+                "name": "Guga"
+            },
+            "message": {
+                "text": "Hello world!",
+                "lang": "en_US"
+            },
+            "font": {
+                "color": 16711680,
+                "size": 14,
+                "font_type": "Arial"
+            }
+        }
+    }
+}    
+  """
+
+val BroadcastPrivateChatMessageEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "broadcast_private_chat_message_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "chat_message": {
+            "id": "msg1234",
+            "server_timestamp": "2013-12-23T08:50Z",
+            "correlation_id": "user1-msg1",
+            "user_timestamp": "2013-12-23T08:50Z",
+            "from": {
+                "id": "user1",
+                "name": "Richard"
+            },
+            "to": {
+                "id": "user2",
+                "name": "Guga"
+            },
+            "message": {
+                "text": "Hello world!",
+                "lang": "en_US"
+            },
+            "font": {
+                "color": 16711680,
+                "size": 14,
+                "font_type": "Arial"
+            },
+            "translations": [
+                {
+                    "lang": "es_LA",
+                    "text": "Hola Mundo!"
+                }
+            ]
+        }
+    }
+}  
+  """   
+  
+  val WhiteboardDrawEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_draw_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "text",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 1.33,
+                "last_y": 2.45
+            },
+            "font": {
+                "style": "arial",
+                "color": 0,
+                "size": 18
+            },
+            "background": {
+                "visible": true,
+                "color": 16777215,
+                "alpha": 0
+            },
+            "text": "He"
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """ 
+    
+  val WhiteboardDrawUpdateEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_draw_update_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "text",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 1.33,
+                "last_y": 2.45
+            },
+            "font": {
+                "style": "arial",
+                "color": 0,
+                "size": 18
+            },
+            "background": {
+                "visible": true,
+                "color": 16777215,
+                "alpha": 0
+            },
+            "text": "He"
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """    
+    
+  val BroadcastWhiteboardDrawEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "broadcast_whiteboard_draw_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "timestamp": "2013-12-23T08:50Z",
+        "shape_type": "text",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 1.33,
+                "last_y": 2.45
+            },
+            "font": {
+                "style": "arial",
+                "color": 0,
+                "size": 18
+            },
+            "background": {
+                "visible": true,
+                "color": 16777215,
+                "alpha": 0
+            },
+            "text": "He"
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """ 
+    
+  val BroadcastWhiteboardDrawUpdateEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "broadcast_whiteboard_draw_update_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "timestamp": "2013-12-23T08:50Z",
+        "shape_type": "text",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 1.33,
+                "last_y": 2.45
+            },
+            "font": {
+                "style": "arial",
+                "color": 0,
+                "size": 18
+            },
+            "background": {
+                "visible": true,
+                "color": 16777215,
+                "alpha": 0
+            },
+            "text": "He"
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """     
 }
