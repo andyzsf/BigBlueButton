@@ -19,7 +19,7 @@ object LineTypes extends Enumeration {
 	val SOLID          = Value("SOLID")
 	val DASH           = Value("DASHED")
 	val DOT            = Value("DOTTED")
-	val DASHDOT        = Value("DASHDOT")
+	val DASHDOT        = Value("DASHEDOT")
 }
 
 case class ShapeDescriptor(whiteboardId: String, shapeId: String, 
@@ -27,7 +27,7 @@ case class ShapeDescriptor(whiteboardId: String, shapeId: String,
                            by: UserIdAndName)
                            
 case class Shape(descriptor: ShapeDescriptor, 
-                 shape: WhiteboardShape, order: Int)
+                 shape: WhiteboardShape, zorder: Int)
 
 sealed trait WhiteboardShape
 
@@ -35,7 +35,9 @@ class Container(coordinate: Coordinate, background: Background,
                 border: LineDescriptor)
 
 case class Point(x: Double, y: Double)
-                  
+
+case class Line(line: LineDescriptor, point1: Point, point2: Point)
+                          extends WhiteboardShape
 case class Scribble(line: LineDescriptor, points: Seq[Point]) 
                           extends WhiteboardShape
 

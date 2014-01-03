@@ -1417,8 +1417,361 @@ val BroadcastPrivateChatMessageEventJson = """
     }
 }  
   """   
-  
-  val WhiteboardDrawEventJson = """
+
+val WhiteboardDrawLineEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_draw_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "line",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 1.33,
+                "last_y": 2.45
+            },
+            "line": {
+                "line_type": "solid",
+                "color": 0,
+                "weight": 18
+            }
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}   
+  """
+
+val WhiteboardUpdateLineEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_update_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "line",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 2.33,
+                "last_y": 3.45
+            },
+            "line": {
+                "line_type": "solid",
+                "color": 0,
+                "weight": 18
+            }
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}   
+  """
+
+val WhiteboardDrawScribbleEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_draw_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "scribble",
+        "data": {
+            "points": [
+                {
+                    "x": 0.016025641025641028,
+                    "y": 0.982905982905983
+                },
+                {
+                    "x": 2.33,
+                    "y": 3.45
+                }
+            ],
+            "line": {
+                "line_type": "solid",
+                "color": 0,
+                "weight": 18
+            }
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}  
+  """
+
+  val WhiteboardDrawRectangleEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_draw_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "rectangle",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 1.33,
+                "last_y": 2.45
+            },
+            "line": {
+                "line_type": "solid",
+                "color": 0,
+                "weight": 18
+            },
+            "background": {
+                "visible": true,
+                "color": 16777215,
+                "alpha": 0
+            },
+            "square": false
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """ 
+    
+  val WhiteboardUpdateRectangleEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_update_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "rectangle",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 2.33,
+                "last_y": 3.45
+            },
+            "line": {
+                "line_type": "solid",
+                "color": 0,
+                "weight": 18
+            },
+            "background": {
+                "visible": true,
+                "color": 16777215,
+                "alpha": 0
+            },
+            "square": false
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """
+
+  val WhiteboardDrawEllipseEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_draw_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "ellipse",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 1.33,
+                "last_y": 2.45
+            },
+            "line": {
+                "line_type": "solid",
+                "color": 0,
+                "weight": 18
+            },
+            "background": {
+                "visible": true,
+                "color": 16777215,
+                "alpha": 0
+            },
+            "circle": false
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """ 
+    
+  val WhiteboardUpdateEllipseleEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_update_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "ellipse",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 2.33,
+                "last_y": 3.45
+            },
+            "line": {
+                "line_type": "solid",
+                "color": 0,
+                "weight": 18
+            },
+            "background": {
+                "visible": true,
+                "color": 16777215,
+                "alpha": 0
+            },
+            "circle": false
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """
+
+  val WhiteboardDrawTriangleEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_draw_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "triangle",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 1.33,
+                "last_y": 2.45
+            },
+            "line": {
+                "line_type": "solid",
+                "color": 0,
+                "weight": 18
+            },
+            "background": {
+                "visible": true,
+                "color": 16777215,
+                "alpha": 0
+            }
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """ 
+    
+  val WhiteboardUpdateTriangleleEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_update_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "presentation_id/page_num",
+        "shape_id": "q779ogycfmxk-13-1383262166102",
+        "shape_type": "triangle",
+        "data": {
+            "coordinate": {
+                "first_x": 0.016025641025641028,
+                "first_y": 0.982905982905983,
+                "last_x": 2.33,
+                "last_y": 3.45
+            },
+            "line": {
+                "line_type": "solid",
+                "color": 0,
+                "weight": 18
+            },
+            "background": {
+                "visible": true,
+                "color": 16777215,
+                "alpha": 0
+            }
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """
+    
+  val WhiteboardDrawTextEventJson = """
 {
     "header": {
         "destination": {
@@ -1459,7 +1812,7 @@ val BroadcastPrivateChatMessageEventJson = """
 }
   """ 
     
-  val WhiteboardDrawUpdateEventJson = """
+  val WhiteboardUpdateTextEventJson = """
 {
     "header": {
         "destination": {
@@ -1500,7 +1853,7 @@ val BroadcastPrivateChatMessageEventJson = """
 }
   """    
     
-  val BroadcastWhiteboardDrawEventJson = """
+  val BroadcastWhiteboardDrawTextEventJson = """
 {
     "header": {
         "destination": {
@@ -1514,6 +1867,7 @@ val BroadcastPrivateChatMessageEventJson = """
         "whiteboard_id": "presentation_id/page_num",
         "shape_id": "q779ogycfmxk-13-1383262166102",
         "timestamp": "2013-12-23T08:50Z",
+        "zorder": 100,
         "shape_type": "text",
         "data": {
             "coordinate": {
@@ -1542,7 +1896,7 @@ val BroadcastPrivateChatMessageEventJson = """
 }
   """ 
     
-  val BroadcastWhiteboardDrawUpdateEventJson = """
+  val BroadcastWhiteboardUpdateTextEventJson = """
 {
     "header": {
         "destination": {
@@ -1556,6 +1910,7 @@ val BroadcastPrivateChatMessageEventJson = """
         "whiteboard_id": "presentation_id/page_num",
         "shape_id": "q779ogycfmxk-13-1383262166102",
         "timestamp": "2013-12-23T08:50Z",
+        "zorder": 100,
         "shape_type": "text",
         "data": {
             "coordinate": {
@@ -1582,5 +1937,55 @@ val BroadcastPrivateChatMessageEventJson = """
         }
     }
 }
-  """     
+  """  
+
+    
+    
+val WhiteboardCursorEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "whiteboard_cursor_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "user1-shape-1",
+        "cursor": {
+            "x": 0.54,
+            "y": 0.98
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}  
+  """
+  
+val BroadcastWhiteboardCursorEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "broadcast_whiteboard_cursor_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "whiteboard_id": "user1-shape-1",
+        "cursor": {
+            "x": 0.54,
+            "y": 0.98
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}  
+  """  
 }
