@@ -58,7 +58,8 @@ case class StatusFormat(hand_raised: Boolean, muted: Boolean,
                   
 case class CallerIdFormat(name: String, number: String)
 
-case class MediaStreamFormat(media_type: String, uri: String)
+case class MediaStreamFormat(media_type: String, uri: String, 
+                  metadata: Map[String, String])
 
 case class JoinedUserFormat(id: String, external_id: String, name: String,
                   role: Role.RoleType, pin: Int, welcome_message: String,

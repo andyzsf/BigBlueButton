@@ -97,7 +97,7 @@ object UserMessagesProtocol extends DefaultJsonProtocol {
   implicit val callerIdFormat = 
                   jsonFormat2(CallerIdFormat)
   implicit val mediaStreamFormat = 
-                  jsonFormat2(MediaStreamFormat)
+                  jsonFormat3(MediaStreamFormat)
   implicit val joinedUserFormat = 
                   jsonFormat12(JoinedUserFormat)
   implicit val userJoinedEventPayloadFormat = 

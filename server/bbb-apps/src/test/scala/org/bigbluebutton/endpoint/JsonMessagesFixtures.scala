@@ -544,24 +544,33 @@ trait JsonMessagesFixtures {
             "media_streams": [
                 {
                     "media_type": "audio",
-                    "uri": "http://cdn.bigbluebutton.org/stream/a1234"
+                    "uri": "http://cdn.bigbluebutton.org/stream/a1234",
+                    "metadata": {
+                        "foo": "bar"
+                    }
                 },
                 {
                     "media_type": "video",
-                    "uri": "http://cdn.bigbluebutton.org/stream/v1234"
+                    "uri": "http://cdn.bigbluebutton.org/stream/v1234",
+                    "metadata": {
+                        "foo": "bar"
+                    }
                 },
                 {
                     "media_type": "screen",
-                    "uri": "http://cdn.bigbluebutton.org/stream/s1234"
+                    "uri": "http://cdn.bigbluebutton.org/stream/s1234",
+                    "metadata": {
+                        "foo": "bar"
+                    }
                 }
             ],
             "metadata": {
-	           "student_id": "54321",
-	           "program": "engineering"
-	        }
+                "student_id": "54321",
+                "program": "engineering"
+            }
         }
     }
-}    
+}   
     """
 
 /**
@@ -692,25 +701,34 @@ trait JsonMessagesFixtures {
                 "media_streams": [
                     {
                         "media_type": "audio",
-                        "uri": "http://cdn.bigbluebutton.org/stream/a1234"
+                        "uri": "http://cdn.bigbluebutton.org/stream/a1234",
+                        "metadata": {
+                            "foo": "bar"
+                        }
                     },
                     {
                         "media_type": "video",
-                        "uri": "http://cdn.bigbluebutton.org/stream/v1234"
+                        "uri": "http://cdn.bigbluebutton.org/stream/v1234",
+                        "metadata": {
+                            "foo": "bar"
+                        }
                     },
                     {
                         "media_type": "screen",
-                        "uri": "http://cdn.bigbluebutton.org/stream/s1234"
+                        "uri": "http://cdn.bigbluebutton.org/stream/s1234",
+                        "metadata": {
+                            "foo": "bar"
+                        }
                     }
                 ],
                 "metadata": {
-	              "student_id": "54321",
-	              "program": "engineering"
-	            }
+                    "student_id": "54321",
+                    "program": "engineering"
+                }
             }
         ]
     }
-}    
+}   
     """
 
 /**
@@ -1013,7 +1031,10 @@ val UserPublishStreamRequestJson = """
         },
         "session": "english_101-12345",
         "media": {
-            "media_type": "video"
+            "media_type": "video",
+            "metadata": {
+               "foo": "bar"
+            }
         },
         "user": {
             "id": "user1",
@@ -1044,7 +1065,10 @@ val PublishStreamRequestJson = """
         },
         "session": "english_101-12345",
         "media": {
-            "media_type": "video"
+            "media_type": "video",
+            "metadata": {
+               "foo": "bar"
+            }
         },
         "user": {
             "id": "user1",
@@ -1073,7 +1097,10 @@ val PublishStreamResponseJson = """
         "session": "english_101-12345",
         "media": {
             "media_type": "video",
-            "uri": "http://cdn.bigbluebutton.org/stream/v1234"
+            "uri": "http://cdn.bigbluebutton.org/stream/v1234",
+            "metadata": {
+               "foo": "bar"
+            }
         },
         "user": {
             "id": "user1",
@@ -1102,7 +1129,10 @@ val UserPublishStreamResponseJson = """
         "session": "english_101-12345",
         "media": {
             "media_type": "video",
-            "uri": "http://cdn.bigbluebutton.org/stream/v1234"
+            "uri": "http://cdn.bigbluebutton.org/stream/v1234",
+            "metadata": {
+               "foo": "bar"
+            }
         },
         "user": {
             "id": "user1",
@@ -1130,7 +1160,10 @@ val PublishedStreamEventJson = """
         "session": "english_101-12345",
         "media": {
             "media_type": "video",
-            "uri": "http://cdn.bigbluebutton.org/stream/v1234"
+            "uri": "http://cdn.bigbluebutton.org/stream/v1234",
+            "metadata": {
+               "foo": "bar"
+            }
         },
         "user": {
             "id": "user1",
@@ -1158,7 +1191,10 @@ val UserPublishedStreamEventJson = """
         "session": "english_101-12345",
         "media": {
             "media_type": "video",
-            "uri": "http://cdn.bigbluebutton.org/stream/v1234"
+            "uri": "http://cdn.bigbluebutton.org/stream/v1234",
+            "metadata": {
+               "foo": "bar"
+            }
         },
         "user": {
             "id": "user1",
