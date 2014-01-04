@@ -1988,4 +1988,129 @@ val BroadcastWhiteboardCursorEventJson = """
     }
 }  
   """  
+  
+val SharePresentationEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "share_presentation_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "presentation": {
+            "id": "pres-123",
+            "name": "Flight School"
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}
+  """
+  
+val BroadcastSharePresentationEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "broadcast_share_presentation_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "presentation": {
+            "id": "pres-123",
+            "name": "Flight School"
+        },
+        "page": {
+            "id": "pres-123/1",
+            "uri": "http://www.example.com/presentations/pres-123/1.swf",
+            "position": {
+                "x_offset": 0,
+                "y_offset": 0,
+                "width_ratio": 100,
+                "height_ratio": 100
+            }
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}  
+  
+  """
+  
+val ResizeAndMovePagePageEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "resize_and_move_page_presentation_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "presentation": {
+            "id": "pres-123",
+            "name": "Flight School"
+        },
+        "page": {
+            "id": "pres-123/1",
+            "uri": "http://www.example.com/presentations/pres-123/1.swf",
+            "position": {
+                "x_offset": 0,
+                "y_offset": 0,
+                "width_ratio": 100,
+                "height_ratio": 100
+            }
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}  
+  
+  """  
+  
+val BroadcastResizeAndMovePagePageEventJson = """
+{
+    "header": {
+        "destination": {
+            "to": "apps_channel"
+        },
+        "name": "broadcast_resize_and_move_page_presentation_event",
+        "timestamp": "2013-12-23T08:50Z",
+        "source": "bbb-apps"
+    },
+    "payload": {
+        "presentation": {
+            "id": "pres-123",
+            "name": "Flight School"
+        },
+        "page": {
+            "id": "pres-123/1",
+            "uri": "http://www.example.com/presentations/pres-123/1.swf",
+            "position": {
+                "x_offset": 0,
+                "y_offset": 0,
+                "width_ratio": 100,
+                "height_ratio": 100
+            }
+        },
+        "by": {
+            "id": "user1",
+            "name": "Guga"
+        }
+    }
+}  
+  
+  """  
 }
