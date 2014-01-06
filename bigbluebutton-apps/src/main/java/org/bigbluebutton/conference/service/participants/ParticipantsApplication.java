@@ -31,7 +31,27 @@ public class ParticipantsApplication {
 	public void setParticipantStatus(String room, String userid, String status, Object value) {
 		bbbInGW.setUserStatus(room, userid, status, value);
 	}
-		
+	
+	public Map getParticipants(String roomName) {
+		log.debug("getParticipants - " + roomName);
+		if (! roomsManager.hasRoom(roomName)) {
+			log.warn("Could not find room " + roomName + ". Total rooms " + roomsManager.numberOfRooms());
+			return null;
+		}
+
+		return roomsManager.getParticipants(roomName);
+	}
+	
+	public User getParticipantByUserID(String roomName, String userid) {
+		log.debug("getParticipantByUserID - " + roomName);
+		if (! roomsManager.hasRoom(roomName)) {
+			log.warn("Could not find room " + roomName + ". Total rooms " + roomsManager.numberOfRooms());
+			return null;
+		}
+
+		return roomsManager.getParticipantByUserID(roomName,userid);
+	}
+	
 	public boolean participantLeft(String roomName, String userid) {
 		log.debug("Participant " + userid + " leaving room " + roomName);
 			bbbInGW.userLeft(userid, userid);
@@ -51,6 +71,15 @@ public class ParticipantsApplication {
 	
 	public void getUsers(String meetingID, String requesterID) {
 		bbbInGW.getUsers(meetingID, requesterID);
+	}
+
+	public boolean addParticipantsBridge(String room, ParticipantsBridge participantsBridge) {
+		if (roomsManager.hasRoom(room)){
+			roomsManager.addParticipantsBridge(room, participantsBridge);
+			return true;
+		}
+		log.warn("Adding listener to a non-existant room " + room);
+		return false;
 	}
 	
 	public void setBigBlueButtonInGW(IBigBlueButtonInGW inGW) {

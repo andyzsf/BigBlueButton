@@ -32,12 +32,44 @@ public class ParticipantsService {
 
 	private static Logger log = Red5LoggerFactory.getLogger( ParticipantsService.class, "bigbluebutton" );	
 	private ParticipantsApplication application;
+	private ParticipantsBridge participantsBridge;
 
 	public void assignPresenter(Map<String, String> msg) {
 
 		IScope scope = Red5.getConnectionLocal().getScope();
 		log.debug("Checking assignPresenter values " + msg.get("newPresenterID") + " " + msg.get("newPresenterName") + " " + msg.get("assignedBy"));
 		application.assignPresenter(scope.getName(), (String) msg.get("newPresenterID"), (String) msg.get("newPresenterName"), (String) msg.get("assignedBy"));
+		/*ArrayList<String> presenter = new ArrayList<String>();
+		presenter.add(userid);
+		presenter.add(name);
+		presenter.add(assignedBy.toString());
+		ArrayList<String> curPresenter = application.getCurrentPresenter(scope.getName());
+		application.setParticipantStatus(scope.getName(), userid, "presenter", true);
+		
+		if (curPresenter != null){ 
+			String curUserid = (String) curPresenter.get(0);
+			if (! curUserid.equals(userid)){
+				log.info("Changing the current presenter [" + curPresenter.get(0) + "] to viewer.");
+				application.setParticipantStatus(scope.getName(), curPresenter.get(0), "presenter", false);
+			}
+		} else {
+			log.info("No current presenter. So do nothing.");
+		}*/
+		//application.assignPresenter(scope.getName(), presenter);
+		
+		ArrayList<String> curPresenter = application.getCurrentPresenter(scope.getName());
+		String previousPresenter = null;
+		if (curPresenter != null){ 
+			String curUserid = (String) curPresenter.get(0);
+			if (! curUserid.equalsIgnoreCase(userid)){
+				previousPresenter = curUserid;
+			}
+		} else {
+			log.info("No current presenter. So do nothing.");
+		}
+		participantsBridge.storeAssignPresenter(scope.getName(), userid, previousPresenter);
+		
+		participantsBridge.sendAssignPresenter(scope.getName(), userid);
 	}
 	
 	public void getParticipants() {
@@ -59,5 +91,7 @@ public class ParticipantsService {
 	
 	private BigBlueButtonSession getBbbSession() {
 		return (BigBlueButtonSession) Red5.getConnectionLocal().getAttribute(Constants.SESSION);
+	public void setParticipantsBridge(ParticipantsBridge pb){
+		this.participantsBridge = pb;
 	}
 }

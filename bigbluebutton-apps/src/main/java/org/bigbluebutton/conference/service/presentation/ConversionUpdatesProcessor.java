@@ -25,9 +25,11 @@ public class ConversionUpdatesProcessor {
 	private static Logger log = Red5LoggerFactory.getLogger(ConversionUpdatesProcessor.class, "bigbluebutton");
 
 	private PresentationApplication presentationApplication;
+	private PresentationBridge presentationBridge;
 	
 	public void process(Map<String, Object> message) {
 		presentationApplication.sendUpdateMessage(message);
+		//presentationBridge.sendUpdateMessage(message);
 	}
 	
 	public void setPresentationApplication(PresentationApplication a) {

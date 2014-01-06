@@ -17,18 +17,31 @@
 *
 */
 package org.bigbluebutton.conference.service.presentation;
+<<<<<<< HEAD
 
+=======
+import java.util.ArrayList;
+import java.util.HashMap;
+>>>>>>> html5-bridge-new-events
 import java.util.Map;
 
 import org.slf4j.Logger;
+<<<<<<< HEAD
 import org.red5.logging.Red5LoggerFactory;import org.red5.server.api.Red5;import org.red5.server.api.scope.IScope;
 import org.bigbluebutton.conference.BigBlueButtonSession;
 import org.bigbluebutton.conference.Constants;
+=======
+import org.red5.logging.Red5LoggerFactory;
+import org.red5.server.api.Red5;
+import org.red5.server.api.scope.IScope;
+import org.bigbluebutton.conference.service.participants.ParticipantsApplication;
+>>>>>>> html5-bridge-new-events
 
 public class PresentationService {	
 	private static Logger log = Red5LoggerFactory.getLogger( PresentationService.class, "bigbluebutton" );
 	
 	private PresentationApplication presentationApplication;
+	private PresentationBridge bridge;
 
 	public void removePresentation(Map<String, Object> msg) {
 		String presentationID = (String) msg.get("presentationID");
@@ -57,6 +70,7 @@ public class PresentationService {
 		
 		IScope scope = Red5.getConnectionLocal().getScope();
 		presentationApplication.gotoSlide(scope.getName(), slideNum);
+		bridge.changeSlide(scope.getName(), presentationApplication.getCurrentPresentation(scope.getName()) ,slideNum);
 	}
 	
 	public void sharePresentation(Map<String, Object> msg) {
@@ -67,6 +81,7 @@ public class PresentationService {
 		presentationApplication.sharePresentation(scope.getName(), presentationID, share);
 	}
 	
+<<<<<<< HEAD
 	public void sendCursorUpdate(Map<String, Object> msg) {
 		IScope scope = Red5.getConnectionLocal().getScope();
 		
@@ -88,6 +103,13 @@ public class PresentationService {
 		}
 		
 		presentationApplication.sendCursorUpdate(scope.getName(), xPercent, yPercent);
+=======
+	public void sendCursorUpdate(Double xPercent,Double yPercent) {
+		log.debug("[HTML5-Debug] Request update cursor[" + xPercent + "," + yPercent + "]" );
+		IScope scope = Red5.getConnectionLocal().getScope();
+		//presentationApplication.sendCursorUpdate(scope.getName(), xPercent, yPercent);
+		bridge.sendCursorUpdate(scope.getName(),xPercent,yPercent);
+>>>>>>> html5-bridge-new-events
 	}
 	
 	public void resizeAndMoveSlide(Map<String, Object> msg) {
@@ -127,13 +149,20 @@ public class PresentationService {
 		
 		IScope scope = Red5.getConnectionLocal().getScope();
 		presentationApplication.resizeAndMoveSlide(scope.getName(), xOffset, yOffset, widthRatio, heightRatio);
+		bridge.resizeAndMoveSlide(scope.getName(), xOffset, yOffset, widthRatio, heightRatio);
 	}
 
 	public void setPresentationApplication(PresentationApplication a) {
 		presentationApplication = a;
 	}
 	
+<<<<<<< HEAD
 	private BigBlueButtonSession getBbbSession() {
 		return (BigBlueButtonSession) Red5.getConnectionLocal().getAttribute(Constants.SESSION);
+=======
+	public void setPresentationBridge(PresentationBridge pb) {
+		log.debug("Setting Presentation Bridge");
+		bridge = pb;
+>>>>>>> html5-bridge-new-events
 	}
 }

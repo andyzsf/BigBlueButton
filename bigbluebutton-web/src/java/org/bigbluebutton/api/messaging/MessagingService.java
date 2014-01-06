@@ -36,4 +36,7 @@ public interface MessagingService {
 	public String storeSubscription(String meetingId, String externalMeetingID, String callbackURL);
 	public boolean removeSubscription(String meetingId, String subscriptionId);
 	public List<Map<String,String>> listSubscriptions(String meetingId);
+	public void recordMeeting(String meetingID, String externalID, String name);
+	public void removeMeeting(String meetingId);
+	public void recordPresentation(String room, String name, int numberOfPages);
 }

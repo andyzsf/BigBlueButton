@@ -130,6 +130,9 @@ public class WhiteboardApplication extends ApplicationAdapter implements IApplic
 	
 	public void setIsWhiteboardEnabled(String meetingID, String requesterID) {
 		bbbInGW.isWhiteboardEnabled(meetingID, requesterID);
+	//TODO: changed to public for html5 integration
+	public String getMeetingId(){
+		return Red5.getConnectionLocal().getScope().getName();
 	}
 	
 }

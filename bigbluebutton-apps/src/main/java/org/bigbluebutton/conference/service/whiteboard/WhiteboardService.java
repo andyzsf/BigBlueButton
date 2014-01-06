@@ -33,6 +33,7 @@ public class WhiteboardService {
 	private static Logger log = Red5LoggerFactory.getLogger(WhiteboardService.class, "bigbluebutton");
 	
 	private WhiteboardApplication application;
+	private WhiteboardBridge whiteboardBridge;
 	
 	public void setWhiteboardApplication(WhiteboardApplication a){
 		log.debug("Setting whiteboard application instance");
@@ -58,6 +59,9 @@ public class WhiteboardService {
 		
 		application.sendWhiteboardAnnotation(meetingID, requesterID, annotation);
 		
+		application.sendAnnotation(a);
+		whiteboardBridge.sendAnnotation(application.getMeetingId(), a);
+		whiteboardBridge.storeAnnotation(application.getMeetingId(), a);
 	}
 	
 	private String pointsToString(ArrayList<Double> points){
@@ -92,6 +96,8 @@ public class WhiteboardService {
 		Integer pageNum = (Integer) message.get("pageNumber");
 		
 		application.requestAnnotationHistory(meetingID, requesterID, presentationID, pageNum);
+		application.sendAnnotationHistory(getBbbSession().getInternalUserID(), 
+		(String) message.get("presentationID"), (Integer) message.get("pageNumber"));
 	}
 		
 	public void clear() {
@@ -100,14 +106,21 @@ public class WhiteboardService {
 		String meetingID = getMeetingId();
 		String requesterID = getBbbSession().getInternalUserID();
 		application.clearWhiteboard(meetingID, requesterID);		
+		application.clear();
+		whiteboardBridge.clear(application.getMeetingId()); // send "clrPaper" event to html5-client
 	}
 	
 	public void undo() {
 		log.info("WhiteboardApplication - Deleting last graphic");
+<<<<<<< HEAD
 		
 		String meetingID = getMeetingId();
 		String requesterID = getBbbSession().getInternalUserID();
 		application.undoWhiteboard(meetingID, requesterID);
+=======
+		application.undo();
+		whiteboardBridge.undo(application.getMeetingId()); // send "undo" event to html5-client
+>>>>>>> html5-bridge-new-events
 	}
 	
 	public void toggleGrid() {
@@ -145,8 +158,14 @@ public class WhiteboardService {
 		return (BigBlueButtonSession) Red5.getConnectionLocal().getAttribute(Constants.SESSION);
 	}
 	
+<<<<<<< HEAD
 	private String getMeetingId(){
 		return Red5.getConnectionLocal().getScope().getName();
 	}
 	
+=======
+	public void setWhiteboardBridge(WhiteboardBridge br){
+		this.whiteboardBridge = br;
+	}
+>>>>>>> html5-bridge-new-events
 }

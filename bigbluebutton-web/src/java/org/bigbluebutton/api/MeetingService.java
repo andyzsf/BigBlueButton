@@ -88,7 +88,7 @@ public class MeetingService {
 		  		destroyMeeting(m.getInternalId());
 		  		
 				meetings.remove(m.getInternalId());
-				
+				messagingService.removeMeeting(m.getInternalId());
 				continue;
 			}
 			
@@ -97,6 +97,7 @@ public class MeetingService {
 				destroyMeeting(m.getInternalId());
 				
 				meetings.remove(m.getInternalId());
+				messagingService.removeMeeting(m.getInternalId());
 				continue;
 			}
 			
@@ -144,6 +145,9 @@ public class MeetingService {
 
 	public List<Map<String,String>> listSubscriptions(String meetingId){
 		return messagingService.listSubscriptions(meetingId);
+		//for compatibility with html5 client
+		messagingService.recordMeeting(m.getInternalId(), m.getExternalId(), m.getName());
+		
 	}
 
 
@@ -258,6 +262,7 @@ public class MeetingService {
 					processRecording(m.getInternalId());
 				}
 				meetings.remove(m.getInternalId());
+				messagingService.removeMeeting(m.getInternalId());
 			}
 		}else{
 			log.debug("endMeeting - meeting doesn't exist: " + meetingId);

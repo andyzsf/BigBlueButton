@@ -43,8 +43,20 @@ public class ChatApplication {
 		bbbInGW.sendPublicMessage(meetingID, requesterID, message);
 	}
 	
-	public void sendPrivateMessage(String meetingID, String requesterID, Map<String, String> message) {
-		bbbInGW.sendPrivateMessage(meetingID, requesterID, message);
+	public void sendPublicMessage(String room, ChatMessageVO chatobj) {
+		roomsManager.sendMessage(room, chatobj);
+		
+		//ClientMessage m = new ClientMessage(ClientMessage.BROADCAST, getMeetingId(), "ChatReceivePublicMessageCommand", chatobj.toMap());
+		ClientMessage m = new ClientMessage(ClientMessage.BROADCAST, room, "ChatReceivePublicMessageCommand", chatobj.toMap());
+		connInvokerService.sendMessage(m);
+	}
+
+	public void sendPrivateMessage(ChatMessageVO chatobj) {
+		ClientMessage m = new ClientMessage(ClientMessage.DIRECT, chatobj.toUserID, "ChatReceivePrivateMessageCommand", chatobj.toMap());
+		connInvokerService.sendMessage(m);
+		
+		ClientMessage m2 = new ClientMessage(ClientMessage.DIRECT, chatobj.fromUserID, "ChatReceivePrivateMessageCommand", chatobj.toMap());
+		connInvokerService.sendMessage(m2);
 	}
 	
 }
