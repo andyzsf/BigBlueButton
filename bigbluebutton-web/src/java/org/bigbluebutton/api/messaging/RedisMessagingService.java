@@ -22,7 +22,6 @@ package org.bigbluebutton.api.messaging;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
->>>>>>> html5-bridge-new-events
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,9 +30,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
 import javax.imageio.ImageIO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
@@ -311,7 +308,6 @@ public class RedisMessagingService implements MessagingService {
 		}		
 	}
 
-	@Override
 	public void recordMeeting(String meetingID, String externalID, String name) {
 		Jedis jedis = redisPool.getResource();
 		try {
@@ -327,6 +323,7 @@ public class RedisMessagingService implements MessagingService {
 			redisPool.returnResource(jedis);
 		}
 	}
+	
 	public void removeMeeting(String meetingId){
 		Jedis jedis = redisPool.getResource();
 		try {
@@ -339,7 +336,6 @@ public class RedisMessagingService implements MessagingService {
 		}
 	}
 
-	@Override
 	public void recordPresentation(String meetingID, String presentationName, int numberOfPages) {
 		Jedis jedis = redisPool.getResource();
 		try {
