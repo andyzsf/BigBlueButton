@@ -146,7 +146,7 @@ public class MeetingService {
 	public List<Map<String,String>> listSubscriptions(String meetingId){
 		return messagingService.listSubscriptions(meetingId);
 		//for compatibility with html5 client
-		messagingService.recordMeeting(m.getInternalId(), m.getExternalId(), m.getName());
+	//	messagingService.recordMeeting(m.getInternalId(), m.getExternalId(), m.getName());
 		
 	}
 
