@@ -1,7 +1,9 @@
 
-organization  := "bbb-apps"
+name := "webapi"
 
-version       := "0.1"
+organization  := "org.bigbluebutton"
+
+version := "0.1-SNAPSHOT"
 
 scalaVersion  := "2.10.2"
 

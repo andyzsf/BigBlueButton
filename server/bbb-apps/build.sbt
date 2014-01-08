@@ -1,7 +1,9 @@
 
-organization  := "bbb-apps"
+name := "apps"
 
-version       := "0.1"
+organization := "org.bigbluebutton"
+
+version := "0.1-SNAPSHOT"
 
 scalaVersion  := "2.10.2"
 
@@ -11,7 +13,7 @@ scalacOptions ++= Seq(
   "-Xlint",
   "-Ywarn-dead-code",
   "-language:_",
-  "-target:jvm-1.7",
+  "-target:jvm-1.6",
   "-encoding", "UTF-8"
 )
 
@@ -20,6 +22,7 @@ resolvers ++= Seq(
   "rediscala" at "https://github.com/etaty/rediscala-mvn/raw/master/releases/"
 )
 
+publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/dev/repo/maven-repo/releases" )) )
 
 // We want to have our jar files in lib_managed dir.
 // This way we'll have the right path when we import
