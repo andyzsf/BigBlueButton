@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><actionScriptProperties analytics="false" mainApplicationPath="dummy.as" projectUUID="5f51993f-790d-49b5-9a82-c5f52856efb0" version="10">
+  <compiler additionalCompilerArguments="" autoRSLOrdering="true" copyDependentFiles="false" fteInMXComponents="false" generateAccessible="false" htmlExpressInstall="true" htmlGenerate="false" htmlHistoryManagement="false" htmlPlayerVersionCheck="true" includeNetmonSwc="false" outputFolderPath="bin" removeUnusedRSL="true" sourceFolderPath="src/main/actionscript" strict="true" targetPlayerVersion="10.0" useApolloConfig="false" useDebugRSLSwfs="true" verifyDigests="true" warn="true">
+    <compilerSourcePath>
+      <compilerSourcePathEntry kind="1" linkType="1" path="src/main/resources"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="src/test/actionscript"/>
+      <compilerSourcePathEntry kind="1" linkType="1" path="src/test/resources"/>
+    </compilerSourcePath>
+    <libraryPath defaultLinkType="0">
+      <libraryPathEntry kind="4" path="">
+        <excludedEntries>
+          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/flex.swc" useDefaultLinkType="false"/>
+          <libraryPathEntry kind="3" linkType="1" path="${PROJECT_FRAMEWORKS}/libs/core.swc" useDefaultLinkType="false"/>
+        </excludedEntries>
+      </libraryPathEntry>
+      <libraryPathEntry kind="3" linkType="2" path="/home/ubuntu/.gradle/caches/modules-2/files-2.1/org.springextensions.actionscript/spring-actionscript-core/1.2-SNAPSHOT/77a138a127ce33f7bea9ba3ab0ede43fd23845d5/spring-actionscript-core-1.2-SNAPSHOT.swc" useDefaultLinkType="true"/>
+      <libraryPathEntry kind="3" linkType="2" path="/home/ubuntu/.gradle/caches/modules-2/files-2.1/org.as3commons/as3commons-collections/1.1/6f1afabb411dd065b8caae24d9886a8a268b5fbf/as3commons-collections-1.1.swc" useDefaultLinkType="true"/>
+      <libraryPathEntry kind="3" linkType="2" path="/home/ubuntu/.gradle/caches/modules-2/files-2.1/org.as3commons/as3commons-lang/0.3.2/727bc6546e79c3bb63ccc939b7ebefa1a1ae03c6/as3commons-lang-0.3.2.swc" useDefaultLinkType="true"/>
+      <libraryPathEntry kind="3" linkType="2" path="/home/ubuntu/.gradle/caches/modules-2/files-2.1/org.graniteds/granite-swc/2.2.0.SP1/9d925fb9da7d66ebe45578da4e5ad04161f89ffa/granite-swc-2.2.0.SP1.swc" useDefaultLinkType="true"/>
+      <libraryPathEntry kind="3" linkType="2" path="/home/ubuntu/.gradle/caches/modules-2/files-2.1/org.graniteds/granite-essentials-swc/2.2.0.SP1/bc19d391f529458acb5864accad6ff2f51793261/granite-essentials-swc-2.2.0.SP1.swc" useDefaultLinkType="true"/>
+    </libraryPath>
+    <sourceAttachmentPath/>
+  </compiler>
+  <applications>
+    <application path="dummy.as"/>
+  </applications>
+  <modules/>
+  <buildCSSFiles/>
+  <flashCatalyst validateFlashCatalystCompatibility="false"/>
+</actionScriptProperties>

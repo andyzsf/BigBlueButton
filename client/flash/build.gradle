@@ -1,3 +1,4 @@
+
 buildscript {
 	repositories {
 		mavenCentral()
@@ -8,6 +9,7 @@ buildscript {
 }
 
 subprojects {
+        apply plugin: 'flashbuilder'
 
 	apply plugin: 'gradlefx'
 
