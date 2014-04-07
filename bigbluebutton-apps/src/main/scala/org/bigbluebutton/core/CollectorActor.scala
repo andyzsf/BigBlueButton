@@ -1,21 +1,24 @@
 package org.bigbluebutton.core
 
-import scala.actors.Actor
-import scala.actors.Actor._
+import akka.actor.Actor
+import akka.actor.ActorRef
+import akka.actor.ActorLogging
+import akka.actor.Props
 import org.bigbluebutton.core.api.CreateMeeting
 import org.bigbluebutton.core.api.IDispatcher
 import org.bigbluebutton.core.api.MeetingCreated
 
+object CollectorActor {
+	def props(dispatcher: IDispatcher): Props = 
+	      Props(classOf[CollectorActor], dispatcher)
+}
+
 class CollectorActor(dispatcher: IDispatcher) extends Actor {
 
-  def act() = {
-	loop {
-		react {
+  def receive = {
 	      case msg: CreateMeeting                 => handleCreateMeeting(msg)
 	      case msg: MeetingCreated                => handleMeetingCreated(msg)
 	      case _ => // do nothing
-	    }
-	}
   }
   
   private def handleCreateMeeting(msg: CreateMeeting) {

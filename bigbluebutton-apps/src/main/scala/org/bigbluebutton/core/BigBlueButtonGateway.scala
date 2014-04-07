@@ -5,8 +5,9 @@ import net.lag.configgy.Configgy
 import java.util.concurrent.CountDownLatch
 import scala.actors.Actor
 import scala.actors.Actor._
+import akka.actor.ActorSystem
 
-class BigBlueButtonGateway(outGW: MessageOutGateway, collGW: CollectorGateway) {
+class BigBlueButtonGateway(outGW: MessageOutGateway, collGW: CollectorGateway) extends SystemConfiguration {
   private val deathSwitch = new CountDownLatch(1)
   // load our config file and configure logfiles.
   Configgy.configure("webapps/bigbluebutton/WEB-INF/configgy-logger.conf")
@@ -15,8 +16,8 @@ class BigBlueButtonGateway(outGW: MessageOutGateway, collGW: CollectorGateway) {
 	deathSwitch.await
   }
   
-  private val bbbActor = new BigBlueButtonActor(outGW)
-  bbbActor.start
+  implicit val system = ActorSystem("bigbluebutton-apps-system")
+  val bbbActor = system.actorOf(BigBlueButtonActor.props(outGW), "meeting-manager")
   
   def accept(msg: InMessage):Unit = {
     collGW.collectInMessage(msg)

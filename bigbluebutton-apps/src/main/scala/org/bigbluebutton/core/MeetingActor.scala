@@ -1,7 +1,9 @@
 package org.bigbluebutton.core
 
-import scala.actors.Actor
-import scala.actors.Actor._
+import akka.actor.Actor
+import akka.actor.ActorRef
+import akka.actor.ActorLogging
+import akka.actor.Props
 import org.bigbluebutton.core.apps.poll.PollApp
 import org.bigbluebutton.core.apps.poll.Poll
 import org.bigbluebutton.core.apps.poll.PollApp
@@ -11,34 +13,28 @@ import org.bigbluebutton.core.apps.presentation.PresentationApp
 import org.bigbluebutton.core.apps.layout.LayoutApp
 import org.bigbluebutton.core.apps.chat.ChatApp
 import org.bigbluebutton.core.apps.whiteboard.WhiteboardApp
-import net.lag.logging.Logger
 import scala.actors.TIMEOUT
 
 case object StopMeetingActor
-                      
+
+object MeetingActor {
+	def props(meetingID: String, meetingName: String, recorded: Boolean, 
+	          voiceBridge: String, duration: Long, outGW: MessageOutGateway): Props = 
+	      Props(classOf[MeetingActor], meetingID, meetingName, recorded, voiceBridge, duration, outGW)
+}
+
 class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boolean, 
                    val voiceBridge: String, duration: Long, val outGW: MessageOutGateway) 
                    extends Actor with UsersApp with PresentationApp
                    with PollApp with LayoutApp with ChatApp
                    with WhiteboardApp {  
-  private val log = Logger.get
-  
+
   var permissions = new PermissionsSetting(false, new Permissions())
   var recording = false;
   var muted = false;
   var meetingEnded = false
-  
-  class TimerActor(val timeout: Long, val who: Actor, val reply: String) extends Actor {
-    def act {
-        reactWithin(timeout) {
-          case TIMEOUT => who ! reply
-        }
-    }
-  }
-  
-  def act() = {
-	loop {
-	  react {
+    
+  def receive = {
 	    case "StartTimer"                                => handleStartTimer
 	    case "Hello"                                     => handleHello
 	    case msg: ValidateAuthToken                      => handleValidateAuthToken(msg)
@@ -114,8 +110,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
 	    case msg: EndMeeting                             => handleEndMeeting(msg)
 	    case StopMeetingActor                            => exit
 	    case _ => // do nothing
-	  }
-	}
+
   }	
   
   def hasMeetingEnded():Boolean = {

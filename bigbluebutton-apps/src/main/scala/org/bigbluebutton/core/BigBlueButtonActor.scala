@@ -1,37 +1,35 @@
 package org.bigbluebutton.core
 
-import scala.actors.Actor
-import scala.actors.Actor._
+import akka.actor.Actor
+import akka.actor.ActorRef
+import akka.actor.ActorLogging
+import akka.actor.Props
 import scala.collection.mutable.HashMap
 import org.bigbluebutton.core.api._
-import net.lag.logging.Logger
+import org.bigbluebutton.apps.RunningMeeting
+
+object BigBlueButtonActor {
+  	def props(outGW: MessageOutGateway): Props =  Props(classOf[BigBlueButtonActor], outGW)
+}
 
 class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
-  private val log = Logger.get 
 
-  private var meetings = new HashMap[String, MeetingActor]
+  private var meetings = new HashMap[String, RunningMeeting]
   
-  log.debug("Starting up BigBlueButton Actor")
-  
-  def act() = {
-	loop {
-		react {
+  def receive = {
 	      case msg: CreateMeeting                 => handleCreateMeeting(msg)
 	      case msg: DestroyMeeting                => handleDestroyMeeting(msg)
 	      case msg: KeepAliveMessage              => handleKeepAliveMessage(msg)
 	      case msg: InMessage                     => handleMeetingMessage(msg)
 	      case _ => // do nothing
-	    }
-	}
   }
   
-
   private def handleMeetingMessage(msg: InMessage):Unit = {
     meetings.get(msg.meetingID) match {
       case None => //
       case Some(m) => {
        // log.debug("Forwarding message [{}] to meeting [{}]", msg.meetingID)
-        m ! msg
+        m.actorRef forward msg
       }
     }
   }
@@ -45,7 +43,7 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
     meetings.get(msg.meetingID) match {
       case None => println("Could not find meeting id[" + msg.meetingID + "] to destroy.")
       case Some(m) => {
-        m ! StopMeetingActor
+        m.actorRef ! StopMeetingActor
         meetings -= msg.meetingID    
         println("Kinc everyone out on meeting id[" + msg.meetingID + "].")
         outGW.send(new EndAndKickAll(msg.meetingID, m.recorded))
@@ -59,13 +57,11 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
   private def handleCreateMeeting(msg: CreateMeeting):Unit = {
     meetings.get(msg.meetingID) match {
       case None => {
-    	  var m = new MeetingActor(msg.meetingID, msg.meetingName, msg.recorded, msg.voiceBridge, msg.duration, outGW)
-    	  m.start
+    	  var m = RunningMeeting(msg.meetingID, msg.meetingName, msg.recorded, msg.voiceBridge, msg.duration, outGW)
     	  meetings += m.meetingID -> m
     	  outGW.send(new MeetingCreated(m.meetingID, m.recorded, m.voiceBridge))
     	  
-    	  m ! new InitializeMeeting(m.meetingID, m.recorded)
-    	  m ! "StartTimer"
+    	  m.actorRef ! new InitializeMeeting(m.meetingID, m.recorded)
       }
       case Some(m) => // do nothing
     }
