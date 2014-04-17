@@ -138,6 +138,8 @@ package org.bigbluebutton.modules.present.business
 		public function loadPresentation(e:UploadEvent) : void
 		{
 			var presentationName:String = e.presentationName;
+      presentationModel.curSlideNum = e.currentPageNumber;
+      
 			LogUtil.debug("PresentProxy::loadPresentation: presentationName=" + presentationName);
 			var fullUri : String = host + "/bigbluebutton/presentation/" + conference + "/" + room + "/" + presentationName+"/slides";	
 			var slideUri:String = host + "/bigbluebutton/presentation/" + conference + "/" + room + "/" + presentationName;

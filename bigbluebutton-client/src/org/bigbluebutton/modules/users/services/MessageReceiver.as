@@ -172,7 +172,7 @@ package org.bigbluebutton.modules.users.services
     }
     
     private function sendSwitchedPresenterEvent(amIPresenter:Boolean, newPresenterUserID:String):void {
-      
+      trace(LOG + " sendSwitchedPresenterEvent [" + amIPresenter + "]");
       var roleEvent:SwitchedPresenterEvent = new SwitchedPresenterEvent();
       roleEvent.amIPresenter = amIPresenter;
       roleEvent.newPresenterUserID = newPresenterUserID;

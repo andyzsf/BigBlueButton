@@ -27,6 +27,7 @@ package org.bigbluebutton.modules.users.services
     private static const LOG:String = "Users::MessageSender - ";
 
     public function kickUser(userID:String):void {
+      trace(LOG + " kickUser [" + userID + "]");
       var message:Object = new Object();
       message["userID"] = userID;
       
@@ -42,6 +43,7 @@ package org.bigbluebutton.modules.users.services
     }
     
     public function queryForParticipants():void {
+      trace(LOG + " queryForParticipants");
       var _nc:ConnectionManager = BBB.initConnectionManager();
       _nc.sendMessage("participants.getParticipants", 
         function(result:String):void { // On successful result
@@ -54,6 +56,7 @@ package org.bigbluebutton.modules.users.services
     }
     
     public function assignPresenter(userid:String, name:String, assignedBy:Number):void {
+      trace(LOG + " assignPresenter [" + name + "]");
       var message:Object = new Object();
       message["newPresenterID"] = userid;
       message["newPresenterName"] = name;
@@ -72,6 +75,7 @@ package org.bigbluebutton.modules.users.services
     }
     
     public function raiseHand(userID:String, raise:Boolean):void {
+      trace(LOG + " raiseHand [" + userID + "]");
       var message:Object = new Object();
       message["userID"] = userID;
       message["status"] = "hasStream";
@@ -91,6 +95,7 @@ package org.bigbluebutton.modules.users.services
     }
     
     public function addStream(userID:String, streamName:String):void {
+      trace(LOG + " addStream [" + streamName + "]");
       var message:Object = new Object();
       message["userID"] = userID;
       message["status"] = "raiseHand";
@@ -109,6 +114,7 @@ package org.bigbluebutton.modules.users.services
     }
     
     public function removeStream(userID:String, streamName:String):void {
+      trace(LOG + " removeStream [" + streamName + "]");
       var message:Object = new Object();
       message["userID"] = userID;
       message["status"] = "raiseHand";

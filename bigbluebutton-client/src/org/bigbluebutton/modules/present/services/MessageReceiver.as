@@ -254,6 +254,7 @@ package org.bigbluebutton.modules.present.services
         
         var shareEvent:UploadEvent = new UploadEvent(UploadEvent.PRESENTATION_READY);
         shareEvent.presentationName = String(msg.presentation.currentPresentation);
+        shareEvent.currentPageNumber = currentSlide;
         dispatcher.dispatchEvent(shareEvent);
       }      
     }
