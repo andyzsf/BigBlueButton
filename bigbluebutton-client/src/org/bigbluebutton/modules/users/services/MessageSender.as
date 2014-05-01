@@ -78,7 +78,7 @@ package org.bigbluebutton.modules.users.services
       trace(LOG + " raiseHand [" + userID + "]");
       var message:Object = new Object();
       message["userID"] = userID;
-      message["status"] = "hasStream";
+      message["status"] = "raiseHand";
       message["value"] = raise;
       
       var _nc:ConnectionManager = BBB.initConnectionManager();
@@ -98,7 +98,7 @@ package org.bigbluebutton.modules.users.services
       trace(LOG + " addStream [" + streamName + "]");
       var message:Object = new Object();
       message["userID"] = userID;
-      message["status"] = "raiseHand";
+      message["status"] = "hasStream";
       message["value"] = "true,stream=" + streamName;
 
       var _nc:ConnectionManager = BBB.initConnectionManager();
@@ -117,7 +117,7 @@ package org.bigbluebutton.modules.users.services
       trace(LOG + " removeStream [" + streamName + "]");
       var message:Object = new Object();
       message["userID"] = userID;
-      message["status"] = "raiseHand";
+      message["status"] = "hasStream";
       message["value"] = "false,stream=" + streamName;
       
       var _nc:ConnectionManager = BBB.initConnectionManager();
