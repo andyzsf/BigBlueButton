@@ -166,7 +166,7 @@ package org.bigbluebutton.modules.present.services
     
     private function handleGeneratedSlideUpdateMessageCallback(msg:Object) : void {				
       var uploadEvent:UploadEvent = new UploadEvent(UploadEvent.CONVERT_UPDATE);
-      uploadEvent.totalSlides = msg.maxNumberPages;
+      uploadEvent.totalSlides = msg.numberOfPages;
       uploadEvent.completedSlides = msg.pagesCompleted;
       dispatcher.dispatchEvent(uploadEvent);	
     }
