@@ -7,7 +7,10 @@
     "express": "3.5.1",
     "ejs": "1.0.0",
     "request": "2.34.0",
-    "bunyan": "0.22.2"
+    "bunyan": "0.22.2",
+    "postal" : "0.10.1",
+    "redis" : "0.10.3",
+    "hiredis" : "0.1.17"
   },
   "devDependencies": {
     "codo": "2.0.8",
