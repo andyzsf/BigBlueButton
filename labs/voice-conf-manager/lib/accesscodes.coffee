@@ -6,4 +6,3 @@ module.exports = class AccessCodes
     if code.accessCode?
       @accessCodes[code.accessCode] = code
 
-   

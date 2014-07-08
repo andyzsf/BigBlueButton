@@ -1,5 +1,5 @@
 {
-  "name": "fsproxy",
+  "name": "vcm",
   "version": "0.0.1",
   "private": true,
   "description": "Node app that proxies calls to the right voice conference",
@@ -10,13 +10,19 @@
     "bunyan": "0.22.2",
     "postal" : "0.10.1",
     "redis" : "0.10.3",
-    "hiredis" : "0.1.17"
+    "hiredis" : "0.1.17",
+    "requirejs" : "2.1.14",
+    "coffee-script": "1.7.1",
+    "lodash": "2.4.1",
+    "glob": "4.0.3"
   },
   "devDependencies": {
-    "codo": "2.0.8",
-    "mocha": "1.18.2",
-    "should": "3.2.0",
-    "sinon": "1.9.0"
+    "codo": "2.0.9",
+    "mocha": "1.20.1",
+    "should": "4.0.4",
+    "sinon": "1.10.2",
+    "chai": "1.9.1",
+    "supertest": "0.13.0"
   },
   "scripts": {
     "start": "coffee index.coffee"
