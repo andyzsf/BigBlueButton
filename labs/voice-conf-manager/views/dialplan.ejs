@@ -5,7 +5,11 @@
       <extension name="test9">
         <condition field="destination_number" expression="<%= confnum %>">
           <action application="answer"></action>
-        <action application="conference" data="$1@wideband"></action>
+          <% if (info.userId != null || info.userId != "") {%>
+            <action application="set" data="userid=<%= info.userid %>"/>
+          <% } %>
+
+          <action application="conference" data="$1@wideband"></action>
         </condition>
       </extension>
     </context>

@@ -1,8 +1,16 @@
+store = require './redisdb'
 
 module.exports = class AccessCodes
-  @accessCodes = {}
+  constructor: ->
+    @db = new RedisDbStore
+
+  getAccessCode: (code) ->
+    accessCode = null
+    if code.accessCode?
+      accessCode = @db.getAccessCode(code)
+
+    accessCode
 
   addAccessCode: (code) ->
-    if code.accessCode?
-      @accessCodes[code.accessCode] = code
+    @db.addAccessCode(code)
 
