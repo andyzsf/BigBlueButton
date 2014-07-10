@@ -1,6 +1,7 @@
 store = require './redisdb'
 
 module.exports = class AccessCodes
+
   constructor: ->
     @db = new RedisDbStore
 

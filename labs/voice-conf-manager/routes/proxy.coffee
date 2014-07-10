@@ -3,7 +3,7 @@ fs      = require 'fs'
 log     = require '../lib/logger'
 acodes  = require '../lib/accesscodes'
 
-db = new AccessCodes
+db = new AccessCodes()
 
 # HANDLER
 exports.dialplan = (req, res) -> 

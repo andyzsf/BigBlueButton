@@ -1,9 +1,15 @@
 express = require 'express'
 routes  = require './routes'
+acodes  = require './lib/accesscodes'
+ctrl    = require './lib/controller'
+config      = require("./config")
 fsproxy = require './routes/proxy'
 http    = require 'http'
 path    = require 'path'
 log     = require './lib/logger'
+
+# Module to store the modules registered in the application
+config.modules = modules = new Modules()
 
 app = express()
 
@@ -24,6 +30,9 @@ app.configure(() ->
 app.configure('development', () ->
   app.use(express.errorHandler())
 )
+
+controller = new Controller()
+ac = new AccessCodes()
 
 app.get('/', routes.index)
 app.post('/proxy', fsproxy.dialplan)
