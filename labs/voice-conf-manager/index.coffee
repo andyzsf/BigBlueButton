@@ -1,41 +1,44 @@
 express = require 'express'
 routes  = require './routes'
-acodes  = require './lib/accesscodes'
-ctrl    = require './lib/controller'
-config      = require("./config")
-fsproxy = require './routes/proxy'
 http    = require 'http'
 path    = require 'path'
-log     = require './lib/logger'
+bodyParser = require 'body-parser'
+serveStatic = require 'serve-static'
+
+config      = require("./config")
+AccessCodes = require("./lib/accesscodes")
+Controller  = require("./lib/controller")
+Logger      = require("./lib/logger")
+MainRouter  = require("./routes/main_router")
+Modules     = require("./lib/modules")
+RedisPubSub = require("./lib/redispubsub")
 
 # Module to store the modules registered in the application
 config.modules = modules = new Modules()
 
+# The application, exported in this module
 app = express()
+config.modules.register "App", app
 
-app.configure(() -> 
-  app.set('port', process.env.PORT || 3004);
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'ejs');
-  app.use(express.favicon());
-  app.use(express.logger('dev'));
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.cookieParser('your secret here'));
-  app.use(express.session());
-  app.use(app.router);
-  app.use(express.static(path.join(__dirname, 'public')));
-)
+module.exports = app
 
-app.configure('development', () ->
-  app.use(express.errorHandler())
-)
+app.set('port', process.env.PORT || 3004)
+app.set('views', __dirname + '/views')
+app.set('view engine', 'ejs')
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(app.router)
+app.use(serveStatic(path.join(__dirname, 'public')))
 
-controller = new Controller()
-ac = new AccessCodes()
 
-app.get('/', routes.index)
-app.post('/proxy', fsproxy.dialplan)
+
+# Router
+config.modules.register "MainRouter", new MainRouter()
+
+# Application modules
+config.modules.register "RedisPubSub", new RedisPubSub()
+config.modules.register "RedisDbStore", new RedisDbStore()
+config.modules.register "AccessCodes", new AccessCodes()
+config.modules.register "Controller", new Controller()
 
 http.createServer(app).listen(app.get('port'), () ->
   log.info("Express server listening on port " + app.get('port'));

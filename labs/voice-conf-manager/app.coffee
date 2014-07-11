@@ -1,8 +1,6 @@
 
 express     = require("express")
 redis       = require("redis")
-RedisStore  = require("connect-redis")(express)
-
 config      = require("./config")
 AccessCodes = require("./lib/accesscodes")
 Controller  = require("./lib/controller")
@@ -15,7 +13,7 @@ RedisPubSub = require("./lib/redispubsub")
 config.modules = modules = new Modules()
 
 # The application, exported in this module
-app = config.modules.register "App", express.createServer()
+app = config.modules.register "App", express()
 module.exports = app
 
 # configure the application
@@ -27,18 +25,7 @@ app.configure ->
   app.use express.bodyParser()
   app.use express.methodOverride()
   app.use express.cookieParser()
-
-  # redis
-  app.use express.session(
-    secret: config.app.sessionSecret
-    cookie:
-      secure: true
-    store: new RedisStore(
-      host: config.redis.host
-      port: config.redis.port
-    )
-    key: "express.sid"
-  )
+  app.use express.session()
 
   app.use app.router
 
