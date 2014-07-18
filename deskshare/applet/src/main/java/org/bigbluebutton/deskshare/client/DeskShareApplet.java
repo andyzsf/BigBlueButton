@@ -25,8 +25,6 @@ import javax.swing.JOptionPane;
 import java.io.IOException;
 import java.net.URL;
 import java.security.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.awt.Image;
 
 public class DeskShareApplet extends JApplet implements ClientListener {
@@ -34,7 +32,8 @@ public class DeskShareApplet extends JApplet implements ClientListener {
 	
 	private static final long serialVersionUID = 1L;
 
-	String hostValue = "localhost";
+	  String hostValue = "localhost";
+	  String minJreVersion = "1.7.0_51";
     Integer portValue = new Integer(9123);
     String roomValue = "85115";
     Integer cWidthValue = new Integer(800);
@@ -54,23 +53,25 @@ public class DeskShareApplet extends JApplet implements ClientListener {
     
     public boolean isSharing = false;
     private volatile boolean clientStarted = false;
-    private static final String MIN_JRE_VERSION = "1.7.0_51";
-    private final static String VERSION_ERROR_MSG = "Desktop sharing requires Java 7 update 51 (or later) to run.";
+    private final static String VERSION_ERROR_MSG = "You have an unsupported Java version.";
     
     private class DestroyJob implements PrivilegedExceptionAction {
        public Object run() throws Exception {
-		System.out.println("Desktop Sharing Applet Destroy");
-		if (clientStarted) {
-			client.stop();	
-		}
-               	return null;
+		     System.out.println("Desktop Sharing Applet Destroy");
+		     if (clientStarted) {
+			     client.stop();	
+		     }
+         return null;
        }
     }
     
     @Override
 	public void init() {		
-    	System.out.println("Desktop Sharing Applet Initializing");
-    	
+    System.out.println("Desktop Sharing Applet Initializing");
+    
+    String javaVersion = getParameter("JavaVersion");
+    if (javaVersion != null && javaVersion != "") minJreVersion = javaVersion;
+    
 		hostValue = getParameter("IP");
 		String port = getParameter("PORT");
 		if (port != null) portValue = Integer.parseInt(port);
@@ -126,76 +127,13 @@ public class DeskShareApplet extends JApplet implements ClientListener {
 	public void start() {		 	
 		System.out.println("Desktop Sharing Applet Starting");
 		super.start();
+		String javaRuntimeVersion = getJavaVersionRuntime();
+		System.out.println("**** JAVA VERSION = [" + javaRuntimeVersion + "]");
 		
-		System.out.println("**** JAVA VERSION = [" + getJavaVersionRuntime() + "]");
-		
-		System.out.println("Validate min JRE version");
-		if(validateMinJREVersion())
+		if (VersionCheckUtil.validateMinJREVersion(javaRuntimeVersion, minJreVersion))
 			allowDesktopSharing();
 		else
-			displayJavaWarning(VERSION_ERROR_MSG);
-	}
-
-	private boolean validateMinJREVersion(){
-		String[] requestedVersioning = MIN_JRE_VERSION.split("\\.");
-		String[] clientVersioning = getJavaVersionRuntime().split("\\.");
-
-		if(requestedVersioning.length < 3 || clientVersioning.length < 3)
-			return false;
-
-		// First major update
-		if(Integer.parseInt(clientVersioning[0]) > Integer.parseInt(requestedVersioning[0]))
-			return true;
-		else{
-			// Checking Java version
-			if(Integer.parseInt(clientVersioning[1]) > Integer.parseInt(requestedVersioning[1]))
-				return true;
-
-			// Checking update
-			else if(Integer.parseInt(clientVersioning[1]) == Integer.parseInt(requestedVersioning[1])){	
-				// non-GA or non-FCS release won't be supported
-				if(clientVersioning[2].indexOf("-") != -1)
-					return false;
-
-				int rUpdatePart1 = 0;
-				int rUpdatePart2 = 0;
-
-				int underbar = requestedVersioning[2].indexOf("_");
-				if( underbar != -1){
-					rUpdatePart1 = Integer.parseInt(requestedVersioning[2]);
-				}else{
-					rUpdatePart1 = Integer.parseInt(requestedVersioning[2].substring(0,underbar-1));
-					rUpdatePart2 = Integer.parseInt(requestedVersioning[2].substring(underbar+1,requestedVersioning[2].length()-1));	
-				}
-
-				int cUpdatePart1 = 0;
-				int cUpdatePart2 = 0;
-
-				underbar = clientVersioning[2].indexOf("_");
-				if( underbar != -1){
-					cUpdatePart1 = Integer.parseInt(clientVersioning[2]);
-				}else{
-					cUpdatePart1 = Integer.parseInt(clientVersioning[2].substring(0,underbar-1));
-					cUpdatePart2 = Integer.parseInt(clientVersioning[2].substring(underbar+1,clientVersioning[2].length()-1));	
-				}
-
-				if(cUpdatePart1 > rUpdatePart1)
-					return true;
-				else if(cUpdatePart1 == rUpdatePart1)
-				{
-					if(cUpdatePart2 > rUpdatePart2 || cUpdatePart2 == rUpdatePart2)
-						return true;
-					else
-						return false;
-				}else
-					return false;
-			}else
-				return false;
-		}
-
-
-
-
+			displayJavaWarning("Unsupported Java version [" + javaRuntimeVersion + "]. Minimum version required [" + minJreVersion + "]");
 	}
 
 	
