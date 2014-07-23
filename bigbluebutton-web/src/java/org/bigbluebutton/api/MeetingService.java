@@ -152,24 +152,7 @@ public class MeetingService implements MessageListener {
 			} else {
 				log.debug("Meeting [id={} , name={}] has not expired yet.", m.getInternalId(), m.getName());
 			}
-			
-			if (m.isForciblyEnded()) {
-				log.info("Meeting [id={} , name={}] has been forcefully ended.", m.getInternalId(), m.getName());
-				processMeetingForRemoval(m);			
-				continue;
-			}
-			
-			if (m.wasNeverJoined(defaultMeetingCreateJoinDuration)) {
-				log.info("No user has joined the meeting [id={} , name={}]. Removing it.", m.getInternalId(), m.getName());
-				destroyMeeting(m.getInternalId());			
-				meetings.remove(m.getInternalId());
-				continue;
-			}
-			
-			if (m.hasExceededDuration()) {
-				log.info("Meeting [id={} , name={}] has ran past duration. Ending it.", m.getInternalId(), m.getName());
-				endMeeting(m.getInternalId());
-			}			
+				
 		}		
 	}
 	
@@ -376,9 +359,7 @@ public class MeetingService implements MessageListener {
 		log.debug("Meeting [{}] has ended.", message.meetingId);
 		Meeting m = getMeeting(message.meetingId);
 		if (m != null) {
-			long now = System.currentTimeMillis();
-			log.debug("Meeting [{}] end time [{}].", message.meetingId, now);
-			m.setEndTime(now);
+			processMeetingForRemoval(m);
 			return;
 		}
 		log.warn("The meeting " + message.meetingId + " doesn't exist");

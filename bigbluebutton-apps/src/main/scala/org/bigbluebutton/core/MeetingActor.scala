@@ -36,6 +36,8 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
   var hasReceivedExtendNoticeReply = false
   var minutesToExtend = 0
   
+  var lastUserLeftOn:Long = 0
+  
   class TimerActor(val timeout: Long, val who: Actor, val reply: String) extends Actor {
     def act {
         reactWithin(timeout) {
@@ -135,7 +137,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
     timerActor.start    
   }
   
-  private def timeNowInMinutes():Long = {
+  def timeNowInMinutes():Long = {
     TimeUnit.NANOSECONDS.toMinutes(System.nanoTime())
   }
   
@@ -159,6 +161,14 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
     }
   }
   
+  private def meetingEmptyFor5Minutes():Boolean = {
+    val now = timeNowInMinutes
+    if (lastUserLeftOn > 0) {
+      now - lastUserLeftOn > 5
+    } else {
+      false
+    }
+  }
   private def lessThanMinToEnd(numMinutes: Long):Boolean = {
      (timeNowInMinutes - (startedOn + duration + minutesToExtend)) < numMinutes
   }
@@ -177,7 +187,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
   
   private def handleHello() {
     println("*************** timer fired on [" + timeNowInMinutes + "]******************")
-    if (noUserJoined) {
+    if (noUserJoined || meetingEmptyFor5Minutes) {
       println("Ending meeting as no user joined in 2 minutes")
       endMeeting()
     } else {

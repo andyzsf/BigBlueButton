@@ -207,6 +207,7 @@ trait UsersApp {
       
       // Mark the meeting that a user has joined.
       if (!hasUserJoined) hasUserJoined = true
+      lastUserLeftOn = 0
     }
   }
 			
@@ -216,9 +217,8 @@ trait UsersApp {
 	  user foreach (u => outGW.send(new UserLeft(msg.meetingID, recorded, u)))
 	  
 	 }
-   else{
-
-   }
+	 
+	 if (users.numUsers == 0) lastUserLeftOn = timeNowInMinutes
   }
 
   def handleVoiceUserJoined(msg: VoiceUserJoined) = {

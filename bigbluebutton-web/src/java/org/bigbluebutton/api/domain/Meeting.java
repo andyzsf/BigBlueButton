@@ -50,7 +50,6 @@ public class Meeting {
 	private String dialNumber;
 	private String defaultAvatarURL;
 	private String defaultConfigToken;
-	private boolean userHasJoined = false;
 	private Map<String, String> metadata;
 	private Map<String, Object> userCustomData;
 	private final ConcurrentMap<String, User> users; 
@@ -203,7 +202,6 @@ public class Meeting {
 	}
 	
 	public void userJoined(User user) {
-		userHasJoined = true;
 		this.users.put(user.getInternalUserId(), user);
 	}
 	
@@ -232,49 +230,11 @@ public class Meeting {
 		return dialNumber;
 	}
 	
-	public boolean wasNeverJoined(int expiry) {
-		return (hasStarted() && !hasEnded() && nobodyJoined(expiry));
-	}
-	
-	private boolean meetingInfinite() {
-		/* Meeting stays runs infinitely */
-	  return 	duration == 0;
-	}
-	
-	private boolean nobodyJoined(int expiry) {
-		if (meetingInfinite()) return false; 
-		
-		long now = System.currentTimeMillis();
-		return (!userHasJoined && (now - createdTime) >  (expiry * MILLIS_IN_A_MINUTE));
-	}
-
-	private boolean hasBeenEmptyFor(int expiry) {
-		long now = System.currentTimeMillis();
-		return (now - endTime > (expiry * MILLIS_IN_A_MINUTE));
-	}
-	
-	private boolean isEmpty() {
-		return users.isEmpty();
-	}
-	
 	public boolean hasExpired(int expiry) {
-		return (hasStarted() && userHasJoined && isEmpty() && hasBeenEmptyFor(expiry));
+		return hasEnded();
 	}
-	
-	public boolean hasExceededDuration() {
-		return (hasStarted() && !hasEnded() && pastDuration());
-	}
+		
 
-	private boolean pastDuration() {
-		if (meetingInfinite()) return false; 
-		long now = System.currentTimeMillis();
-		return (now - startTime > (duration * MILLIS_IN_A_MINUTE));
-	}
-	
-	private boolean hasStarted() {
-		return startTime > 0;
-	}
-	
 	private boolean hasEnded() {
 		return endTime > 0;
 	}
