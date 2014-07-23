@@ -12,6 +12,7 @@ import org.bigbluebutton.core.apps.layout.LayoutApp
 import org.bigbluebutton.core.apps.chat.ChatApp
 import org.bigbluebutton.core.apps.whiteboard.WhiteboardApp
 import scala.actors.TIMEOUT
+import java.util.concurrent.TimeUnit
 
 case object StopMeetingActor
                       
@@ -26,12 +27,19 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
   var recording = false;
   var muted = false;
   var meetingEnded = false
-
+  
+  val TIMER_INTERVAL = 30000
+  val EXTENSION_TIME = 30
+  val startedOn = timeNowInMinutes
+  var hasUserJoined = false
+  var hasSentExtendNotice = false
+  var hasReceivedExtendNoticeReply = false
+  var minutesToExtend = 0
   
   class TimerActor(val timeout: Long, val who: Actor, val reply: String) extends Actor {
     def act {
         reactWithin(timeout) {
-          case TIMEOUT => who ! reply
+          case TIMEOUT => who ! reply; exit
         }
     }
   }
@@ -83,19 +91,19 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
     	case msg: SharePresentation                      => handleSharePresentation(msg)
     	case msg: GetSlideInfo                           => handleGetSlideInfo(msg)
     	case msg: PreuploadedPresentations               => handlePreuploadedPresentations(msg)
-        case msg: PreCreatedPoll                         => handlePreCreatedPoll(msg)
-        case msg: CreatePoll                             => handleCreatePoll(msg)
-        case msg: UpdatePoll                             => handleUpdatePoll(msg)
-        case msg: DestroyPoll                            => handleDestroyPoll(msg)
-        case msg: RemovePoll                             => handleRemovePoll(msg)
-        case msg: SharePoll                              => handleSharePoll(msg)
-        case msg: StopPoll                               => handleStopPoll(msg)
-        case msg: StartPoll                              => handleStartPoll(msg)
-        case msg: ClearPoll                              => handleClearPoll(msg)
-        case msg: GetPolls                               => handleGetPolls(msg)
-        case msg: RespondToPoll                          => handleRespondToPoll(msg)
-        case msg: HidePollResult                         => handleHidePollResult(msg)
-        case msg: ShowPollResult                         => handleShowPollResult(msg)
+      case msg: PreCreatedPoll                         => handlePreCreatedPoll(msg)
+      case msg: CreatePoll                             => handleCreatePoll(msg)
+      case msg: UpdatePoll                             => handleUpdatePoll(msg)
+      case msg: DestroyPoll                            => handleDestroyPoll(msg)
+      case msg: RemovePoll                             => handleRemovePoll(msg)
+      case msg: SharePoll                              => handleSharePoll(msg)
+      case msg: StopPoll                               => handleStopPoll(msg)
+      case msg: StartPoll                              => handleStartPoll(msg)
+      case msg: ClearPoll                              => handleClearPoll(msg)
+      case msg: GetPolls                               => handleGetPolls(msg)
+      case msg: RespondToPoll                          => handleRespondToPoll(msg)
+      case msg: HidePollResult                         => handleHidePollResult(msg)
+      case msg: ShowPollResult                         => handleShowPollResult(msg)
 	    case msg: SendWhiteboardAnnotationRequest        => handleSendWhiteboardAnnotationRequest(msg)
 	    case msg: GetWhiteboardShapesRequest             => handleGetWhiteboardShapesRequest(msg)
 	    case msg: ClearWhiteboardRequest                 => handleClearWhiteboardRequest(msg)
@@ -105,7 +113,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
 	    case msg: SetRecordingStatus                     => handleSetRecordingStatus(msg)
 	    case msg: GetRecordingStatus                     => handleGetRecordingStatus(msg)
 	    case msg: VoiceRecording                         => handleVoiceRecording(msg)
-	    
+	    case msg: ExtendMeetingNoticeReply               => handleExtendMeetingNoticeReply(msg)
 	    case msg: EndMeeting                             => handleEndMeeting(msg)
 	    case StopMeetingActor                            => exit
 	    case _ => // do nothing
@@ -118,27 +126,99 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
   }
   
   private def handleStartTimer() {
-//    println("***************timer started******************")
-//    val timerActor = new TimerActor(2000, self, "Hello")
-//    timerActor.start
+    println("*************** timer started******************")
+    schedTimer()
+  }
+  
+  private def schedTimer() {
+    val timerActor = new TimerActor(TIMER_INTERVAL, self, "Hello")
+    timerActor.start    
+  }
+  
+  private def timeNowInMinutes():Long = {
+    TimeUnit.NANOSECONDS.toMinutes(System.nanoTime())
+  }
+  
+  private def noUserJoined():Boolean = {
+    val now = timeNowInMinutes
+    if (!hasUserJoined && (now - startedOn > 2)) {
+      println("No user has joined in 2 minutes")
+      true
+    } else {
+      false
+    }
+  }
+  
+  private def isMeetingPassedDuration():Boolean = {
+    val now = timeNowInMinutes
+    println("now=[" + now + "], startedOn=[" + startedOn + "], duration=[" + duration + "]")
+    if ((duration > 0) && (now > startedOn + duration)) {
+      true
+    } else {
+      false
+    }
+  }
+  
+  private def lessThanMinToEnd(numMinutes: Long):Boolean = {
+     (timeNowInMinutes - (startedOn + duration + minutesToExtend)) < numMinutes
+  }
+  
+  private def seeIfMeetingNeedsToBeExtended() {
+    val now = timeNowInMinutes
+    if ((duration > 0) && lessThanMinToEnd(2) && !hasSentExtendNotice) {
+      sendMeetingEndNotice(2, EXTENSION_TIME)
+      hasSentExtendNotice = true
+    } else if ((duration > 0) && lessThanMinToEnd(5)) {
+      sendMeetingEndNotice(5, EXTENSION_TIME)
+    } else if ((duration > 0) && lessThanMinToEnd(15)) {
+      sendMeetingEndNotice(15, EXTENSION_TIME)
+    }
   }
   
   private def handleHello() {
-//    println("***************hello received on [" + System.currentTimeMillis() + "]******************")
-    
-//    val timerActor = new TimerActor(2000, self, "Hello")    
-//    timerActor.start
+    println("*************** timer fired on [" + timeNowInMinutes + "]******************")
+    if (noUserJoined) {
+      println("Ending meeting as no user joined in 2 minutes")
+      endMeeting()
+    } else {
+      if (isMeetingPassedDuration()) {
+        endMeeting()
+      } else {
+        seeIfMeetingNeedsToBeExtended()
+      	schedTimer()        
+      } 
+    }
   }
   
+  private def sendMeetingEndNotice(minutesLeft: Int, minutesToExtend: Int) {
+    val moderators = users.getModerators
+    println("Sending meeting end notice. minLeft=[" + minutesLeft + "], minExtend=[" + minutesToExtend + "]")
+    outGW.send(new ExtendMeetingNotice(meetingID, recorded, minutesLeft, minutesToExtend, moderators))
+  }
+  
+  private def handleExtendMeetingNoticeReply(msg: ExtendMeetingNoticeReply) {
+    if (msg.extend) {
+      minutesToExtend += EXTENSION_TIME
+      hasSentExtendNotice = false
+      users.getUser(msg.extendedBy) foreach { u=>
+        outGW.send(new MeetingExtended(meetingID, recorded, u))
+      }
+    }
+  }
+   
   def sendMeetingHasEnded(userId: String) {
     outGW.send(new MeetingHasEnded(meetingID, userId))
     outGW.send(new DisconnectUser(meetingID, userId))
   }
   
   private def handleEndMeeting(msg: EndMeeting) {
+    endMeeting()
+  }
+  
+  private def endMeeting() {
     meetingEnded = true
-    outGW.send(new MeetingEnded(msg.meetingID, recorded, voiceBridge))
-    outGW.send(new DisconnectAllUsers(msg.meetingID))
+    outGW.send(new MeetingEnded(meetingID, recorded, voiceBridge))
+    outGW.send(new DisconnectAllUsers(meetingID))    
   }
   
   private def handleVoiceRecording(msg: VoiceRecording) {

@@ -203,7 +203,10 @@ trait UsersApp {
 	      if (ru.role == Role.MODERATOR) {
 		      assignNewPresenter(msg.userID, ru.name, msg.userID)
 	      }	  
-	    }      
+	    }  
+      
+      // Mark the meeting that a user has joined.
+      if (!hasUserJoined) hasUserJoined = true
     }
   }
 			

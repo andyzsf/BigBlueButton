@@ -182,7 +182,7 @@ public class ConnectionInvokerService {
 	}
 	
 	private void sendDirectMessage(final DirectClientMessage msg) {
-		Runnable sender = new Runnable() {
+		Runnable task = new Runnable() {
 			public void run() {
 				IScope meetingScope = getScope(msg.getMeetingID());
 				if (meetingScope != null) {
@@ -198,11 +198,11 @@ public class ConnectionInvokerService {
 				}	
 			}
 		};		
-	  runExec.execute(sender);
+	  runExec.execute(task);
 	}
 	
 	private void sendBroadcastMessage(final BroadcastClientMessage msg) {
-		Runnable sender = new Runnable() {
+		Runnable task = new Runnable() {
 			public void run() {
 				IScope meetingScope = getScope(msg.getMeetingID());
 				if (meetingScope != null) {
@@ -213,7 +213,7 @@ public class ConnectionInvokerService {
 				}
 			}
 		};	
-		runExec.execute(sender);
+		runExec.execute(task);
 	}
 	
 	private IConnection getConnection(IScope scope, String userID) {

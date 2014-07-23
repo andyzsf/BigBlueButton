@@ -57,6 +57,8 @@ class Users {
 
   def moderatorCount:Int = users.values.filter(u => u.role == MODERATOR).size
  
+  def moderators:Array[UserV] = users.values.filter(u => u.role == MODERATOR).toArray
+  
   def getVoiceUser(id:String):Option[UserV] = users.values.find(u => u.voice.id == id)
   
   def mute(id:String):Option[UserV] = {

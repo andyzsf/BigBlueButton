@@ -8,6 +8,20 @@ import org.bigbluebutton.core.apps.presentation.Page
 
 abstract class OutMessage
 
+case class ExtendMeetingNotice(
+    meetingID: String, 
+    recorded: Boolean,
+    minutesLeft: Int,
+    minutesToExtend: Int,
+    moderators: Array[UserVO]
+) extends IOutMessage
+
+case class MeetingExtended(
+   meetingID: String,
+   recorded: Boolean,
+   extendedBy: UserVO
+) extends IOutMessage
+
 case class VoiceRecordingStarted(
     meetingID: String, 
     recorded: Boolean,

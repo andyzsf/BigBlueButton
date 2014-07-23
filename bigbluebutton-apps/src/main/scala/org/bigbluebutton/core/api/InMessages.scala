@@ -34,6 +34,13 @@ case class StartMeeting(
 case class EndMeeting(
   meetingID: String) extends InMessage
 
+case class ExtendMeetingNoticeReply(
+  meetingID: String,
+  extend: Boolean,
+  extendedBy: String
+) extends InMessage
+  
+  
 case class LockSetting(
   meetingID: String, 
   locked: Boolean, 
