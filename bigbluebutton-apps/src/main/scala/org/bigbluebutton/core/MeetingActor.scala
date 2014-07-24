@@ -50,7 +50,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
 	loop {
 	  react {
 	    case "StartTimer"                                => handleStartTimer
-	    case "Hello"                                     => handleHello
+	    case "CheckEndMeeting"                           => handleCheckEndMeeting
 	    case msg: ValidateAuthToken                      => handleValidateAuthToken(msg)
 	    case msg: RegisterUser                           => handleRegisterUser(msg)
 	    case msg: VoiceUserJoined                        => handleVoiceUserJoined(msg)
@@ -185,7 +185,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
     }
   }
   
-  private def handleHello() {
+  private def handleCheckEndMeeting() {
     println("*************** timer fired on [" + timeNowInMinutes + "]******************")
     if (noUserJoined || meetingEmptyFor5Minutes) {
       println("Ending meeting as no user joined in 2 minutes")
