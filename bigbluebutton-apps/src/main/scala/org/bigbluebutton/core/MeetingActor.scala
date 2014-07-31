@@ -37,6 +37,8 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
   var minutesToExtend = 0
   
   var lastUserLeftOn:Long = 0
+  var hasLastWebUserLeft = false
+  var lastWebUserLeftOn:Long = 0
   
   class TimerActor(val timeout: Long, val who: Actor, val reply: String) extends Actor {
     def act {
@@ -51,6 +53,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
 	  react {
 	    case "StartTimer"                                => handleStartTimer
 	    case "CheckEndMeeting"                           => handleCheckEndMeeting
+	    case "MonitorNumberOfWebUsers"                   => handleMonitorNumberOfWebUsers()
 	    case msg: ValidateAuthToken                      => handleValidateAuthToken(msg)
 	    case msg: RegisterUser                           => handleRegisterUser(msg)
 	    case msg: VoiceUserJoined                        => handleVoiceUserJoined(msg)
@@ -216,6 +219,37 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
     }
   }
    
+  def webUserJoined() {
+    if (users.numWebUsers > 0) {
+      lastWebUserLeftOn = 0
+	  }      
+  }
+  
+  def startCheckingIfWeNeedToEndVoiceConf() {
+    if (users.numWebUsers == 0) {
+      lastWebUserLeftOn = timeNowInMinutes
+	    println("*************** MonitorNumberOfWebUsers started ******************")
+      scheduleEndVoiceConference()
+	  }
+  }
+  
+  def handleMonitorNumberOfWebUsers() {
+    if (users.numWebUsers == 0 && lastWebUserLeftOn > 0) {
+      if (timeNowInMinutes - lastWebUserLeftOn > 2) {
+        println("*************** MonitorNumberOfWebUsers [Ject all from voice] ******************")
+        outGW.send(new EjectAllVoiceUsers(meetingID, recorded, voiceBridge))
+      } else {
+        scheduleEndVoiceConference()
+      }
+    }
+  }
+  
+  private def scheduleEndVoiceConference() {
+    println("*************** MonitorNumberOfWebUsers monitor ******************")
+    val timerActor = new TimerActor(TIMER_INTERVAL, self, "MonitorNumberOfWebUsers")
+    timerActor.start    
+  }
+  
   def sendMeetingHasEnded(userId: String) {
     outGW.send(new MeetingHasEnded(meetingID, userId))
     outGW.send(new DisconnectUser(meetingID, userId))

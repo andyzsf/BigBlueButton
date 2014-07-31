@@ -206,21 +206,24 @@ trait UsersApp {
 	    }  
       
       // Mark the meeting that a user has joined.
-      if (!hasUserJoined) hasUserJoined = true
-      lastUserLeftOn = 0
+      if (!hasUserJoined) {
+        hasUserJoined = true
+        webUserJoined
+      }
     }
   }
 			
   def handleUserLeft(msg: UserLeaving):Unit = {
 	 if (users.hasUser(msg.userID)) {
 	  val user = users.removeUser(msg.userID)
-	  user foreach (u => outGW.send(new UserLeft(msg.meetingID, recorded, u)))
+	  user foreach (u => outGW.send(new UserLeft(msg.meetingID, recorded, u)))  
 	  
+    startCheckingIfWeNeedToEndVoiceConf()
 	 }
 	 
 	 if (users.numUsers == 0) lastUserLeftOn = timeNowInMinutes
   }
-
+  
   def handleVoiceUserJoined(msg: VoiceUserJoined) = {
       val user = users.getUser(msg.voiceUser.webUserId) match {
         case Some(user) => {
