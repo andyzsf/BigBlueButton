@@ -44,9 +44,9 @@ public class SwfSlidesGenerationProgressNotifier {
 	private void notifyProgressListener(Map<String, Object> msg) {	
 		if(messagingService != null){
 			Gson gson= new Gson();
-			String updateMsg=gson.toJson(msg);
+			String updateMsg = gson.toJson(msg);
 			log.debug("SENDING: " + updateMsg);
-			messagingService.send(MessagingConstants.PRESENTATION_CHANNEL, updateMsg);
+			messagingService.send(MessagingConstants.TO_PRESENTATION_CHANNEL, updateMsg);
 			log.debug("SENT: " + updateMsg);
 		} else {
 			log.warn("MessagingService has not been set");
@@ -77,18 +77,11 @@ public class SwfSlidesGenerationProgressNotifier {
 			return;
 		}
 		
-		String xml = generatedSlidesInfoHelper.generateUploadedPresentationInfo(pres);
-		String escape_xml = StringEscapeUtils.escapeXml(xml);
 		MessageBuilder builder = new ConversionUpdateMessage.MessageBuilder(pres);
-		builder.messageKey(ConversionMessageConstants.CONVERSION_COMPLETED_KEY);
-		builder.slidesInfo(escape_xml);
-		
-		//Storing presentation details in Redis for the html5 client
-		//TODO: Currently the keys are according to Ryan's specs
-		
-		messagingService.recordPresentation(pres.getRoom(),pres.getName(),pres.getNumberOfPages());
-		
-		notifyProgressListener(builder.build().getMessage());
+		builder.messageKey(ConversionMessageConstants.CONVERSION_COMPLETED_KEY);		
+		builder.numberOfPages(pres.getNumberOfPages());
+		builder.presBaseUrl(pres);
+		notifyProgressListener(builder.build().getMessage());	
 	}
 	
 	public void setMessagingService(MessagingService m) {

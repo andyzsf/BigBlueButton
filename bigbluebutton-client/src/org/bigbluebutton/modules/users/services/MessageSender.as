@@ -20,6 +20,7 @@ package org.bigbluebutton.modules.users.services
 {
   import org.bigbluebutton.common.LogUtil;
   import org.bigbluebutton.core.BBB;
+  import org.bigbluebutton.core.UsersUtil;
   import org.bigbluebutton.core.managers.ConnectionManager;
   import org.bigbluebutton.main.model.users.IMessageListener;
   
@@ -71,51 +72,81 @@ package org.bigbluebutton.modules.users.services
       );
     }
     
-    public function raiseHand(userID:String, raise:Boolean):void {
-      var message:Object = new Object();
-      message["userID"] = userID;
-      message["status"] = "hasStream";
-      message["value"] = raise;
-      
+    public function raiseHand(userID:String, raise:Boolean):void {    
       var _nc:ConnectionManager = BBB.initConnectionManager();
-      _nc.sendMessage("participants.setParticipantStatus", 
-        function(result:String):void { // On successful result
-          LogUtil.debug(result); 
-        },	                   
-        function(status:String):void { // status - On error occurred
-          LogUtil.error(status); 
-        },
-        message
-      );
-      
+      if (raise) {
+        _nc.sendMessage("participants.userRaiseHand", 
+          function(result:String):void { // On successful result
+            LogUtil.debug(result); 
+          },	                   
+          function(status:String):void { // status - On error occurred
+            LogUtil.error(status); 
+          }
+        );        
+      } else {
+        var message:Object = new Object();
+        message["userId"] = userID;
+        message["loweredBy"] = userID;
+
+        _nc.sendMessage("participants.lowerHand", 
+          function(result:String):void { // On successful result
+            LogUtil.debug(result); 
+          },	                   
+          function(status:String):void { // status - On error occurred
+            LogUtil.error(status); 
+          },
+          message
+        );        
+      }  
     }
     
     public function addStream(userID:String, streamName:String):void {
-      var message:Object = new Object();
-      message["userID"] = userID;
-      message["status"] = "raiseHand";
-      message["value"] = "true,stream=" + streamName;
-
       var _nc:ConnectionManager = BBB.initConnectionManager();
-      _nc.sendMessage("participants.setParticipantStatus", 
+      _nc.sendMessage("participants.shareWebcam", 
         function(result:String):void { // On successful result
           LogUtil.debug(result); 
         },	                   
         function(status:String):void { // status - On error occurred
           LogUtil.error(status); 
         },
-        message
+        streamName
       );
     }
     
-    public function removeStream(userID:String, streamName:String):void {
+    public function removeStream(userID:String, streamName:String):void {      
+      var _nc:ConnectionManager = BBB.initConnectionManager();
+      _nc.sendMessage("participants.unshareWebcam", 
+        function(result:String):void { // On successful result
+          LogUtil.debug(result); 
+        },	                   
+        function(status:String):void { // status - On error occurred
+          LogUtil.error(status); 
+        }
+      );
+    }
+    
+    public function queryForRecordingStatus():void {
+      var _nc:ConnectionManager = BBB.initConnectionManager();
+      _nc.sendMessage(
+        "participants.getRecordingStatus",// Remote function name
+        function(result:String):void { // On successful result
+          LogUtil.debug(result); 
+        },	                   
+        function(status:String):void { // status - On error occurred
+          LogUtil.error(status); 
+        }
+      ); //_netConnection.call
+    }
+    
+    public function changeRecordingStatus(userID:String, recording:Boolean):void {
+      trace("Sending setRecordingStatus. recording=[" + recording + "]");
       var message:Object = new Object();
-      message["userID"] = userID;
-      message["status"] = "raiseHand";
-      message["value"] = "false,stream=" + streamName;
+      message["userId"] = userID;
+      message["recording"] = recording;
       
       var _nc:ConnectionManager = BBB.initConnectionManager();
-      _nc.sendMessage("participants.setParticipantStatus", 
+      _nc.sendMessage(
+        "participants.setRecordingStatus",// Remote function name
         function(result:String):void { // On successful result
           LogUtil.debug(result); 
         },	                   
@@ -123,7 +154,191 @@ package org.bigbluebutton.modules.users.services
           LogUtil.error(status); 
         },
         message
-      );
+      ); //_netConnection.call
+    }
+
+    public function muteAllUsers(mute:Boolean, dontMuteThese:Array = null):void {
+      if (dontMuteThese == null) dontMuteThese = [];
+      
+      trace("Sending muteAllUsers. ");
+      var message:Object = new Object();
+      message["mute"] = mute;
+      message["exceptUsers"] = dontMuteThese;
+
+      var _nc:ConnectionManager = BBB.initConnectionManager();
+      _nc.sendMessage(
+        "voice.muteUnmuteUser",
+        function(result:String):void { // On successful result
+          LogUtil.debug(result); 
+        },	                   
+        function(status:String):void { // status - On error occurred
+          LogUtil.error(status); 
+        },
+        message
+      ); 
+    }
+    
+    public function muteUnmuteUser(userid:String, mute:Boolean):void {
+      trace("Sending muteUnmuteUser. id=[" + userid + "]");
+      var message:Object = new Object();
+      message["userId"] = userid;
+      message["mute"] = mute;
+
+      var _nc:ConnectionManager = BBB.initConnectionManager();
+      _nc.sendMessage(
+        "voice.muteUnmuteUser",
+        function(result:String):void { // On successful result
+          LogUtil.debug(result); 
+        },	                   
+        function(status:String):void { // status - On error occurred
+          LogUtil.error(status); 
+        },
+        message
+      );          
+     } 
+    
+    public function ejectUser(userid:String):void {
+      trace("Sending ejectUser. id=[" + userid + "]");
+      var message:Object = new Object();
+      message["userId"] = userid;
+
+      
+      var _nc:ConnectionManager = BBB.initConnectionManager();
+      _nc.sendMessage(
+        "voice.kickUSer",
+        function(result:String):void { // On successful result
+          LogUtil.debug(result); 
+        },	                   
+        function(status:String):void { // status - On error occurred
+          LogUtil.error(status); 
+        },
+        message
+      );    
+    }
+    
+    public function getRoomMuteState():void{
+      trace("Sending getRoomMuteState.");
+      var message:Object = new Object();
+         
+      var _nc:ConnectionManager = BBB.initConnectionManager();
+      _nc.sendMessage(
+        "voice.isRoomMuted",
+        function(result:String):void { // On successful result
+          LogUtil.debug(result); 
+        },	                   
+        function(status:String):void { // status - On error occurred
+          LogUtil.error(status); 
+        }
+      ); 
+    }
+    
+    public function getRoomLockState():void{
+      trace("Sending getRoomLockState.");
+      var message:Object = new Object();
+      
+      var _nc:ConnectionManager = BBB.initConnectionManager();
+      _nc.sendMessage(
+        "lock.isRoomLocked",
+        function(result:String):void { // On successful result
+          LogUtil.debug(result); 
+        },	                   
+        function(status:String):void { // status - On error occurred
+          LogUtil.error(status); 
+        }
+      );    
+    }    
+
+    /**
+     * Set lock state of all users in the room, except the users listed in second parameter
+     * */
+    public function setAllUsersLock(lock:Boolean, except:Array = null):void {
+      
+      return;
+/*      
+      if(except == null) except = [];
+      var nc:NetConnection = _module.connection;
+      nc.call(
+        "lock.setAllUsersLock",// Remote function name
+        new Responder(
+          function(result:Object):void { 
+            LogUtil.debug("Successfully locked all users except " + except.join(","));
+          },	
+          function(status:Object):void { 
+            LogUtil.error("Error occurred:"); 
+            for (var x:Object in status) { 
+              LogUtil.error(x + " : " + status[x]); 
+            } 
+          }
+        )//new Responder
+        , lock, except
+      ); //_netConnection.call
+      
+      _listenersSO.send("lockStateCallback", lock);
+*/
+    }
+    
+    /**
+     * Set lock state of all users in the room, except the users listed in second parameter
+     * */
+    public function setUserLock(internalUserID:String, lock:Boolean):void {
+      
+      return;
+/*      
+      var nc:NetConnection = _module.connection;
+      nc.call(
+        "lock.setUserLock",// Remote function name
+        new Responder(
+          function(result:Object):void { 
+            LogUtil.debug("Successfully locked user " + internalUserID);
+          },	
+          function(status:Object):void { 
+            LogUtil.error("Error occurred:"); 
+            for (var x:Object in status) { 
+              LogUtil.error(x + " : " + status[x]); 
+            } 
+          }
+        )//new Responder
+        , lock, internalUserID
+      ); //_netConnection.call
+*/
+    }
+    
+    
+    public function getLockSettings():void{
+      
+      return;
+/*      
+      var nc:NetConnection = _module.connection;
+      nc.call(
+        "lock.getLockSettings",// Remote function name
+        new Responder(
+          function(result:Object):void {
+            //						_conference.setLockSettings(new LockSettingsVO(result.allowModeratorLocking, result.disableCam, result.disableMic, result.disablePrivateChat, result.disablePublicChat));
+          },	
+          function(status:Object):void { 
+            LogUtil.error("Error occurred:"); 
+            for (var x:Object in status) { 
+              LogUtil.error(x + " : " + status[x]); 
+            } 
+          }
+        )//new Responder
+      ); //_netConnection.call
+*/
+    }
+    
+    public function saveLockSettings(newLockSettings:Object):void{   
+      trace("Sending setLockSettings.");
+      var _nc:ConnectionManager = BBB.initConnectionManager();
+      _nc.sendMessage(
+        "lock.setLockSettings",
+        function(result:String):void { // On successful result
+          LogUtil.debug(result); 
+        },	                   
+        function(status:String):void { // status - On error occurred
+          LogUtil.error(status); 
+        },
+        newLockSettings
+      );      
     }
   }
 }

@@ -31,6 +31,11 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import javax.imageio.ImageIO;
+import org.bigbluebutton.api.messaging.converters.messages.CreateMeetingMessage;
+import org.bigbluebutton.api.messaging.converters.messages.DestroyMeetingMessage;
+import org.bigbluebutton.api.messaging.converters.messages.EndMeetingMessage;
+import org.bigbluebutton.api.messaging.converters.messages.KeepAliveMessage;
+import org.bigbluebutton.api.messaging.converters.messages.RegisterUserMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
@@ -42,77 +47,51 @@ import redis.clients.jedis.JedisPubSub;
 public class RedisMessagingService implements MessagingService {
 	private static Logger log = LoggerFactory.getLogger(RedisMessagingService.class);
 	
-	private JedisPool redisPool;
-	private final Set<MessageListener> listeners = new HashSet<MessageListener>();
-
-	private final Executor exec = Executors.newSingleThreadExecutor();
-	private Runnable pubsubListener;
-
- 	@Override
-	public void addListener(MessageListener listener) {
- 		listeners.add(listener);
-	}
- 	
-	public void removeListener(MessageListener listener) {
- 		listeners.remove(listener);
- 	}
-
+	private RedisStorageService storeService;
+	private MessageSender sender;
+	
 	public void recordMeetingInfo(String meetingId, Map<String, String> info) {
-		Jedis jedis = redisPool.getResource();
-		try {
-		    for (String key: info.keySet()) {
-				    	log.debug("Storing metadata {} = {}", key, info.get(key));
-				}   
-
-		    log.debug("Saving metadata in {}", meetingId);
-			jedis.hmset("meeting:info:" + meetingId, info);
-		} catch (Exception e){
-			log.warn("Cannot record the info meeting:"+meetingId,e);
-		} finally {
-			redisPool.returnResource(jedis);
-		}		
+		storeService.recordMeetingInfo(meetingId, info);	
 	}
 
 	public void destroyMeeting(String meetingID) {
-		HashMap<String,String> map = new HashMap<String, String>();
-		map.put("messageId", MessagingConstants.DESTROY_MEETING_REQUEST_EVENT);
-		map.put("meetingID", meetingID);
-		Gson gson = new Gson();
-		
-		send(MessagingConstants.SYSTEM_CHANNEL, gson.toJson(map));		
+		DestroyMeetingMessage msg = new DestroyMeetingMessage(meetingID);
+		String json = MessageToJson.destroyMeetingMessageToJson(msg);
+		log.info("Sending destory meeting message to bbb-apps:[{}]", json);
+		sender.send(MessagingConstants.TO_MEETING_CHANNEL, json);	
 	}
 	
-	public void createMeeting(String meetingID, Boolean recorded, String voiceBridge) {
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		map.put("messageId", MessagingConstants.CREATE_MEETING_REQUEST_EVENT);
-		map.put("meetingID", meetingID);
-		map.put("record", recorded);
-		map.put("voiceBridge", voiceBridge);
-		
-		Gson gson = new Gson();
-		
-		send(MessagingConstants.SYSTEM_CHANNEL, gson.toJson(map));		
+	public void registerUser(String meetingID, String internalUserId, String fullname, String role, String externUserID, String authToken) {
+		RegisterUserMessage msg = new RegisterUserMessage(meetingID, internalUserId, fullname, role, externUserID, authToken);
+		String json = MessageToJson.registerUserToJson(msg);
+		log.info("Sending register user message to bbb-apps:[{}]", json);
+		sender.send(MessagingConstants.TO_MEETING_CHANNEL, json);		
+	}
+	
+	public void createMeeting(String meetingID, String meetingName, Boolean recorded, String voiceBridge, Long duration) {
+		CreateMeetingMessage msg = new CreateMeetingMessage(meetingID, meetingName, recorded, voiceBridge, duration);
+		String json = MessageToJson.createMeetingMessageToJson(msg);
+		log.info("Sending create meeting message to bbb-apps:[{}]", json);
+		sender.send(MessagingConstants.TO_MEETING_CHANNEL, json);			
 	}
 	
 	public void endMeeting(String meetingId) {
-		HashMap<String,String> map = new HashMap<String, String>();
-		map.put("messageId", MessagingConstants.END_MEETING_REQUEST_EVENT);
-		map.put("meetingId", meetingId);
-		Gson gson = new Gson();
-		send(MessagingConstants.SYSTEM_CHANNEL, gson.toJson(map));
+		EndMeetingMessage msg = new EndMeetingMessage(meetingId);
+		String json = MessageToJson.endMeetingMessageToJson(msg);
+		log.info("Sending end meeting message to bbb-apps:[{}]", json);
+		sender.send(MessagingConstants.TO_MEETING_CHANNEL, json);	
 	}
 
-	public void send(String channel, String message) {
-		Jedis jedis = redisPool.getResource();
-		try {
-			jedis.publish(channel, message);
-		} catch(Exception e){
-			log.warn("Cannot publish the message to redis",e);
-		}finally{
-			redisPool.returnResource(jedis);
-		}
-	}
-
+  public void sendKeepAlive(String keepAliveId) {
+		KeepAliveMessage msg = new KeepAliveMessage(keepAliveId);
+		String json = MessageToJson.keepAliveMessageToJson(msg);
+		sender.send(MessagingConstants.TO_SYSTEM_CHANNEL, json);		
+  }
+	
+  public void send(String channel, String message) {
+		sender.send(channel, message);
+  }
+  
 	public void sendPolls(String meetingId, String title, String question, String questionType, List<String> answers){
 		Gson gson = new Gson();
 
@@ -126,91 +105,28 @@ public class RedisMessagingService implements MessagingService {
 		
 		System.out.println(gson.toJson(map));
 		
-		send(MessagingConstants.POLLING_CHANNEL, gson.toJson(map));		
+		sender.send(MessagingConstants.TO_POLLING_CHANNEL, gson.toJson(map));		
 	}
 
+	public void setMessageSender(MessageSender sender) {
+		this.sender = sender;
+	}
+	
+  public void setRedisStorageService(RedisStorageService storeService) {
+  	this.storeService = storeService;
+  }
+  
 	public String storeSubscription(String meetingId, String externalMeetingID, String callbackURL){
-		String sid = "";
-		Jedis jedis = redisPool.getResource();
-		try {
-			sid = Long.toString(jedis.incr("meeting:" + meetingId + ":nextSubscription"));
-
-			HashMap<String,String> props = new HashMap<String,String>();
-			props.put("subscriptionID", sid);
-			props.put("meetingId", meetingId);
-			props.put("externalMeetingID", externalMeetingID);
-			props.put("callbackURL", callbackURL);
-			props.put("active", "true");
-
-			jedis.hmset("meeting:" + meetingId + ":subscription:" + sid, props);
-			jedis.rpush("meeting:" + meetingId + ":subscriptions", sid);
-			
-		} catch (Exception e){
-			log.warn("Cannot store subscription:" + meetingId, e);
-		} finally {
-			redisPool.returnResource(jedis);
-		}
-
-		return sid; 	
+		return storeService.storeSubscription(meetingId, externalMeetingID, callbackURL);
 	}
 
 	public boolean removeSubscription(String meetingId, String subscriptionId){
-		boolean unsubscribed = true;
-		Jedis jedis = redisPool.getResource();
-		try {
-			jedis.hset("meeting:" + meetingId + ":subscription:" + subscriptionId, "active", "false");	
-		} catch (Exception e){
-			log.warn("Cannot rmove subscription:" + meetingId, e);
-			unsubscribed = false;
-		} finally {
-			redisPool.returnResource(jedis);
-		}
-
-		return unsubscribed; 	
+		return storeService.removeSubscription(meetingId, subscriptionId);
 	}
 
 	public List<Map<String,String>> listSubscriptions(String meetingId){
-		List<Map<String,String>> list = new ArrayList<Map<String,String>>();
-		Jedis jedis = redisPool.getResource();
-		try {
-			List<String> sids = jedis.lrange("meeting:" + meetingId + ":subscriptions", 0 , -1);
-			for(int i=0; i<sids.size(); i++){
-				Map<String,String> props = jedis.hgetAll("meeting:" + meetingId + ":subscription:" + sids.get(i));
-				list.add(props);	
-			}
-				
-		} catch (Exception e){
-			log.warn("Cannot list subscriptions:" + meetingId, e);
-		} finally {
-			redisPool.returnResource(jedis);
-		}
-
-		return list;	
+		return storeService.listSubscriptions(meetingId);	
 	}	
-
-	public void start() {
-		log.debug("Starting redis pubsub...");		
-
-		final Jedis jedis = redisPool.getResource();
-		try {
-			pubsubListener = new Runnable() {
-			    public void run() {
-			    	jedis.psubscribe(new PubSubListener(), MessagingConstants.BIGBLUEBUTTON_PATTERN);       			
-			    }
-			};
-			exec.execute(pubsubListener);
-		} catch (Exception e) {
-			log.error("Error in subscribe: " + e.getMessage());
-		}
-	}
-
-	public void stop() {
-		try {
-			redisPool.destroy();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 	public void setRedisPool(JedisPool redisPool){
 		this.redisPool=redisPool;
@@ -378,6 +294,8 @@ public class RedisMessagingService implements MessagingService {
 		} finally {
 			redisPool.returnResource(jedis);
 		}
+	public void removeMeeting(String meetingId){
+		storeService.removeMeeting(meetingId);
 	}
-
+	
 }

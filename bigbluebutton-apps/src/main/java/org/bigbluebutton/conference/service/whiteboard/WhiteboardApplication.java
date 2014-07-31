@@ -18,22 +18,14 @@
 */
 package org.bigbluebutton.conference.service.whiteboard;
 
-import java.util.List;
-import org.bigbluebutton.conference.BigBlueButtonSession;
-import org.bigbluebutton.conference.Constants;
 import org.red5.logging.Red5LoggerFactory;
 import org.red5.server.adapter.ApplicationAdapter;
 import org.red5.server.adapter.IApplication;
 import org.red5.server.api.IClient;
 import org.red5.server.api.IConnection;
-import org.red5.server.api.Red5;
 import org.red5.server.api.scope.IScope;
 import org.slf4j.Logger;
-import org.bigbluebutton.conference.service.whiteboard.red5.ClientMessageSender;
-import org.bigbluebutton.conference.service.whiteboard.shapes.Annotation;
 import org.bigbluebutton.core.api.IBigBlueButtonInGW;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 public class WhiteboardApplication extends ApplicationAdapter implements IApplication {	
 	private static Logger log = Red5LoggerFactory.getLogger(WhiteboardApplication.class, "bigbluebutton");
@@ -100,39 +92,39 @@ public class WhiteboardApplication extends ApplicationAdapter implements IApplic
 	public void roomStop(IScope scope) {
 	}
 	
-	public void requestAnnotationHistory(String meetingID, String requesterID, String presentationID, Integer pageNum) {
-		bbbInGW.requestWhiteboardAnnotationHistory(meetingID, requesterID, presentationID, pageNum);
+	public void requestAnnotationHistory(String meetingID, String requesterID, String whiteboardId) {
+	// Just hardcode as we don't really need it for flash client. (ralam may 7, 2014)
+		String replyTo = meetingID + "/" + requesterID; 
+		bbbInGW.requestWhiteboardAnnotationHistory(meetingID, requesterID, whiteboardId, replyTo);
 	}
 	
 	public void sendWhiteboardAnnotation(String meetingID, String requesterID, java.util.Map<String, Object> shape) {
 		bbbInGW.sendWhiteboardAnnotation(meetingID, requesterID, shape);
 	}
 	
-	public void changeWhiteboardPage(String meetingID, String requesterID, Integer page) {
-		bbbInGW.setWhiteboardActivePage(meetingID, requesterID, page);
+	public void clearWhiteboard(String meetingID, String requesterID, String whiteboardId) {
+		bbbInGW.clearWhiteboard(meetingID, requesterID, whiteboardId);
 	}
 	
-	public void clearWhiteboard(String meetingID, String requesterID) {
-		bbbInGW.clearWhiteboard(meetingID, requesterID);
+	public void undoWhiteboard(String meetingID, String requesterID, String whiteboardId) {
+		bbbInGW.undoWhiteboard(meetingID, requesterID, whiteboardId);
 	}
-	
-	public void undoWhiteboard(String meetingID, String requesterID) {
-		bbbInGW.undoWhiteboard(meetingID, requesterID);
-	}
-	
-	public void setWhiteboardActivePresentation(String meetingID, String requesterID, String presentationID, Integer numPages) {
-		bbbInGW.setActivePresentation(meetingID, requesterID, presentationID, numPages);
-	}
-	
+		
 	public void setWhiteboardEnable(String meetingID, String requesterID, Boolean enable) {
 		bbbInGW.enableWhiteboard(meetingID, requesterID, enable);
 	}
 	
 	public void setIsWhiteboardEnabled(String meetingID, String requesterID) {
+<<<<<<< HEAD
 		bbbInGW.isWhiteboardEnabled(meetingID, requesterID);
 	//TODO: changed to public for html5 integration
 	public String getMeetingId(){
 		return Red5.getConnectionLocal().getScope().getName();
+=======
+		// Just hardcode as we don't really need it for flash client. (ralam may 7, 2014)
+		String replyTo = meetingID + "/" + requesterID; 
+		bbbInGW.isWhiteboardEnabled(meetingID, requesterID, replyTo);
+>>>>>>> allow-meeting-to-be-extended
 	}
 	
 }

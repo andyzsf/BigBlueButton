@@ -17,8 +17,8 @@ public class PollRedisMessageHandler implements MessageHandler {
 	
 	@Override
 	public void handleMessage(String pattern, String channel, String message) {
-		log.debug("Checking message: " + pattern + " " + channel + " " + message);
-		if (channel.equalsIgnoreCase(MessagingConstants.POLLING_CHANNEL)){
+//		log.debug("Checking message: " + pattern + " " + channel + " " + message);
+		if (channel.equalsIgnoreCase(MessagingConstants.TO_POLLING_CHANNEL)){
 			Gson gson = new Gson();
 			JsonParser parser = new JsonParser();
 			JsonObject obj = parser.parse(message).getAsJsonObject();

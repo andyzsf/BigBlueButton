@@ -19,6 +19,7 @@
 package org.bigbluebutton.conference.service.recorder;
 
 import org.slf4j.Logger;
+import org.bigbluebutton.service.recording.RedisListRecorder;
 import org.red5.logging.Red5LoggerFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,16 +39,17 @@ public class RecorderApplication {
 	
 	private static final int NTHREADS = 1;
 	private static final Executor exec = Executors.newFixedThreadPool(NTHREADS);
-			
+	private static final Executor runExec = Executors.newFixedThreadPool(NTHREADS);
+	
 	private BlockingQueue<RecordEvent> messages;
 	private volatile boolean recordEvents = false;
 
-	private final Map<String, String> recordingSessions;
+  private RedisListRecorder redisListRecorder;
+  
 	private Recorder recorder;
 	
 	public RecorderApplication() {
 		 messages = new LinkedBlockingQueue<RecordEvent>();
-		recordingSessions = new ConcurrentHashMap<String, String>();
 	}
 
 	public void start() {
@@ -75,30 +77,33 @@ public class RecorderApplication {
 	}
 
 	public void destroyRecordSession(String meetingID) {
-		recordingSessions.remove(meetingID);
+//		recordingSessions.remove(meetingID);
 	}
 	
 	public void createRecordSession(String meetingID) {
-		recordingSessions.put(meetingID, meetingID);
+//		recordingSessions.put(meetingID, meetingID);
 	}
 	
 	public void record(String meetingID, RecordEvent message) {
 		messages.offer(message);
-
-		if (recordingSessions.containsKey(meetingID)) {
-			recorder.record(meetingID, message);
-		}
 	}
 
-	private void recordEvent(RecordEvent message) {
-		if (recordingSessions.containsKey(message.getMeetingID())) {
-			recorder.record(message.getMeetingID(), message);
-		}		
+	private void recordEvent(final RecordEvent message) {
+		Runnable task = new Runnable() {
+			public void run() {
+			  recorder.record(message.getMeetingID(), message);
+			}
+		};
+		runExec.execute(task);
 	}
 	
 	public void setRecorder(Recorder recorder) {
 		this.recorder = recorder;
 		log.debug("setting recorder");
+	}
+	
+	public void setRedisListRecorder(RedisListRecorder rec) {
+		redisListRecorder = rec;
 	}
 }
 

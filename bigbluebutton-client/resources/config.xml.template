@@ -13,6 +13,8 @@
     <layout showLogButton="false" showVideoLayout="false" showResetLayout="true" defaultLayout="Default"
             showToolbar="true" showFooter="true" showMeetingName="true" showHelpButton="true" 
             showLogoutWindow="true" showLayoutTools="true" showNetworkMonitor="false" confirmLogout="true"/>
+    <lock allowModeratorLocking="false" disableCamForLockedUsers="false" disableMicForLockedUsers="false" disablePrivateChatForLockedUsers="false" 
+          disablePublicChatForLockedUsers="false" lockLayoutForLockedUsers="false"/>
             
 		<modules>
 		 
@@ -24,6 +26,7 @@
 			privateEnabled="true"  
 			position="top-right"
 			baseTabIndex="701"
+			colorPickerIsVisible="false"
 		/>
 
 		<module name="UsersModule" url="http://HOST/client/UsersModule.swf?v=VERSION" 
@@ -46,10 +49,15 @@
 		
 		<module name="PhoneModule" url="http://HOST/client/PhoneModule.swf?v=VERSION" 
 			uri="rtmp://HOST/sip" 
-			autoJoin="true"
+			autoJoin="false"
+			listenOnlyMode="true"
+			presenterShareOnly="false"
 			skipCheck="false"
 			showButton="true"
 			enabledEchoCancel="true"
+			useWebrtcIfAvailable="true"
+			showPhoneOption="false"
+			echoTestApp="9196"
 			dependsOn="UsersModule"
 		/>
 
@@ -92,14 +100,14 @@
 			whiteboardAccess="presenter"
 			keepToolbarVisible="false"
 		/>
-
 <!--
+
     <module name="PollingModule" url="http://HOST/client/PollingModule.swf?v=VERSION" 
       uri="rtmp://HOST/bigbluebutton" 
       dependsOn="PresentModule"
     />
--->
     		
+-->
 		<module name="PresentModule" url="http://HOST/client/PresentModule.swf?v=VERSION" 
 			uri="rtmp://HOST/bigbluebutton" 
 			host="http://HOST" 

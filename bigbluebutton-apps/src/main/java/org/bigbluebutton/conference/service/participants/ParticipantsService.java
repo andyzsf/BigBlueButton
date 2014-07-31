@@ -29,13 +29,10 @@ import org.bigbluebutton.conference.Constants;
 
 
 public class ParticipantsService {
-
 	private static Logger log = Red5LoggerFactory.getLogger( ParticipantsService.class, "bigbluebutton" );	
 	private ParticipantsApplication application;
-	private ParticipantsBridge participantsBridge;
 
 	public void assignPresenter(Map<String, String> msg) {
-
 		IScope scope = Red5.getConnectionLocal().getScope();
 		log.debug("Checking assignPresenter values " + msg.get("newPresenterID") + " " + msg.get("newPresenterName") + " " + msg.get("assignedBy"));
 		application.assignPresenter(scope.getName(), (String) msg.get("newPresenterID"), (String) msg.get("newPresenterName"), (String) msg.get("assignedBy"));
@@ -69,7 +66,7 @@ public class ParticipantsService {
 		}
 		participantsBridge.storeAssignPresenter(scope.getName(), userid, previousPresenter);
 		
-		participantsBridge.sendAssignPresenter(scope.getName(), userid);
+		application.assignPresenter(scope.getName(), (String) msg.get("newPresenterID"), (String) msg.get("newPresenterName"), (String) msg.get("assignedBy"));
 	}
 	
 	public void getParticipants() {
@@ -77,7 +74,31 @@ public class ParticipantsService {
 		application.getUsers(scope.getName(), getBbbSession().getInternalUserID());
 	}
 	
-		
+	public void userRaiseHand() {
+		IScope scope = Red5.getConnectionLocal().getScope();
+		String userId = getBbbSession().getInternalUserID();
+		application.userRaiseHand(scope.getName(), userId);
+	}
+	
+	public void lowerHand(Map<String, String> msg) {
+		String userId = (String) msg.get("userId");
+		String loweredBy = (String) msg.get("loweredBy");
+		IScope scope = Red5.getConnectionLocal().getScope();
+		application.lowerHand(scope.getName(), userId, loweredBy);
+	}
+	
+	public void shareWebcam(String stream) {
+		IScope scope = Red5.getConnectionLocal().getScope();
+		String userId = getBbbSession().getInternalUserID();
+		application.shareWebcam(scope.getName(), userId, stream);		
+	}
+	
+	public void unshareWebcam() {
+		IScope scope = Red5.getConnectionLocal().getScope();
+		String userId = getBbbSession().getInternalUserID();
+		application.unshareWebcam(scope.getName(), userId);
+	}
+	
 	public void setParticipantStatus(Map<String, Object> msg) {
 		String roomName = Red5.getConnectionLocal().getScope().getName();
 
@@ -85,13 +106,27 @@ public class ParticipantsService {
 	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {
-		log.debug("Setting Participants Applications");
 		application = a;
 	}
 	
-	private BigBlueButtonSession getBbbSession() {
-		return (BigBlueButtonSession) Red5.getConnectionLocal().getAttribute(Constants.SESSION);
-	public void setParticipantsBridge(ParticipantsBridge pb){
-		this.participantsBridge = pb;
+	public void setRecordingStatus(Map<String, Object> msg) {
+		String roomName = Red5.getConnectionLocal().getScope().getName();
+		application.setRecordingStatus(roomName, (String)msg.get("userId"), (Boolean) msg.get("recording"));
 	}
+
+	public void getRecordingStatus() {
+		String roomName = Red5.getConnectionLocal().getScope().getName();
+		application.getRecordingStatus(roomName, getMyUserId());
+	}
+	
+	public String getMyUserId() {
+		BigBlueButtonSession bbbSession = (BigBlueButtonSession) Red5.getConnectionLocal().getAttribute(Constants.SESSION);
+		assert bbbSession != null;
+		return bbbSession.getInternalUserID();
+	}
+	
+	private BigBlueButtonSession getBbbSession() {
+        return (BigBlueButtonSession) Red5.getConnectionLocal().getAttribute(Constants.SESSION);
+    }
+
 }

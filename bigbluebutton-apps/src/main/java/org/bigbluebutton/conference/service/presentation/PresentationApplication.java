@@ -21,17 +21,12 @@ package org.bigbluebutton.conference.service.presentation;
 import org.slf4j.Logger;
 import org.bigbluebutton.core.api.IBigBlueButtonInGW;
 import org.red5.logging.Red5LoggerFactory;
-<<<<<<< HEAD
 import java.util.Map;
-
-
-=======
 import org.red5.server.api.Red5;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
->>>>>>> html5-bridge-new-events
 public class PresentationApplication {
 	private static Logger log = Red5LoggerFactory.getLogger( PresentationApplication.class, "bigbluebutton" );	
 		
@@ -40,67 +35,68 @@ public class PresentationApplication {
 	public void setBigBlueButtonInGW(IBigBlueButtonInGW inGW) {
 		bbbInGW = inGW;
 	}
-	
-
-	
+		
 	public void clear(String meetingID) {
 		
 	}
+
+	public void sendConversionUpdate(String messageKey, String meetingId, 
+            String code, String presentationId, String presName) {
+		bbbInGW.sendConversionUpdate(messageKey, meetingId, code, 
+				presentationId, presName);
+    }
 	
-	public void sendUpdateMessage(Map<String, Object> message){	
-		String meetingID = (String) message.get("room");		
-		bbbInGW.sendUpdateMessage(meetingID, message);
+	public void sendPageCountError(String messageKey, String meetingId, 
+            String code, String presentationId, int numberOfPages,
+            int maxNumberPages, String presName) {
+		bbbInGW.sendPageCountError(messageKey, meetingId, code, 
+				presentationId, numberOfPages, maxNumberPages, presName);
 	}
-			
+	
+	public void sendSlideGenerated(String messageKey, String meetingId, 
+            String code, String presentationId, int numberOfPages,
+            int pagesCompleted, String presName) {
+		bbbInGW.sendSlideGenerated(messageKey, meetingId, code, 
+				presentationId, numberOfPages, pagesCompleted, presName);
+	}
+
+	public void sendConversionCompleted(String messageKey, String meetingId, 
+            String code, String presentation, int numberOfPages, 
+            String presName, String presBaseUrl) {
+		bbbInGW.sendConversionCompleted(messageKey, meetingId, 
+	            code, presentation, numberOfPages, presName, presBaseUrl);
+	}
+				
 	public void removePresentation(String meetingID, String presentationID){
 		bbbInGW.removePresentation(meetingID, presentationID);
     }
 	
 	public void getPresentationInfo(String meetingID, String requesterID) {
-		bbbInGW.getPresentationInfo(meetingID, requesterID);
+		// Just hardcode as we don't really need it for flash client. (ralam may 7, 2014)
+		String replyTo = meetingID + "/" + requesterID; 
+		bbbInGW.getPresentationInfo(meetingID, requesterID, replyTo);
 	}
-<<<<<<< HEAD
 		
 	public void sendCursorUpdate(String meetingID, Double xPercent, Double yPercent) {	
-
 		bbbInGW.sendCursorUpdate(meetingID, xPercent, yPercent);
-=======
-	
-	public void sendCursorUpdate(String room, Double xPercent, Double yPercent) {	
-		if (roomsManager.hasRoom(room)){
-			log.debug("Request to update cursor[" + xPercent + "," + yPercent + "]");
-			roomsManager.sendCursorUpdate(room, xPercent, yPercent);
-			
-			Map<String, Object> message = new HashMap<String, Object>();	
-			message.put("xPercent", xPercent);
-			message.put("yPercent", yPercent);
-			//ClientMessage m = new ClientMessage(ClientMessage.BROADCAST, getMeetingId(), "PresentationCursorUpdateCommand", message);
-			ClientMessage m = new ClientMessage(ClientMessage.BROADCAST, room, "PresentationCursorUpdateCommand", message);
-			connInvokerService.sendMessage(m);
-			
-			return;
-		}
-				
-		log.warn("Sending cursor update on a non-existant room " + room);
->>>>>>> html5-bridge-new-events
 	}
 	
 	public void resizeAndMoveSlide(String meetingID, Double xOffset, Double yOffset, Double widthRatio, Double heightRatio) {
 		bbbInGW.resizeAndMoveSlide(meetingID, xOffset, yOffset, widthRatio, heightRatio);
 	}
 		
-	public void gotoSlide(String meetingID, int slide){		
-		bbbInGW.gotoSlide(meetingID, slide);
+	public void gotoSlide(String meetingID, String pageId){		
+		bbbInGW.gotoSlide(meetingID, pageId);
 	}
 	
 	public void sharePresentation(String meetingID, String presentationID, Boolean share){		
 		bbbInGW.sharePresentation(meetingID, presentationID, share);
 	}
 	
-	public void getSlideInfo(String meetingID, String requesterID) {
-		
-		bbbInGW.getSlideInfo(meetingID, requesterID);
-		
+	public void getSlideInfo(String meetingID, String requesterID) {		
+		// Just hardcode as we don't really need it for flash client. (ralam may 7, 2014)
+		String replyTo = meetingID + "/" + requesterID; 
+		bbbInGW.getSlideInfo(meetingID, requesterID,  replyTo);		
 	}
 		
 }

@@ -22,8 +22,6 @@ package org.bigbluebutton.main.api
   
   import flash.external.ExternalInterface;
   
-  import mx.controls.Alert;
-  
   import org.bigbluebutton.common.LogUtil;
   import org.bigbluebutton.core.EventConstants;
   import org.bigbluebutton.core.UsersUtil;
@@ -39,20 +37,28 @@ package org.bigbluebutton.main.api
   import org.bigbluebutton.main.model.users.events.KickUserEvent;
   import org.bigbluebutton.main.model.users.events.RaiseHandEvent;
   import org.bigbluebutton.main.model.users.events.RoleChangeEvent;
-  import org.bigbluebutton.modules.present.events.QueryPresentationsListEvent;
+  import org.bigbluebutton.modules.phone.events.FlashCallConnectedEvent;
+  import org.bigbluebutton.modules.phone.events.FlashCallDisconnectedEvent;
+  import org.bigbluebutton.modules.phone.events.WebRtcCallEndedEvent;
+  import org.bigbluebutton.modules.phone.events.WebRtcCallFailedEvent;
+  import org.bigbluebutton.modules.phone.events.WebRtcCallProgressEvent;
+  import org.bigbluebutton.modules.phone.events.WebRtcCallStartedEvent;
+  import org.bigbluebutton.modules.phone.events.WebRtcConfCallEndedEvent;
+  import org.bigbluebutton.modules.phone.events.WebRtcConfCallStartedEvent;
+  import org.bigbluebutton.modules.phone.events.WebRtcEchoTestFailedEvent;
+  import org.bigbluebutton.modules.present.events.GetListOfPresentationsRequest;
   import org.bigbluebutton.modules.present.events.RemovePresentationEvent;
   import org.bigbluebutton.modules.present.events.UploadEvent;
   import org.bigbluebutton.modules.videoconf.events.ClosePublishWindowEvent;
   import org.bigbluebutton.modules.videoconf.events.ShareCameraRequestEvent;
   import org.bigbluebutton.modules.videoconf.model.VideoConfOptions;
 
-  public class ExternalApiCallbacks
-  {
+  public class ExternalApiCallbacks {
+    private static const LOG:String = "ExternalApiCallbacks - ";    
     private var _dispatcher:Dispatcher;
     
     public function ExternalApiCallbacks() {
-      _dispatcher = new Dispatcher();
-      
+      _dispatcher = new Dispatcher();     
       init();
     }
     
@@ -90,20 +96,26 @@ package org.bigbluebutton.main.api
         ExternalInterface.addCallback("displayPresentationRequest", handleDisplayPresentationRequest);
         ExternalInterface.addCallback("deletePresentationRequest", handleDeletePresentationRequest);
         ExternalInterface.addCallback("queryListsOfPresentationsRequest", handleQueryListsOfPresentationsRequest);
+
+        ExternalInterface.addCallback("webRtcConferenceCallEnded", handleWebRtcConferenceCallEnded);
+        ExternalInterface.addCallback("webRtcConferenceCallFailed", handleWebRtcConferenceCallFailed);
+        ExternalInterface.addCallback("webRtcConferenceCallStarted", handleWebRtcConferenceCallStarted);
+        ExternalInterface.addCallback("webRtcEchoTestFailed", handleWebRtcEchoTestFailed);
+        ExternalInterface.addCallback("webRtcEchoTestEnded", handleWebRtcEchoTestEnded);
+        ExternalInterface.addCallback("webRtcEchoTestStarted", handleWebRtcEchoTestStarted);
+        
       }
       
       // Tell out JS counterpart that we are ready.
       if (ExternalInterface.available) {
         ExternalInterface.call("BBB.swfClientIsReady");
-      }  
-      
+      }        
     }
 
-    private function handleQueryListsOfPresentationsRequest():void {
-      _dispatcher.dispatchEvent(new QueryPresentationsListEvent());
+    private function handleQueryListsOfPresentationsRequest():void {    
+      _dispatcher.dispatchEvent(new GetListOfPresentationsRequest());
     }
-    
-    
+        
     private function handleDisplayPresentationRequest(presentationID:String):void {
       var readyEvent:UploadEvent = new UploadEvent(UploadEvent.PRESENTATION_READY);
       readyEvent.presentationName = presentationID;
@@ -127,7 +139,7 @@ package org.bigbluebutton.main.api
     }
  
     private function handleRaiseHandRequest(handRaised:Boolean):void {
-      trace("Received raise hand request from JS API [" + handRaised + "]");
+      trace(LOG + "Received raise hand request from JS API [" + handRaised + "]");
       var e:RaiseHandEvent = new RaiseHandEvent(RaiseHandEvent.RAISE_HAND);
       e.raised = handRaised;
       _dispatcher.dispatchEvent(e);
@@ -162,15 +174,16 @@ package org.bigbluebutton.main.api
     }
     
     private function handleGetMyUserInfoSynch():Object {
+      trace(LOG + " handleGetMyUserInfoSynch");
       var obj:Object = new Object();
       obj.myUserID = UsersUtil.internalUserIDToExternalUserID(UsersUtil.getMyUserID());
       obj.myUsername = UsersUtil.getMyUsername();
       obj.myAvatarURL = UsersUtil.getAvatarURL();
       obj.myRole = UsersUtil.getMyRole();
       obj.amIPresenter = UsersUtil.amIPresenter();
-	  obj.dialNumber = UsersUtil.getDialNumber();
-	  obj.voiceBridge = UsersUtil.getVoiceBridge();
-	  obj.customdata = UsersUtil.getCustomData();
+	    obj.dialNumber = UsersUtil.getDialNumber();
+	    obj.voiceBridge = UsersUtil.getVoiceBridge();
+	    obj.customdata = UsersUtil.getCustomData();
       
       return obj;
     }
@@ -222,10 +235,12 @@ package org.bigbluebutton.main.api
     }
     
     private function handleGetMyUserID():String {
+      trace(LOG + " handleGetMyUserID");
       return UsersUtil.internalUserIDToExternalUserID(UsersUtil.getMyUserID());
     }
     
     private function handleGetPresenterUserID():String {
+      trace(LOG + " handleGetPresenterUserID");
       var presUserID:String = UsersUtil.getPresenterUserID();
       if (presUserID != "") {
         return UsersUtil.internalUserIDToExternalUserID(presUserID);
@@ -339,14 +354,14 @@ package org.bigbluebutton.main.api
     
     private function handleMuteMeRequest():void {
       var e:VoiceConfEvent = new VoiceConfEvent(VoiceConfEvent.MUTE_USER);
-      e.userid = UserManager.getInstance().getConference().getMyVoiceUserId();
+      e.userid = UserManager.getInstance().getConference().getMyUserId();
       e.mute = true;
       _dispatcher.dispatchEvent(e);
     }
 
     private function handleUnmuteMeRequest():void {
       var e:VoiceConfEvent = new VoiceConfEvent(VoiceConfEvent.MUTE_USER);
-      e.userid = UserManager.getInstance().getConference().getMyVoiceUserId();
+      e.userid = UserManager.getInstance().getConference().getMyUserId();
       e.mute = false;
       _dispatcher.dispatchEvent(e);
     }
@@ -380,5 +395,37 @@ package org.bigbluebutton.main.api
       _dispatcher.dispatchEvent(event);
     }
     
+    private function handleWebRtcConferenceCallStarted(localStream:Boolean, remoteStream:Boolean):void {
+      trace(LOG + "handleWebRtcConferenceCallStarted: local=[" + localStream + "] remote=[" + remoteStream + "]");
+      var connectedEvent:WebRtcConfCallStartedEvent = new WebRtcConfCallStartedEvent();
+      _dispatcher.dispatchEvent(connectedEvent);
+    }
+
+    private function handleWebRtcConferenceCallEnded(cause:String):void {
+      trace(LOG + "handleWebRtcConferenceCallEnded: cause=[" + cause + "]");
+      var disconnectedEvent:WebRtcConfCallEndedEvent = new WebRtcConfCallEndedEvent();
+      _dispatcher.dispatchEvent(disconnectedEvent);
+    }
+    
+    private function handleWebRtcConferenceCallFailed(cause:String):void {
+      trace(LOG + "handleWebRtcConferenceCallFailed: cause=[" + cause + "]");
+      _dispatcher.dispatchEvent(new WebRtcCallFailedEvent(cause));
+    }
+    
+    private function handleWebRtcEchoTestFailed(cause:String):void {
+      trace(LOG + "handleWebRtcEchoTestFailed: cause=[" + cause + "]");
+      _dispatcher.dispatchEvent(new WebRtcEchoTestFailedEvent(cause));
+    }
+    
+    private function handleWebRtcEchoTestEnded(cause:String):void {
+      trace(LOG + "handleWebRtcEchoTestEnded: cause=[" + cause + "]");
+      _dispatcher.dispatchEvent(new WebRtcCallEndedEvent(cause));
+    }
+    
+    private function handleWebRtcEchoTestStarted(localStream:Boolean, remoteStream:Boolean):void {
+      trace(LOG + "handleWebRtcEchoTestStarted: local=[" + localStream + "] remote=[" + remoteStream + "]");
+      _dispatcher.dispatchEvent(new WebRtcCallStartedEvent(localStream, remoteStream));
+    }
+
   }
 }

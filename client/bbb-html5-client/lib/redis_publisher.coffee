@@ -4,6 +4,7 @@ redis = require("redis")
 config = require("../config")
 Logger = require("./logger")
 Utils = require("./utils")
+messageLib = require("bigbluebutton-messages")
 
 moduleDeps = ["RedisAction"]
 
@@ -20,35 +21,21 @@ module.exports = class RedisPublisher
   # @param meetingID [string] the ID of the meeting
   # @param sessionID [string] the ID of the user, if `null` will send to all clients
   # @param callback(err, succeeded) [Function] callback to call when finished
-  publishShapes: (meetingID, sessionID, callback) ->
+  publishShapes2: (meetingID, sessionID, callback) ->
     shapes = []
     @redisAction.getCurrentPresentationID meetingID, (err, presentationID) =>
       @redisAction.getCurrentPageID meetingID, presentationID, (err, pageID) =>
         @redisAction.getItems meetingID, presentationID, pageID, "currentshapes", (err, shapes) =>
 
           receivers = (if sessionID? then sessionID else meetingID)
-          @pub.publish receivers, JSON.stringify(["all_shapes", shapes])
+          allShapesEventObject = {
+            name : "allShapes",
+            shapes : shapes
+          }
+          @pub.publish receivers, JSON.stringify(allShapesEventObject)
           callback?(null)
 
-  # Publish load users to appropriate clients.
-  #
-  # @param meetingID [string] the ID of the meeting
-  # @param sessionID [string] the ID of the user, if `null` will send to all clients
-  # @param callback(err, succeeded) [Function] callback to call when finished
-  publishLoadUsers: (meetingID, sessionID, callback) ->
-    console.log("***publishLoadUsers***")
-    usernames = []
-    @redisAction.getUsers meetingID, (err, users) =>
-      users.forEach (user) =>
-        usernames.push
-          name: user.username
-          id: user.pubID
-
-      receivers = (if sessionID? then sessionID else meetingID)
-      @pub.publish "bigbluebutton:bridge", JSON.stringify([receivers, "load users", usernames])
-      callback?(null, true)
-
-
+  
   # Publish load users to appropriate clients.
   #
   # @param meetingID [string] the ID of the meeting
@@ -58,10 +45,13 @@ module.exports = class RedisPublisher
     console.log("***publishLoadUsers2***")
     usernames = []
     @redisAction.getUsers meetingID, (err, users) =>
+
+      console.log "___users.length=" + users.length
       users.forEach (user) =>
-        usernames.push
-          name: user.username
-          id: user.pubID
+        if user?
+          usernames.push
+            name: user.username
+            id: user.pubID
 
       receivers = (if sessionID? then sessionID else meetingID)
 
@@ -95,54 +85,79 @@ module.exports = class RedisPublisher
   # @param meetingID [string] the ID of the meeting
   # @param sessionID [string] the ID of the user, if `null` will send to all clients
   # @param callback(err, succeeded) [Function] callback to call when finished
-  publishUserJoin: (meetingID, sessionID, userid, username, callback) ->
-    console.log ("\n\n**publishUserJoin**\n\n")
-    receivers = (if sessionID? then sessionID else meetingID)
-    @pub.publish "bigbluebutton:bridge", JSON.stringify([receivers, "user join", userid, username, "VIEWER"])
-    callback?(null, true)
-
-  # Publishes a user join.
-  #
-  # @param meetingID [string] the ID of the meeting
-  # @param sessionID [string] the ID of the user, if `null` will send to all clients
-  # @param callback(err, succeeded) [Function] callback to call when finished
   publishUserJoin2: (meetingID, sessionID, userid, username, callback) ->
-    console.log ("\n\n**publishUserJoin2**\n\n")
-    receivers = (if sessionID? then sessionID else meetingID)
+    console.log ("**publishUserJoin2**")
+
+    sessionID = "someSessionID" unless sessionID?
+
     userJoinEventObject = {
-      name: "UserJoiningRequest",
-      meeting: {
-        id:meetingID,
-        sessionID: sessionID
+      header: {
+        destination: {
+          to: "apps_channel"
+        },
+        name: "user_joined_event",
+        timestamp: "Thu, 03 Apr 2014 16:06:38 GMT",
+        source: "bbb-web"
       },
-      user: {
-        name:username,
-        metadata:{
-          userid: userid
+      payload: {
+        meeting: {
+          name: "someMeetingName",
+          id: meetingID
+        },
+        session: sessionID,
+        user: {
+          id: userid,
+          external_id: "external_id",
+          name: username,
+          role: "MODERATOR",
+          pin: 12345,
+          welcome_message: "Welcome to English 101",
+          logout_url: "http://www.example.com",
+          avatar_url: "http://www.example.com/avatar.png",
+          is_presenter: true,
+          status: {
+            hand_raised: false,
+            muted: false,
+            locked: false,
+            talking: false
+          },
+          caller_id: {
+            name: "Juan Tamad",
+            number: "011-63-917-555-1234"
+          },
+          media_streams: [
+            {
+              media_type: "audio",
+              uri: "http://cdn.bigbluebutton.org/stream/a1234",
+              metadata: {
+                foo: "bar"
+              }
+            },
+            {
+              media_type: "video",
+              uri: "http://cdn.bigbluebutton.org/stream/v1234",
+              metadata: {
+                foo: "bar"
+              }
+            },
+            {
+              media_type: "screen",
+              uri: "http://cdn.bigbluebutton.org/stream/s1234",
+              metadata: {
+                foo: "bar"
+              }
+            }
+          ],
+          metadata: {
+            student_id: "54321",
+            program: "engineering"
+          }
         }
-        role: "VIEWER"
       }
     }
-
-    #@pub.publish "bigbluebutton:bridge", JSON.stringify([receivers, "user join", userid, username, "VIEWER"])
     @pub.publish "bigbluebutton:bridge", JSON.stringify( userJoinEventObject )
 
     callback?(null, true)
-
-  # Get all chat messages from redis and publish to the appropriate clients
-  #
-  # @param meetingID [string] the ID of the meeting
-  # @param sessionID [string] the ID of the user, if `null` will send to all clients
-  # @param callback(err, succeeded) [Function] callback to call when finished
-  # @todo callback should be called at the end and only once, can use async for this
-  publishMessages: (meetingID, sessionID, callback) ->
-    messages = []
-    @redisAction.getCurrentPresentationID meetingID, (err, presentationID) =>
-      @redisAction.getCurrentPageID meetingID, presentationID, (err, pageID) =>
-        @redisAction.getItems meetingID, presentationID, pageID, "messages", (err, messages) =>
-          receivers = (if sessionID? then sessionID else meetingID)
-          @pub.publish receivers, JSON.stringify(["all_messages", messages])
-          callback?(true)
 
   # Get all chat messages from redis and publish to the appropriate clients
   #
@@ -167,30 +182,6 @@ module.exports = class RedisPublisher
           }
           @pub.publish receivers, JSON.stringify( allMessagesEventObject )
           callback?(true)
-
-
-  # Publish list of slides from redis to the appropriate clients
-  #
-  # @param meetingID [string] the ID of the meeting
-  # @param sessionID [string] the ID of the user, if `null` will send to all clients
-  # @param callback(err, succeeded) [Function] callback to call when finished
-  # @todo callback should be called at the end and only once, can use async for this
-  publishSlides: (meetingID, sessionID, callback) ->
-    console.log("\n\n***publishSlides called");
-    slides = []
-    @redisAction.getCurrentPresentationID meetingID, (err, presentationID) =>
-      @redisAction.getPageIDs meetingID, presentationID, (err, pageIDs) =>
-        slideCount = 0
-        pageIDs.forEach (pageID) =>
-          @redisAction.getPageImage meetingID, presentationID, pageID, (err, filename) =>
-            @redisAction.getImageSize meetingID, presentationID, pageID, (err, width, height) =>
-              path = config.presentationImagePath(meetingID, presentationID, filename)
-              slides.push [path, width, height]
-              if slides.length is pageIDs.length
-                receivers = (if sessionID? then sessionID else meetingID)
-                @pub.publish receivers, JSON.stringify(["all_slides", slides])
-                callback?(true)
-
 
   # Publish list of slides from redis to the appropriate clients
   #
@@ -295,17 +286,6 @@ module.exports = class RedisPublisher
   publishChatMessageTooLong: (meetingID, sessionID, callback) ->
     receivers = (if sessionID? then sessionID else meetingID)
     @pub.publish receivers, JSON.stringify(["msg", "System", "Message too long."])
-    callback?(null, true)
-
-  # Publishes a chat message.
-  #
-  # @param meetingID [string] the ID of the meeting
-  # @param username [string] the username of the user that sent the message
-  # @param msg [string] the text message
-  # @param pubID [string] the public ID of the user sending the message
-  # @param callback(err, succeeded) [Function] callback to call when finished
-  publishChatMessage: (meetingID, username, msg, pubID, callback) ->
-    @pub.publish "bigbluebutton:bridge", JSON.stringify([meetingID, "msg", username, msg, pubID])
     callback?(null, true)
 
   # Publishes a chat message.

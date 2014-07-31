@@ -39,4 +39,15 @@ public interface MessagingService {
 	public void recordMeeting(String meetingID, String externalID, String name);
 	public void removeMeeting(String meetingId);
 	public void recordPresentation(String room, String name, int numberOfPages);
+	void recordMeetingInfo(String meetingId, Map<String, String> info);
+	void destroyMeeting(String meetingID);
+	void createMeeting(String meetingID, String meetingName, Boolean recorded, String voiceBridge, Long duration);
+	void endMeeting(String meetingId);
+	void send(String channel, String message);
+	void sendPolls(String meetingId, String title, String question, String questionType, List<String> answers);
+	String storeSubscription(String meetingId, String externalMeetingID, String callbackURL);
+	boolean removeSubscription(String meetingId, String subscriptionId);
+	List<Map<String,String>> listSubscriptions(String meetingId);
+	void registerUser(String meetingID, String internalUserId, String fullname, String role, String externUserID, String authToken);
+	void sendKeepAlive(String keepAliveId);
 }

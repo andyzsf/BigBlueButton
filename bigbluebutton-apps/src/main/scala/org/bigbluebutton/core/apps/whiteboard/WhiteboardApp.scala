@@ -1,89 +1,93 @@
 package org.bigbluebutton.core.apps.whiteboard
 
-import org.bigbluebutton.core.api.InMessage
-import org.bigbluebutton.core.api.MessageOutGateway
-import org.bigbluebutton.core.apps.whiteboard.messages._
+import org.bigbluebutton.core.api._
 import org.bigbluebutton.conference.service.whiteboard.WhiteboardKeyUtil
+import org.bigbluebutton.core.MeetingActor
+import org.bigbluebutton.core.apps.whiteboard.vo._
 
-class WhiteboardApp(meetingID: String, recorded: Boolean, outGW: MessageOutGateway) {
+case class Whiteboard(id: String, shapes:Seq[AnnotationVO])
 
-  val model = new WhiteboardModel
+trait WhiteboardApp {
+  this : MeetingActor =>
   
-    def handleMessage(msg: InMessage):Unit = {
-	    msg match {
-	      case sendWhiteboardAnnotationRequest: SendWhiteboardAnnotationRequest => handleSendWhiteboardAnnotationRequest(sendWhiteboardAnnotationRequest)
-	      case setWhiteboardActivePageRequest: SetWhiteboardActivePageRequest => handleSetWhiteboardActivePageRequest(setWhiteboardActivePageRequest)
-	      case sendWhiteboardAnnotationHistoryRequest: SendWhiteboardAnnotationHistoryRequest => handleSendWhiteboardAnnotationHistoryRequest(sendWhiteboardAnnotationHistoryRequest)
-	      case clearWhiteboardRequest: ClearWhiteboardRequest => handleClearWhiteboardRequest(clearWhiteboardRequest)
-	      case undoWhiteboardRequest: UndoWhiteboardRequest => handleUndoWhiteboardRequest(undoWhiteboardRequest)
-	      case setActivePresentationRequest: SetActivePresentationRequest => handleSetActivePresentationRequest(setActivePresentationRequest)
-	      case enableWhiteboardRequest: EnableWhiteboardRequest => handleEnableWhiteboardRequest(enableWhiteboardRequest)
-	      case isWhiteboardEnabledRequest: IsWhiteboardEnabledRequest => handleIsWhiteboardEnabledRequest(isWhiteboardEnabledRequest)
-	      case _ => // do nothing
-	    }
-    }
+  val outGW: MessageOutGateway
+  
+  private val wbModel = new WhiteboardModel
+  
+  def handleSendWhiteboardAnnotationRequest(msg: SendWhiteboardAnnotationRequest) {
+    val status = msg.annotation.status
+    val shapeType = msg.annotation.shapeType
+    val wbId = msg.annotation.wbId
+    val shape = msg.annotation
     
-    private def handleSendWhiteboardAnnotationRequest(msg: SendWhiteboardAnnotationRequest) {
-      val status = msg.annotation.status
-      val shapeType = msg.annotation.shapeType
-      val shape = msg.annotation
+//    println("Received whiteboard shape. status=[" + status + "], shapeType=[" + shapeType + "]")
+
+    if (WhiteboardKeyUtil.TEXT_CREATED_STATUS == status) {
+//      println("Received textcreated status")
+      wbModel.addAnnotation(wbId, shape)
+    } else if ((WhiteboardKeyUtil.PENCIL_TYPE == shapeType) 
+            && (WhiteboardKeyUtil.DRAW_START_STATUS == status)) {
+//        println("Received pencil draw start status")
+		wbModel.addAnnotation(wbId, shape)
+    } else if ((WhiteboardKeyUtil.DRAW_END_STATUS == status) 
+           && ((WhiteboardKeyUtil.RECTANGLE_TYPE == shapeType) 
+            || (WhiteboardKeyUtil.ELLIPSE_TYPE == shapeType)
+	        || (WhiteboardKeyUtil.TRIANGLE_TYPE == shapeType)
+	        || (WhiteboardKeyUtil.LINE_TYPE == shapeType))) {	
+//        println("Received [" + shapeType +"] draw end status")
+		wbModel.addAnnotation(wbId, shape)
+    } else if (WhiteboardKeyUtil.TEXT_TYPE == shapeType) {
+//	    println("Received [" + shapeType +"] modify text status")
+	   wbModel.modifyText(wbId, shape)
+	} else {
+//	    println("Received UNKNOWN whiteboard shape!!!!. status=[" + status + "], shapeType=[" + shapeType + "]")
+	}
       
-      if (WhiteboardKeyUtil.TEXT_CREATED_STATUS == status) {
-		model.addAnnotation(shape)
-      } else if ((WhiteboardKeyUtil.PENCIL_TYPE == shapeType) && (WhiteboardKeyUtil.DRAW_START_STATUS == status)) {
-		model.addAnnotation(shape)
-      } else if ((WhiteboardKeyUtil.DRAW_END_STATUS == status) && ((WhiteboardKeyUtil.RECTANGLE_TYPE == shapeType) 
-														|| (WhiteboardKeyUtil.ELLIPSE_TYPE == shapeType)
-														|| (WhiteboardKeyUtil.TRIANGLE_TYPE == shapeType)
-														|| (WhiteboardKeyUtil.LINE_TYPE == shapeType))) {				
-				model.addAnnotation(shape)
-      } else {
-		if (WhiteboardKeyUtil.TEXT_TYPE == shapeType) {
-			model.modifyText(shape)
-		}
+    wbModel.getWhiteboard(wbId) foreach {wb =>
+//        println("WhiteboardApp::handleSendWhiteboardAnnotationRequest - num shapes [" + wb.shapes.length + "]")
+        outGW.send(new SendWhiteboardAnnotationEvent(meetingID, recorded, 
+                      msg.requesterID, wbId, msg.annotation))        
+    }
+        
+  }
+        
+  def handleGetWhiteboardShapesRequest(msg: GetWhiteboardShapesRequest) {
+//    println("WB: Received page history [" + msg.whiteboardId + "]")
+      wbModel.history(msg.whiteboardId) foreach {wb =>
+          outGW.send(new GetWhiteboardShapesReply(meetingID, recorded, 
+                       msg.requesterID, wb.id, wb.shapes.toArray, msg.replyTo))         
       }
-      
-      outGW.send(new SendWhiteboardAnnotationEvent(meetingID, recorded, msg.requesterID, model.activePresentation, model.currentPage, msg.annotation))
     }
     
-    private def handleSetWhiteboardActivePageRequest(msg: SetWhiteboardActivePageRequest) {
-      model.changePage(msg.page)
-      
-      outGW.send(new ChangeWhiteboardPageEvent(meetingID, recorded, msg.requesterID, msg.page, model.history.length))
+  def handleClearWhiteboardRequest(msg: ClearWhiteboardRequest) {
+//    println("WB: Received clear whiteboard")
+      wbModel.clearWhiteboard(msg.whiteboardId)
+      wbModel.getWhiteboard(msg.whiteboardId) foreach {wb =>
+          outGW.send(new ClearWhiteboardEvent(meetingID, recorded, 
+                       msg.requesterID, wb.id))        
+      }      
     }
     
-    private def handleSendWhiteboardAnnotationHistoryRequest(msg: SendWhiteboardAnnotationHistoryRequest) {
-      val history = model.history
-      outGW.send(new SendWhiteboardAnnotationHistoryReply(meetingID, recorded, msg.requesterID, model.activePresentation, model.numPages, history))
+  def handleUndoWhiteboardRequest(msg: UndoWhiteboardRequest) {
+//    println("WB: Received undo whiteboard")
+    
+    wbModel.getWhiteboard(msg.whiteboardId) foreach {wb =>
+      wbModel.undoWhiteboard(msg.whiteboardId) foreach {last => 
+        outGW.send(new UndoWhiteboardEvent(meetingID, recorded, 
+                  msg.requesterID, wb.id, last.id))         
+      }     
+    }       
+  }
+      
+  def handleEnableWhiteboardRequest(msg: EnableWhiteboardRequest) {
+      wbModel.enableWhiteboard(msg.enable)      
+      outGW.send(new WhiteboardEnabledEvent(meetingID, recorded, 
+                       msg.requesterID, msg.enable))
     }
     
-    private def handleClearWhiteboardRequest(msg: ClearWhiteboardRequest) {
-      model.clearWhiteboard()
-      
-      outGW.send(new ClearWhiteboardEvent(meetingID, recorded, msg.requesterID, model.activePresentation, model.currentPage))
-    }
-    
-    private def handleUndoWhiteboardRequest(msg: UndoWhiteboardRequest) {
-      model.undoWhiteboard()
-      
-      outGW.send(new UndoWhiteboardEvent(meetingID, recorded, msg.requesterID, model.activePresentation, model.currentPage))
-    }
-    
-    private def handleSetActivePresentationRequest(msg: SetActivePresentationRequest) {
-      model.setActivePresentation(msg.presentationID, msg.numPages)
-      
-      outGW.send(new WhiteboardActivePresentationEvent(meetingID, recorded, msg.requesterID, msg.presentationID, msg.numPages))
-    }
-    
-    private def handleEnableWhiteboardRequest(msg: EnableWhiteboardRequest) {
-      model.enableWhiteboard(msg.enable)
-      
-      outGW.send(new WhiteboardEnabledEvent(meetingID, recorded, msg.requesterID, msg.enable))
-    }
-    
-    private def handleIsWhiteboardEnabledRequest(msg: IsWhiteboardEnabledRequest) {
-      val enabled = model.isWhiteboardEnabled()
-      
-      outGW.send(new IsWhiteboardEnabledReply(meetingID, recorded, msg.requesterID, enabled))
+  def handleIsWhiteboardEnabledRequest(msg: IsWhiteboardEnabledRequest) {
+      val enabled = wbModel.isWhiteboardEnabled()      
+      outGW.send(new IsWhiteboardEnabledReply(meetingID, recorded, 
+                       msg.requesterID, enabled, msg.replyTo))
     }
 }

@@ -22,7 +22,6 @@ package org.bigbluebutton.conference.service.chat;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.red5.logging.Red5LoggerFactory;
-import org.red5.server.api.Red5;
 import org.bigbluebutton.core.api.IBigBlueButtonInGW;
 
 
@@ -36,7 +35,9 @@ public class ChatApplication {
 	}
 	
 	public void sendPublicChatHistory(String meetingID, String requesterID) {
-		bbbInGW.getChatHistory(meetingID, requesterID);
+		// Just hardcode as we don't really need it for flash client. (ralam may 7, 2014)
+		String replyTo = meetingID + "/" + requesterID; 
+		bbbInGW.getChatHistory(meetingID, requesterID, replyTo);
 	}
 	
 	public void sendPublicMessage(String meetingID, String requesterID, Map<String, String> message) {
@@ -59,4 +60,7 @@ public class ChatApplication {
 		connInvokerService.sendMessage(m2);
 	}
 	
+	public void sendPrivateMessage(String meetingID, String requesterID, Map<String, String> message) {
+		bbbInGW.sendPrivateMessage(meetingID, requesterID, message);
+	}
 }

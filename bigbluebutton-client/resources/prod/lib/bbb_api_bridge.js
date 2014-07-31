@@ -415,6 +415,59 @@
         swfObj.deletePresentationRequest(presentationID);
       }     
     }
+
+    /**
+     *
+     */
+    BBB.webRtcConferenceCallEnded = function(message) {
+      var swfObj = getSwfObj();
+      if (swfObj) {
+        swfObj.webRtcConferenceCallEnded(message);
+      }
+    }
+
+    BBB.webRtcConferenceCallFailed = function(message) {
+      var swfObj = getSwfObj();
+      if (swfObj) {
+        swfObj.webRtcConferenceCallFailed(message);
+      }
+    }
+
+    BBB.webRtcConferenceCallStarted = function(localStream, remoteStream) {
+      var swfObj = getSwfObj();
+      if (swfObj) {
+        swfObj.webRtcConferenceCallStarted(localStream, remoteStream);
+      }
+    }
+
+    BBB.webRtcCallProgressCallback = function(progress) {
+      var swfObj = getSwfObj();
+      if (swfObj) {
+        swfObj.webRtcCallProgressCallback(progress);
+      }
+    }
+
+    BBB.webRtcEchoTestFailed = function(reason) {
+      var swfObj = getSwfObj();
+      if (swfObj) {
+        swfObj.webRtcEchoTestFailed(reason);
+      }
+    }
+
+    BBB.webRtcEchoTestEnded = function(cause) {
+      var swfObj = getSwfObj();
+      if (swfObj) {
+        swfObj.webRtcEchoTestEnded(cause);
+      }
+    }
+
+    BBB.webRtcEchoTestStarted = function(localStream, remoteStream) {
+      var swfObj = getSwfObj();
+      if (swfObj) {
+        swfObj.webRtcEchoTestStarted(localStream, remoteStream);
+      }
+    }
+
             
     // Third-party JS apps should use this to query if the BBB SWF file is ready to handle calls.
     BBB.isSwfClientReady = function() {

@@ -35,6 +35,7 @@ package org.bigbluebutton.modules.polling.service
     public var processor:PollDataProcessor;
     
     public function MessageReceiver() {
+      trace(LOG + " registering message listener");
       BBB.initConnectionManager().addMessageListener(this);
     }
 

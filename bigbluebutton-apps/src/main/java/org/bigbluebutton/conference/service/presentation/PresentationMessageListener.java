@@ -2,7 +2,6 @@ package org.bigbluebutton.conference.service.presentation;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.bigbluebutton.conference.service.messaging.MessagingConstants;
 import org.bigbluebutton.conference.service.messaging.redis.MessageHandler;
 import com.google.gson.Gson;
@@ -26,26 +25,50 @@ public class PresentationMessageListener implements MessageHandler {
 		conversionUpdatesProcessor = p;
 	}	
 
+	private void sendConversionUpdate(String messageKey, String conference, 
+			                          String code, String presId, String filename) {
+		conversionUpdatesProcessor.sendConversionUpdate(messageKey, conference,
+				code, presId, filename);
+	}
+	
+	public void sendPageCountError(String messageKey, String conference, 
+            String code, String presId, Integer numberOfPages,
+            Integer maxNumberPages, String filename) {
+		conversionUpdatesProcessor.sendPageCountError(messageKey, conference, 
+	            code, presId, numberOfPages,
+	            maxNumberPages, filename);
+	}
+	
+	private void sendSlideGenerated(String messageKey, String conference, 
+            String code, String presId, Integer numberOfPages,
+            Integer pagesCompleted, String filename) {
+		conversionUpdatesProcessor.sendSlideGenerated(messageKey, conference, 
+	            code, presId, numberOfPages,
+	            pagesCompleted, filename);
+	}
+		
+	private void sendConversionCompleted(String messageKey, String conference, 
+            String code, String presId, Integer numberOfPages,
+             String filename, String presBaseUrl) {
+		
+		conversionUpdatesProcessor.sendConversionCompleted(messageKey, conference,  
+	            code, presId, numberOfPages, filename, presBaseUrl);
+	}
+	
+	
 	@Override
 	public void handleMessage(String pattern, String channel, String message) {
-		if (channel.equalsIgnoreCase(MessagingConstants.PRESENTATION_CHANNEL)) {
+		if (channel.equalsIgnoreCase(MessagingConstants.TO_PRESENTATION_CHANNEL)) {
 
 			Gson gson = new Gson();
 			HashMap<String,String> map = gson.fromJson(message, new TypeToken<Map<String, String>>() {}.getType());
 
 			String code = (String) map.get("returnCode");
-	    	String room = (String) map.get("room");
-	    	String presentationName = (String) map.get("presentationName");
+	    	String presId = (String) map.get("presentationId");
+	    	String filename = (String) map.get("filename");
 	    	String conference = (String) map.get("conference");
 	    	String messageKey = (String) map.get("messageKey");
-	    	
-			Map<String, Object> msg = new HashMap<String, Object>();
-			msg.put("conference", conference);
-			msg.put("room", room);
-			msg.put("code", code);
-			msg.put("presentationName", presentationName);
-			msg.put("messageKey", messageKey);
-						
+	    							
 			if (messageKey.equalsIgnoreCase(OFFICE_DOC_CONVERSION_SUCCESS_KEY)||
 					messageKey.equalsIgnoreCase(OFFICE_DOC_CONVERSION_FAILED_KEY)||
 					messageKey.equalsIgnoreCase(SUPPORTED_DOCUMENT_KEY)||
@@ -54,24 +77,27 @@ public class PresentationMessageListener implements MessageHandler {
 					messageKey.equalsIgnoreCase(GENERATED_THUMBNAIL_KEY)||
 					messageKey.equalsIgnoreCase(PAGE_COUNT_FAILED_KEY)){
 				
-				conversionUpdatesProcessor.process(msg);
+				sendConversionUpdate(messageKey, conference, code, presId, filename);
+				
 			} else if(messageKey.equalsIgnoreCase(PAGE_COUNT_EXCEEDED_KEY)){
 				Integer numberOfPages = new Integer((String) map.get("numberOfPages"));
 				Integer maxNumberPages = new Integer((String) map.get("maxNumberPages"));
-				msg.put("numberOfPages", numberOfPages);
-				msg.put("maxNumberPages", maxNumberPages);
-				conversionUpdatesProcessor.process(msg);
+				
+				sendPageCountError(messageKey, conference, code,  
+						presId, numberOfPages, maxNumberPages, filename);
+				
 			} else if(messageKey.equalsIgnoreCase(GENERATED_SLIDE_KEY)){
 				Integer numberOfPages = new Integer((String) map.get("numberOfPages"));
 				Integer pagesCompleted = new Integer((String) map.get("pagesCompleted"));
-				msg.put("numberOfPages", numberOfPages);
-				msg.put("pagesCompleted", pagesCompleted);
 				
-				conversionUpdatesProcessor.process(msg);
+				sendSlideGenerated(messageKey, conference, code,  
+						presId, numberOfPages, pagesCompleted, filename);
+				
 			} else if(messageKey.equalsIgnoreCase(CONVERSION_COMPLETED_KEY)){
-				String slidesInfo = (String) map.get("slidesInfo");
-				msg.put("slidesInfo", StringEscapeUtils.unescapeXml(slidesInfo));				
-				conversionUpdatesProcessor.process(msg);
+				Integer numberOfPages = new Integer((String) map.get("numberOfPages"));
+				String presBaseUrl = (String) map.get("presentationBaseUrl");
+				sendConversionCompleted(messageKey, conference, code,  
+						presId, numberOfPages, filename, presBaseUrl);
 			} 
 		}
 	}

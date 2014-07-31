@@ -28,12 +28,6 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			">
 				
 	<bean id="presentationHandler" class="org.bigbluebutton.conference.service.presentation.PresentationHandler">
-		<property name="presentationApplication"> 
-			<ref local="presentationApplication"/>
-		</property>
-		<property name="recorderApplication"> 
-			<ref bean="recorderApplication"/>
-		</property>
 	</bean>
 	
 	<bean id="presentationApplication" class="org.bigbluebutton.conference.service.presentation.PresentationApplication">
@@ -52,4 +46,11 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 		<property name="conversionUpdatesProcessor" ref="conversionUpdatesProcessor" />
 	</bean>
 	
+	<bean id="chatMessageListener" class="org.bigbluebutton.conference.service.chat.ChatMessageListener">
+		<property name="bigBlueButtonInGW" ref="bbbInGW" />
+	</bean>
+
+	<bean id="participantsListener" class="org.bigbluebutton.conference.service.participants.ParticipantsListener">
+		<property name="bigBlueButtonInGW" ref="bbbInGW" />
+	</bean>
 </beans>

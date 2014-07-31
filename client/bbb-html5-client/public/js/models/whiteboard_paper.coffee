@@ -94,25 +94,25 @@ define [
 
       #initializing boarder around slide to cover up areas which shouldnt show
 
-      @boarderLeft = @raphaelObj.rect(0, 0, 0, 0 );
-      @boarderRight = @raphaelObj.rect(0, 0, 0, 0 );
+      @boarderLeft = @raphaelObj.rect(0, 0, 0, 0 )
+      @boarderRight = @raphaelObj.rect(0, 0, 0, 0 )
 
       @boarderTop = @raphaelObj.rect(0,0, 0, 0)
       @boarderBottom = @raphaelObj.rect(0,0, 0, 0)
 
-      @boarderLeft.attr("fill", "#ababab");
+      @boarderLeft.attr("fill", "#ababab")
       @boarderLeft.attr( {stroke:"#ababab"} )
 
 
-      @boarderRight.attr("fill", "#ababab");
+      @boarderRight.attr("fill", "#ababab")
       @boarderRight.attr( {stroke:"#ababab"} )
 
 
-      @boarderTop.attr("fill", "#ababab");
+      @boarderTop.attr("fill", "#ababab")
       @boarderTop.attr( {stroke:"#ababab"} )
 
 
-      @boarderBottom.attr("fill", "#ababab");
+      @boarderBottom.attr("fill", "#ababab")
       @boarderBottom.attr( {stroke:"#ababab"} )
 
 
@@ -139,7 +139,7 @@ define [
         @removeAllImagesFromPaper()
         @slides = slidesTmp
         @rebuild()
-        @showImageFromPaper(urlTmp.url)
+        @showImageFromPaper(urlTmp?.url)
         # drawings
         tmp = _.clone(@currentShapesDefinitions)
         @clearShapes()
@@ -153,7 +153,7 @@ define [
     addImageToPaper: (url, width, height) ->
       @_updateContainerDimensions()
 
-      console.log "adding image to paper", url, width, height
+      alert "addImageToPaper url=#{url} \n #{width}x#{height}"      
       if @fitToPage
         # solve for the ratio of what length is going to fit more than the other
         max = Math.max(width / @containerWidth, height / @containerHeight)
@@ -169,7 +169,7 @@ define [
         originalHeight = height
       else
         # fit to width
-        console.log "no fit"
+        alert "no fit"
         # assume it will fit width ways
         sw = width / wr
         sh = height / wr
@@ -365,6 +365,11 @@ define [
       # make sure the cursor is still on top
       @cursor.toFront()
 
+    #Changes the currently displayed presentation (if any) with this one
+    #@param {object} containing the "presentation" object -id,name,pages[]
+    sharePresentation: (data) ->
+      globals.events.trigger("connection:all_slides", data.payload)
+
     # Clear all shapes from this paper.
     clearShapes: ->
       if @currentShapes?
@@ -380,7 +385,7 @@ define [
       switch shape
         when "line"
           @currentLine.update(data)
-        when "rect"
+        when "rectangle"
           @currentRect.update(data)
         when "ellipse"
           @currentEllipse.update(data)
@@ -393,17 +398,13 @@ define [
 
     # Make a shape `shape` with the data in `data`.
     makeShape: (shape, data) ->
-      console.log("shape")
-      console.log(shape)
-      console.log("data")
-      console.log(data)
       tool = null
       switch shape
         when "path", "line"
           @currentLine = @_createTool(shape)
           toolModel = @currentLine
           tool = @currentLine.make(data)
-        when "rect"
+        when "rectangle"
           @currentRect = @_createTool(shape)
           toolModel = @currentRect
           tool = @currentRect.make(data)
@@ -452,8 +453,8 @@ define [
       #console.log("xOffset: " + xOffset + ", yOffset: " + yOffset);
       #console.log("@containerWidth: " + @containerWidth + " @containerHeight: " + @containerHeight);
       #console.log("slideWidth: " + slideWidth + " slideHeight: " + slideHeight);
-      baseWidth = (@containerWidth - slideWidth) / 2;
-      baseHeight = (@containerHeight - slideHeight) / 2;
+      baseWidth = (@containerWidth - slideWidth) / 2
+      baseHeight = (@containerHeight - slideHeight) / 2
 
 
       #get the actual size of the slide, depending on the limiting factor (container width or container height)
@@ -476,7 +477,7 @@ define [
       #console.log("newXPos: " + newXPos + " newyPos: " + newyPos + " newWidth: " + newWidth + " newHeight: " + newHeight)
 
       #set parameters to raphael viewbox
-      @raphaelObj.setViewBox(newXPos , newyPos,  newWidth , newHeight , true);
+      @raphaelObj.setViewBox(newXPos , newyPos,  newWidth , newHeight , true)
 
 
       #update the rectangle elements which create the boarder when page is zoomed
@@ -516,18 +517,47 @@ define [
     # Registers listeners for events in the gloval event bus
     _registerEvents: ->
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       globals.events.on "connection:all_slides", (data) =>
-        urls = data.slides
         @removeAllImagesFromPaper()
+        ###
+        urls = data.slides
         for url in urls
           @addImageToPaper(url[0], url[1], url[2])
+          #alert "registerEvents url[0]=" + url[0]          
+        ###
+
+        urls = data.presentation.pages
+        for url in urls
+          @addImageToPaper(url.png , 200, 200)
+          #alert "registerEvents url[0]=" + url[0]          
         globals.events.trigger("whiteboard:paper:all_slides", urls)
+        
 
       globals.events.on "connection:clrPaper", =>
         @clearShapes()
 
-      globals.events.on "connection:all_shapes", (shapes) =>
+      globals.events.on "connection:allShapes", (allShapesEventObject) =>
         # TODO: a hackish trick for making compatible the shapes from redis with the node.js
+        shapes = allShapesEventObject.shapes
         for shape in shapes
           properties = JSON.parse(shape.data)
           if shape.shape is "path"
@@ -535,35 +565,39 @@ define [
             strPoints = ""
             for i in [0..points.length] by 2
               letter = ""
-              pA = points[i];
-              pB = points[i+1];
+              pA = points[i]
+              pB = points[i+1]
               if i == 0
-                letter = "M";
+                letter = "M"
               else
-                letter = "L";
+                letter = "L"
               strPoints += letter + (pA/100) + "," + (pB/100)
             properties[0] = strPoints
-            shape.data = JSON.stringify(properties)
+
+            shape.data = JSON.stringify properties #TODO
+
         @clearShapes()
-        @drawListOfShapes(shapes)
+        @drawListOfShapes shapes
 
       globals.events.on "connection:updShape", (shape, data) =>
-        @updateShape(shape, data)
+        @updateShape shape, data
 
-      globals.events.on "connection:whiteboardMakeShape", (shape, data) =>
-        @makeShape(shape, data)
+      globals.events.on "connection:whiteboard_draw_event", (shape, data) =>
+        @makeShape shape, data
 
-      globals.events.on "connection:whiteboardDrawPen", (data) =>
-        type = data.shape.type
-        color = data.shape.color
-        thickness = data.shape.thickness
-        points = data.shape.points
+      globals.events.on "connection:share_presentation_event", (data) =>
+        @sharePresentation data
+
+      globals.events.on "connection:whiteboardDrawPen", (startingData) =>
+        type = startingData.payload.shape_type
+        color = startingData.payload.data.line.color
+        thickness = startingData.payload.data.line.weight
+        points = startingData.shape.points
         if type is "line"
           for i in [0..points.length - 1]
             if i is 0
               #make these compatible with a line
-              console.log("points[i]: ");
-              console.log(points[i]);
+              console.log "points[i]: " + points[i]
               lineObject = {
                 shape: {
                   type: "line",
@@ -571,17 +605,15 @@ define [
                     firstX : points[i].x/100,
                     firstY : points[i].y/100
                   },
-                  color: data.shape.color,
-                  thickness : data.shape.thickness
+                  color: startingData.payload.data.line.color,
+                  thickness : startingData.payload.data.line.weight
                 }
                 adding : false #tell the line object that we are NOT adding points but creating a new line
               }
-              console.log("lineObject: ");
-              console.log(lineObject);
-              @makeShape(type, lineObject);
+              console.log "lineObject: " + lineObject
+              @makeShape type, lineObject
             else
-              console.log("points[i]: ");
-              console.log(points[i]);
+              console.log "points[i]: "+ points[i]
               lineObject = {
                 shape: {
                   type: "line",
@@ -589,14 +621,13 @@ define [
                     firstX : points[i].x/100,
                     firstY : points[i].y/100
                   },
-                  color: data.shape.color,
-                  thickness : data.shape.thickness
+                  color: startingData.payload.data.line.color,
+                  thickness : startingData.payload.data.line.weight
                 }
                 adding : true #tell the line object that we ARE adding points and NOT creating a new line
               }
-              console.log("lineObject: ")
-              console.log(lineObject)
-              @updateShape(type, lineObject)
+              console.log "lineObject: " + lineObject
+              @updateShape type, lineObject 
 
       globals.events.on "connection:mvCur", (x, y) =>
         @moveCursor(x, y)
@@ -728,7 +759,7 @@ define [
     # Called when the application window is resized.
     _onWindowResize: ->
       @_updateContainerDimensions()
-      console.log("_onWindowResize");
+      console.log "_onWindowResize"
 
       #TODO: temporary hacked away fix so that the buttons resize correctly when the window resizes
       $("#users-btn").click();
@@ -741,8 +772,8 @@ define [
       #console.log("xOffset: " + xOffset + ", yOffset: " + yOffset);
       #console.log("@containerWidth: " + @containerWidth + " @containerHeight: " + @containerHeight);
       #console.log("slideWidth: " + slideWidth + " slideHeight: " + slideHeight);
-      baseWidth = (@containerWidth - slideWidth) / 2;
-      baseHeight = (@containerHeight - slideHeight) / 2;
+      baseWidth = (@containerWidth - slideWidth) / 2
+      baseHeight = (@containerHeight - slideHeight) / 2
 
 
       #get the actual size of the slide, depending on the limiting factor (container width or container height)
@@ -815,7 +846,7 @@ define [
       switch type
         when "path", "line"
           model = WhiteboardLineModel
-        when "rect"
+        when "rectangle"
           model = WhiteboardRectModel
         when "ellipse"
           model = WhiteboardEllipseModel
@@ -840,7 +871,7 @@ define [
 
     # Adds the base url (the protocol+server part) to `url` if needed.
     _slideUrl: (url) ->
-      if url.match(/http[s]?:/)
+      if url?.match(/http[s]?:/)
         url
       else
         globals.presentationServer + url

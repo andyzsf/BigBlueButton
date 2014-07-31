@@ -57,25 +57,29 @@ define [
         @_scrollToBottom()
 
       globals.events.on "chat:all_messages", (messages) =>
-        for msgBlock in messages
-          @_addChatMessage(msgBlock.username, msgBlock.message)
+        if messages?
+          for msgBlock in messages
+            @_addChatMessage(msgBlock.from_username, msgBlock.message)
+            #TODO check if public or private message, etc...
         @_scrollToBottom()
 
       globals.events.on "users:user_leave", (userid) =>
         @_removeUserFromChatList(userid, username)
 
+      globals.events.on "users:user_left", (userid) =>
+        @_removeUserFromChatList(userid) #do we need username or userid is sufficient?
+
       globals.events.on "users:user_join", (userid, username) =>
+        console.log "session_chat - user_join for user:#{username}"
         @_addUserToChatList(userid, username)
 
       globals.events.on "users:loadUsers", (users) =>
-        console.log ' globals.events.on "users:loadUsers"'
-        console.log users
+        console.log ' globals.events.on "users:loadUsers"' + JSON.stringify(users)
         #@$(@userListID).clear()
-        for user in users
-          console.log("user: ")
-          console.log(user)
+        ### for user in users
+          console.log "user: " + JSON.stringify(user)
           #@_addUserToChatList(user.id, user.name)
-          globals.events.trigger("users:user_join", user.id, user.name)
+          globals.events.trigger("users:user_join", user.id, user.name)###
 
       # TODO: for now these messages are only being shown in the chat, maybe
       #       they should have their own view and do more stuff
@@ -106,7 +110,7 @@ define [
       #$msgBox.prop({ scrollTop: $msgBox.prop("scrollHeight") })
 
       #got scroll to bottom working using div element ID's (if they change then this line needs to change)
-      console.log("scrollToBottom called"); 
+      console.log("scrollToBottom called");
       $("#chat-messages").scrollTop( $("#chat-public-box").height() )
 
     # A key was pressed in the input box
@@ -129,6 +133,7 @@ define [
     _addUserToChatList: (userid, username) ->
       # only add the new element if it doesn't exist yet
       console.log("_addUserToChatList ", userid, " ", username)
+      console.log "chat-user-#{userid}.length =" + $("#chat-user-#{userid}").length
       unless $("#chat-user-#{userid}").length > 0
         data =
           userid: userid
@@ -203,7 +208,7 @@ define [
 
     # Adds a default welcome message to the chat
     _addWelcomeMessage: ->
-      msg = "You are now connected to the meeting '#{globals.currentAuth.get('meetingID')}'"
+      msg = "You are now connected to the meeting '#{globals.currentAuth?.get('meetingID')}'"
       @_addChatMessage("System", msg)
 
   SessionChatView

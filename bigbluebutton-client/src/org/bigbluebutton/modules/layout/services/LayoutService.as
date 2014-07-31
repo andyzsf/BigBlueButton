@@ -18,26 +18,35 @@
 */
 package org.bigbluebutton.modules.layout.services
 {
-	import flash.events.IEventDispatcher;
+  import flash.events.IEventDispatcher;
+  
+  import org.bigbluebutton.common.LogUtil;
+  import org.bigbluebutton.modules.layout.events.LockLayoutEvent;
+  import org.bigbluebutton.modules.layout.model.LayoutDefinition;
 	
-	import org.bigbluebutton.common.LogUtil;
-	import org.bigbluebutton.modules.layout.model.LayoutDefinition;
-	
-	public class LayoutService
-	{
+  public class LayoutService
+  {
+    private static const LOG:String = "Layout::LayoutService - ";
+    
     public var sender:MessageSender;
     public var receiver:MessageReceiver;
     		
-		public function getCurrentLayout():void {
+    public function getCurrentLayout():void {
       sender.getCurrentLayout();
-		}
+    }
 		
-		public function lockLayout(layout:LayoutDefinition):void {
-      sender.lockLayout(layout);
-		}
+    public function broadcastLayout(layout:LayoutDefinition):void {
+      trace(LOG + " - broadcast layout");
+      sender.broadcastLayout(layout);
+    }
 		
-		public function unlockLayout():void {
-			sender.unlockLayout();
-		}
-	}
+    private function handleLockLayoutEvent(e: LockLayoutEvent):void {
+      
+    }
+    
+    private function lockLayout(lock:Boolean, viewersOnly:Boolean, layout:LayoutDefinition=null):void {
+      trace(LOG + " - lock layout");
+      sender.lockLayout(lock, viewersOnly, layout);
+    }
+  }
 }

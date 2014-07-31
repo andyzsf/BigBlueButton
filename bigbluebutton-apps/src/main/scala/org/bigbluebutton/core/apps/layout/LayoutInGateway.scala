@@ -1,25 +1,21 @@
 package org.bigbluebutton.core.apps.layout
 
 import org.bigbluebutton.core.BigBlueButtonGateway
-import org.bigbluebutton.core.apps.layout.messages.UnlockLayoutRequest
-import org.bigbluebutton.core.apps.layout.messages.SetLayoutRequest
-import org.bigbluebutton.core.apps.layout.messages.LockLayoutRequest
-import org.bigbluebutton.core.apps.layout.messages.GetCurrentLayoutRequest
+import org.bigbluebutton.core.api._
 
 class LayoutInGateway(bbbGW: BigBlueButtonGateway) {
-	def getCurrentLayout(meetingID: String, requesterID: String) {
-	  bbbGW.accept(new GetCurrentLayoutRequest(meetingID, requesterID))
+  
+  def getCurrentLayout(meetingID: String, requesterID: String) {
+    bbbGW.accept(new GetCurrentLayoutRequest(meetingID, requesterID))
+  }
+	
+	def broadcastLayout(meetingID: String, requesterID: String, layout: String) {
+	  bbbGW.accept(new BroadcastLayoutRequest(meetingID, requesterID, layout))
 	}
 	
-	def setLayout(meetingID: String, requesterID: String, layoutID: String) {
-	  bbbGW.accept(new SetLayoutRequest(meetingID, requesterID, layoutID))
-	}
-	
-	def lockLayout(meetingID: String, requesterID: String, layoutID: String) {
-	  bbbGW.accept(new LockLayoutRequest(meetingID, requesterID, layoutID))
-	}
-	
-	def unlockLayout(meetingID: String, requesterID: String) {
-	  bbbGW.accept(new UnlockLayoutRequest(meetingID, requesterID))
+	def lockLayout(meetingID: String, setById: String, 
+	               lock: Boolean, viewersOnly: Boolean,
+                 layout: Option[String]) {
+	  bbbGW.accept(new LockLayoutRequest(meetingID, setById, lock, viewersOnly, layout))
 	}
 }

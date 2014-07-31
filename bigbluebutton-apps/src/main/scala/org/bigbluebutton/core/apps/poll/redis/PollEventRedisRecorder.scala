@@ -1,9 +1,7 @@
 package org.bigbluebutton.core.apps.poll.redis
 
 import org.bigbluebutton.conference.service.recorder.RecorderApplication
-import org.bigbluebutton.core.api.OutMessageListener2
-import org.bigbluebutton.core.api.IOutMessage
-import org.bigbluebutton.core.apps.poll.messages._
+import org.bigbluebutton.core.api._
 import org.bigbluebutton.conference.service.recorder.polling.PollCreatedRecordEvent
 import org.bigbluebutton.conference.service.recorder.polling.PollUpdatedRecordEvent
 import org.bigbluebutton.conference.service.recorder.polling.PollRemovedRecordEvent
@@ -15,13 +13,13 @@ class PollEventRedisRecorder(recorder: RecorderApplication) extends OutMessageLi
 
   	def handleMessage(msg: IOutMessage) {
 	  msg match {
-	    case getPollsReplyOutMsg: GetPollsReplyOutMsg => // do nothing?
-	    case pollClearedOutMsg : PollClearedOutMsg => handlePollClearedOutMsg(pollClearedOutMsg)
-	    case pollStartedOutMsg: PollStartedOutMsg => handlePollStartedOutMsg(pollStartedOutMsg)
-	    case pollStoppedOutMsg: PollStoppedOutMsg => handlePollStoppedOutMsg(pollStoppedOutMsg)
-	    case pollRemovedOutMsg: PollRemovedOutMsg => handlePollRemovedOutMsg(pollRemovedOutMsg)
-	    case pollUpdatedOutMsg: PollUpdatedOutMsg => handlePollUpdatedOutMsg(pollUpdatedOutMsg)
-	    case pollCreatedOutMsg: PollCreatedOutMsg => handlePollCreatedOutMsg(pollCreatedOutMsg)
+	    case msg: GetPollsReplyOutMsg                       => // do nothing?
+	    case msg: PollClearedOutMsg                         => handlePollClearedOutMsg(msg)
+	    case msg: PollStartedOutMsg                         => handlePollStartedOutMsg(msg)
+	    case msg: PollStoppedOutMsg                         => handlePollStoppedOutMsg(msg)
+	    case msg: PollRemovedOutMsg                         => handlePollRemovedOutMsg(msg)
+	    case msg: PollUpdatedOutMsg                         => handlePollUpdatedOutMsg(msg)
+	    case msg: PollCreatedOutMsg                         => handlePollCreatedOutMsg(msg)
 	    case _ => // do nothing
 	  }
 	}
@@ -43,7 +41,7 @@ class PollEventRedisRecorder(recorder: RecorderApplication) extends OutMessageLi
 				}
 			}
 
-			ev.setTimestamp(System.currentTimeMillis())
+			ev.setTimestamp(TimestampGenerator.generateTimestamp)
 			ev.setMeetingId(msg.meetingID)
 			recorder.record(msg.meetingID, ev)					
 		}
@@ -51,7 +49,7 @@ class PollEventRedisRecorder(recorder: RecorderApplication) extends OutMessageLi
 	}
 
 	def handlePollUpdatedOutMsg(msg:PollUpdatedOutMsg):Unit = {
-		if(msg.recorded){
+		if (msg.recorded) {
 			val ev = new PollUpdatedRecordEvent();
 			ev.setPollID(msg.pollVO.id)
 			ev.setTitle(msg.pollVO.title)
@@ -67,34 +65,34 @@ class PollEventRedisRecorder(recorder: RecorderApplication) extends OutMessageLi
 				}
 			}
 
-			ev.setTimestamp(System.currentTimeMillis())
+			ev.setTimestamp(TimestampGenerator.generateTimestamp)
 			ev.setMeetingId(msg.meetingID)
 			recorder.record(msg.meetingID, ev)	
 		}
 	}
 
 	def handlePollRemovedOutMsg(msg:PollRemovedOutMsg):Unit = {
-		if(msg.recorded){
+		if (msg.recorded) {
 			val ev = new PollRemovedRecordEvent()
 			ev.setPollID(msg.pollID)
-			ev.setTimestamp(System.currentTimeMillis())
+			ev.setTimestamp(TimestampGenerator.generateTimestamp)
 			ev.setMeetingId(msg.meetingID)
 			recorder.record(msg.meetingID, ev)	
 		}
 	}
 
 	def handlePollStoppedOutMsg(msg:PollStoppedOutMsg):Unit = {
-		if(msg.recorded){
+		if (msg.recorded) {
 			val ev = new PollStoppedRecordEvent()
 			ev.setPollID(msg.pollID)
-			ev.setTimestamp(System.currentTimeMillis())
+			ev.setTimestamp(TimestampGenerator.generateTimestamp)
 			ev.setMeetingId(msg.meetingID)
 			recorder.record(msg.meetingID, ev)
 		}
 	}
 
 	def handlePollStartedOutMsg(msg:PollStartedOutMsg):Unit = {
-		if(msg.recorded){
+		if(msg.recorded) {
 			val ev = new PollStartedRecordEvent()
 			ev.setPollID(msg.pollID)
 			ev.setTimestamp(System.currentTimeMillis())
@@ -104,10 +102,10 @@ class PollEventRedisRecorder(recorder: RecorderApplication) extends OutMessageLi
 	}
 
 	def handlePollClearedOutMsg(msg:PollClearedOutMsg):Unit = {
-		if(msg.recorded){
+		if (msg.recorded) {
 			val ev = new PollClearedRecordEvent()
 			ev.setPollID(msg.pollID)
-			ev.setTimestamp(System.currentTimeMillis())
+			ev.setTimestamp(TimestampGenerator.generateTimestamp)
 			ev.setMeetingId(msg.meetingID)
 			recorder.record(msg.meetingID, ev)	
 		}	

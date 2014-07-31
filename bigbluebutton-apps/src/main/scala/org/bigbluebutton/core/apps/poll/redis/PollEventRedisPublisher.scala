@@ -1,8 +1,6 @@
 package org.bigbluebutton.core.apps.poll.redis
 
-import org.bigbluebutton.core.api.OutMessageListener2
-import org.bigbluebutton.core.api.IOutMessage
-import org.bigbluebutton.core.apps.poll.messages._
+import org.bigbluebutton.core.api._
 import org.bigbluebutton.conference.service.messaging.redis.MessageSender
 import com.google.gson.Gson
 import org.bigbluebutton.conference.service.messaging.MessagingConstants
@@ -13,14 +11,14 @@ class PollEventRedisPublisher(service: MessageSender) extends OutMessageListener
 
   	def handleMessage(msg: IOutMessage) {
 	  msg match {
-	    case getPollsReplyOutMsg: GetPollsReplyOutMsg => handleGetPollsReplyOutMsg(getPollsReplyOutMsg)
-	    case pollClearedOutMsg : PollClearedOutMsg => handlePollClearedOutMsg(pollClearedOutMsg)
-	    case pollStartedOutMsg: PollStartedOutMsg => handlePollStartedOutMsg(pollStartedOutMsg)
-	    case pollStoppedOutMsg: PollStoppedOutMsg => handlePollStoppedOutMsg(pollStoppedOutMsg)
-	    case pollRemovedOutMsg: PollRemovedOutMsg => handlePollRemovedOutMsg(pollRemovedOutMsg)
-	    case pollUpdatedOutMsg: PollUpdatedOutMsg => handlePollUpdatedOutMsg(pollUpdatedOutMsg)
-	    case pollCreatedOutMsg: PollCreatedOutMsg => handlePollCreatedOutMsg(pollCreatedOutMsg)
-	    case pollResponseOutMsg: PollResponseOutMsg => handlePollResponseOutMsg(pollResponseOutMsg)
+	    case msg: GetPollsReplyOutMsg                 => handleGetPollsReplyOutMsg(msg)
+	    case msg: PollClearedOutMsg                   => handlePollClearedOutMsg(msg)
+	    case msg: PollStartedOutMsg                   => handlePollStartedOutMsg(msg)
+	    case msg: PollStoppedOutMsg                   => handlePollStoppedOutMsg(msg)
+	    case msg: PollRemovedOutMsg                   => handlePollRemovedOutMsg(msg)
+	    case msg: PollUpdatedOutMsg                   => handlePollUpdatedOutMsg(msg)
+	    case msg: PollCreatedOutMsg                   => handlePollCreatedOutMsg(msg)
+	    case msg: PollResponseOutMsg                  => handlePollResponseOutMsg(msg)
 	    case _ => // do nothing
 	  }
   	}
@@ -34,7 +32,7 @@ class PollEventRedisPublisher(service: MessageSender) extends OutMessageListener
   	  map.put("responder", msg.responder)
   	  map.put("response", msg.response)
 
-	  service.send(MessagingConstants.BIGBLUEBUTTON_WEBHOOK_EVENTS, gson.toJson(map));	
+	  service.send(MessagingConstants.FROM_POLLING_CHANNEL, gson.toJson(map));	
   	}
   	
   	private def handleGetPollsReplyOutMsg(msg: GetPollsReplyOutMsg) {
@@ -49,61 +47,61 @@ class PollEventRedisPublisher(service: MessageSender) extends OutMessageListener
   	  
 	  message.put("msg", gson.toJson(collection))
   	  
-	  println("PollClientMessageSender - Handling GetPollsReplyOutMsg \n" + message.get("msg") + "\n")
+//	  println("PollClientMessageSender - Handling GetPollsReplyOutMsg \n" + message.get("msg") + "\n")
 	  	  
   	}
   	
   	private def handlePollClearedOutMsg(msg: PollClearedOutMsg) {
-  	  println("PollClientMessageSender - Handling PollClearedOutMsg")
+//  	  println("PollClientMessageSender - Handling PollClearedOutMsg")
   	}
   	
   	private def handlePollStartedOutMsg(msg: PollStartedOutMsg) {
-  	  println("PollClientMessageSender - Handling PollStartedOutMsg")
+//  	  println("PollClientMessageSender - Handling PollStartedOutMsg")
   	  
   	  val gson = new Gson();
   	  val map = new java.util.HashMap[String, Object]()
   	  map.put("meetingID", msg.meetingID)
 	  map.put("event", "PollStartedEvent")
   	  map.put("pollID", msg.pollID)
-  	  service.send(MessagingConstants.BIGBLUEBUTTON_WEBHOOK_EVENTS, gson.toJson(map));
+  	  service.send(MessagingConstants.FROM_POLLING_CHANNEL, gson.toJson(map));
 
   	}
   	
   	private def handlePollStoppedOutMsg(msg: PollStoppedOutMsg) {
-  	  println("PollClientMessageSender - Handling PollStoppedOutMsg")
+//  	  println("PollClientMessageSender - Handling PollStoppedOutMsg")
   	  
   	  val gson = new Gson();
   	  val map = new java.util.HashMap[String, Object]()
   	  map.put("meetingID", msg.meetingID)
 	  map.put("event", "PollStoppedEvent")
   	  map.put("pollID", msg.pollID)
-  	  service.send(MessagingConstants.BIGBLUEBUTTON_WEBHOOK_EVENTS, gson.toJson(map));
+  	  service.send(MessagingConstants.FROM_POLLING_CHANNEL, gson.toJson(map));
   	}
   	
   	private def handlePollRemovedOutMsg(msg: PollRemovedOutMsg) {
-  	  println("PollClientMessageSender - Handling PollRemovedOutMsg")
+//  	  println("PollClientMessageSender - Handling PollRemovedOutMsg")
   	  
   	  val gson = new Gson();
   	  val map = new java.util.HashMap[String, Object]()
   	  map.put("meetingID", msg.meetingID)
 	  map.put("event", "PollRemovedEvent")
   	  map.put("pollID", msg.pollID)
-  	  service.send(MessagingConstants.BIGBLUEBUTTON_WEBHOOK_EVENTS, gson.toJson(map));
+  	  service.send(MessagingConstants.FROM_POLLING_CHANNEL, gson.toJson(map));
   	}
   	
   	private def handlePollUpdatedOutMsg(msg: PollUpdatedOutMsg) {
-  	  println("PollClientMessageSender - Handling PollUpdatedOutMsg")
+//  	  println("PollClientMessageSender - Handling PollUpdatedOutMsg")
   	  val gson = new Gson();
 	  val map = new java.util.HashMap[String, Object]()
 	  map.put("meetingID", msg.meetingID)
 	  map.put("event", "PollUpdatedEvent")
 	  map.put("msg", gson.toJson(msg.pollVO))
 
-	  service.send(MessagingConstants.BIGBLUEBUTTON_WEBHOOK_EVENTS, gson.toJson(map));
+	  service.send(MessagingConstants.FROM_POLLING_CHANNEL, gson.toJson(map));
   	}
   	
   	private def handlePollCreatedOutMsg(msg: PollCreatedOutMsg) {
-  	  println("PollClientMessageSender - Handling PollCreatedOutMsg")
+//  	  println("PollClientMessageSender - Handling PollCreatedOutMsg")
   	  val gson = new Gson();
   	  
 	  val map = new java.util.HashMap[String, Object]()
@@ -111,6 +109,6 @@ class PollEventRedisPublisher(service: MessageSender) extends OutMessageListener
 	  map.put("event", "PollCreatedEvent")
 	  map.put("msg", gson.toJson(msg.pollVO))
 
-	  service.send(MessagingConstants.BIGBLUEBUTTON_WEBHOOK_EVENTS, gson.toJson(map));
+	  service.send(MessagingConstants.FROM_POLLING_CHANNEL, gson.toJson(map));
   	}
 }

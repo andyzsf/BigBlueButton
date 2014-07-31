@@ -36,6 +36,7 @@ define [
         globals.events.trigger("users:load_users", users)
 
       globals.events.on "connection:user_join", (userid, username) =>
+        console.log "users.coffee: on(connection:user_join)" + username
         @add [
           id : userid
           userid: userid
@@ -47,6 +48,11 @@ define [
         toDel = @get(userid)
         @remove(toDel)
         globals.events.trigger("users:user_leave", userid)
+
+      globals.events.on "connection:user_left", (userid) =>
+        toDel = @get(userid)
+        @remove(toDel)
+        globals.events.trigger("users:user_left", userid)
 
       globals.events.on "connection:setPresenter", (userid) =>
         globals.events.trigger("users:setPresenter", userid)

@@ -12,6 +12,12 @@ define [
       @socket = null
       @host = window.location.protocol + "//" + window.location.host
 
+      # Grab pieces of info from the URL
+      @authToken = @getUrlVars()["auth_token"]
+      @userId = @getUrlVars()["user_id"]
+      @meetingId = @getUrlVars()["meeting_id"]
+      @username = @getUrlVars()["username"]
+
     disconnect: ->
       if @socket?
         console.log "disconnecting from", @host
@@ -20,14 +26,23 @@ define [
         console.log "tried to disconnect but it's not connected"
 
     connect: ->
+      console.log("user_id=" + @userId + " auth_token=" + @authToken + " meeting_id=" + @meetingId)
       unless @socket?
-        console.log "connecting to the server", @host
-        @socket = io.connect(@host)
-        console.log("socket: ");
-        console.log(@socket);
+        console.log "connecting to the socket.io server", @host
+        @socket = io.connect()
+
+        # a1 - just a random 
+        #@socket = io.connect('#{@host}/a1/#{meetingId}/#{userId}') #TODO
+
         @_registerEvents()
       else
         console.log "tried to connect but it's already connected"
+
+    emit: (data) ->
+      if @isConnected()
+        @socket.emit("message", data)
+      else
+        console.log "Not connected, aborting emission of message", data
 
     isConnected: ->
       # if we have a socket set we assume we are connected
@@ -37,11 +52,55 @@ define [
     # event bus so that other objects can receive them too.
     _registerEvents: ->
 
+      # All messages received from the server fall in this block
+      @socket.on "message", (data) ->
+        console.log "socket.io received: data"
+        globals.events.trigger("message", data)
+
+
       # Immediately say we are connected
       @socket.on "connect", =>
         console.log "socket on: connect"
         globals.events.trigger("connection:connected")
-        @socket.emit "user connect" # tell the server we have a new user
+        #@socket.emit "user connect" # tell the server we have a new user
+
+        message = {
+          "payload": {
+            "auth_token": @authToken
+            "userid": @userId
+            "meeting_id": @meetingId
+          },
+          "header": {
+            "timestamp": new Date().getTime()
+            "name": "validate_auth_token"
+          }
+        }
+
+        #emit the validate_auth_token json message if the fields have been populated
+        if @authToken? and @userId? and @meetingId?
+          @socket.emit "message", message
+
+      @socket.on "get_users_reply", (message) =>
+        users = []
+        for user in message.payload?.users
+          users.push user
+
+        globals.events.trigger("connection:load_users", users)
+
+      @socket.on "get_chat_history_reply", (message) =>
+        requesterId = message.payload?.requester_id
+
+        #console.log("my_id=" + @userId + ", while requester_id=" + requesterId)
+        if(requesterId is @userId)
+          globals.events.trigger("connection:all_messages", message.payload?.chat_history)
+
+      # Received event for a new public chat message
+      # @param  {object} message object
+      @socket.on "send_public_chat_message", (message) ->
+        console.log 'got this message:' + JSON.stringify message
+        username = message.payload.message.from_username
+        text = message.payload.message.message
+        globals.events.trigger("connection:msg", username, text)
 
       # Received event to logout yourself
       @socket.on "logout", ->
@@ -77,8 +136,7 @@ define [
       # @param  {Array} urls list of URLs to be added to the paper (after old images are removed)
       @socket.on "all_slides", (allSlidesEventObject) =>
         console.log "socket on: all_slides"
-        console.log("allSlidesEventObject: ");
-        console.log(allSlidesEventObject)
+        console.log "allSlidesEventObject: " + allSlidesEventObject
         globals.events.trigger("connection:all_slides", allSlidesEventObject);
 
       # Received event to clear the whiteboard shapes
@@ -88,39 +146,37 @@ define [
 
       # Received event to update all the shapes in the whiteboard
       # @param  {Array} shapes Array of shapes to be drawn
-      @socket.on "all_shapes", (shapes) =>
-        console.log "socket on: all_shapes"
-        console.log shapes
-        globals.events.trigger("connection:all_shapes", shapes)
+      @socket.on "allShapes", (allShapesEventObject) =>
+        console.log "socket on: all_shapes" + allShapesEventObject
+        globals.events.trigger("connection:all_shapes", allShapesEventObject)
 
       # Received event to update a shape being created
       # @param  {string} shape type of shape being updated
       # @param  {Array} data   all information to update the shape
-      @socket.on "whiteboardUpdShape", (data) =>
-        shape = data.shape.type
-        console.log "socket on: whiteboardUpdShape"
+      @socket.on "whiteboard_update_event", (data) =>
+        console.log "socket on: whiteboard_update_event"
+        shape = data.payload.shape_type
         globals.events.trigger("connection:updShape", shape, data)
 
       # Received event to create a shape on the whiteboard
       # @param  {string} shape type of shape being made
       # @param  {Array} data   all information to make the shape
-      @socket.on "whiteboardMakeShape", (data) =>
-        shape = data.shape.type
-        console.log "socket on: whiteboardMakeShape"
-        globals.events.trigger("connection:whiteboardMakeShape", shape, data)
+      @socket.on "whiteboard_draw_event", (data) =>
+        console.log "socket on: whiteboard_draw_event"
+        shape = data.payload.shape_type
+        globals.events.trigger("connection:whiteboard_draw_event", shape, data)
 
       # Pencil drawings are received as points from the server and painted as lines.
       @socket.on "whiteboardDrawPen", (data) =>
-        console.log "socket on: whiteboardDrawPen"
-        console.log data
+        console.log "socket on: whiteboardDrawPen"+  data
         globals.events.trigger("connection:whiteboardDrawPen", data)
 
       # Received event to update the cursor coordinates
       # @param  {number} x x-coord of the cursor as a percentage of page width
       # @param  {number} y y-coord of the cursor as a percentage of page height
       @socket.on "mvCur", (data) =>
-        x = data.cursor.x
-        y = data.cursor.y
+        x = data.cursor.x #TODO change to new json structure
+        y = data.cursor.y #TODO change to new json structure
         console.log "socket on: mvCur"
         globals.events.trigger("connection:mvCur", x, y)
 
@@ -128,7 +184,7 @@ define [
       # @param  {number} x x-coord of the cursor as a percentage of page width
       # @param  {number} y y-coord of the cursor as a percentage of page height
       @socket.on "move_and_zoom", (xOffset, yOffset, widthRatio, heightRatio) =>
-        #console.log "socket on: move_and_zoom"
+        console.log "socket on: move_and_zoom"
         globals.events.trigger("connection:move_and_zoom", xOffset, yOffset, widthRatio, heightRatio)
 
       # Received event to update the slide image
@@ -188,28 +244,18 @@ define [
         console.log "socket on: user list change"
         globals.events.trigger("connection:user_list_change", users)
 
-      # TODO: event name with spaces is bad
-      @socket.on "loadUsers", (loadUsersEventObject) =>
-        users = loadUsersEventObject.usernames
-        console.log "socket on: loadUsers"
-        console.log(loadUsersEventObject)
-        globals.events.trigger("users:loadUsers", users)
-
       # Received event for a new user
-      @socket.on "UserJoiningRequest", (message) =>
-        console.log "socket on: UserJoiningRequest"
-        #console.log message
-        #eventObject = JSON.parse(message);
-        console.log("message: ")
-        console.log(message);
-        userid = message.user.metadata.userid
-        username = message.user.name
-        globals.events.trigger("connection:user_join", userid, username)
+      @socket.on "user_joined_event", (message) =>
+        console.log "message: " + message
+        userid = message.payload.user.id
+        username = message.payload.user.name
+        globals.events.trigger("connection:user_join", userid, username) #should it be user_joined?! #TODO
 
-      # Received event when a user leave
-      @socket.on "user leave", (userid) =>
-        console.log "socket on: user leave"
-        globals.events.trigger("connection:user_leave", userid)
+      # Received event when a user leaves
+      @socket.on "user_left_event", (message) =>
+        console.log "message: " + message
+        userid = message.payload.user.id
+        globals.events.trigger("connection:user_left", userid)
 
       # Received event to set the presenter to a user
       # @param  {string} userID publicID of the user that is being set as the current presenter
@@ -217,30 +263,16 @@ define [
         console.log "socket on: setPresenter"
         globals.events.trigger("connection:setPresenter", userid)
 
-      # Received event for a new public chat message
-      # @param  {string} name name of user
-      # @param  {string} msg  message to be displayed
-      #THIS IS THE OLD MESSAGE FORMAT. NOT USED ANYMORE
-      ###@socket.on "msg", (name, msg) =>
-        console.log "socket on: msg"
-        globals.events.trigger("connection:msg", name, msg)###
-
-      # Received event for a new public chat message
-      # @param  {string} name name of user
-      # @param  {string} msg  message to be displayed
-      @socket.on "SendPublicChatMessage", (msgEvent) =>
-        console.log "socket on: msg"
-        console.log(msgEvent);
-        name = msgEvent.chat.from.name
-        msg = msgEvent.chat.text
-        globals.events.trigger("connection:msg", name, msg)
-
       # Received event to update all the messages in the chat box
       # @param  {Array} messages Array of messages in public chat box
-      @socket.on "all_messages", (allMessagesEventObject) =>
-        console.log "socket on: all_messages"
-        console.log( allMessagesEventObject )
-        globals.events.trigger("connection:all_messages", allMessagesEventObject)
+      #@socket.on "all_messages", (allMessagesEventObject) =>
+      #  console.log "socket on: all_messages" + allMessagesEventObject
+      #  globals.events.trigger("connection:all_messages", allMessagesEventObject)
+
+      @socket.on "share_presentation_event", (data) =>
+        console.log "socket on: share_presentation_event"
+        globals.events.trigger("connection:share_presentation_event", data)
+
 
     # Emit an update to move the cursor around the canvas
     # @param  {number} x x-coord of the cursor as a percentage of page width
@@ -256,9 +288,35 @@ define [
     # Emit a message to the server
     # @param  {string} the message
     emitMsg: (msg) ->
-      console.log "emitting message: "
-      console.log(msg)
-      @socket.emit "msg", msg
+
+      console.log "emitting message: " + msg
+
+      object = {
+        "header": {
+          "name": "send_public_chat_message"
+          "timestamp": new Date().getTime()
+          "version": "0.0.1"
+        }
+        "payload": {
+          "meeting_id": @meetingId
+          "requester_id": @userId
+          "message": {
+            "chat_type": "PUBLIC_CHAT"
+            "message": msg
+            "to_username": "public_chat_username"
+            "from_tz_offset": "240"
+            "from_color": "0"
+            "to_userid": "public_chat_userid"
+            "from_userid": @userId
+            "from_time": "1.400869381346E12"
+            "from_username": @username
+            "from_lang": "en"
+          }
+        }
+      }
+      
+      @socket.emit "message", object
+
 
     # Emit the finish of a text shape
     emitTextDone: ->
@@ -327,5 +385,13 @@ define [
     # Emit signal to clear the canvas
     emitClearCanvas: (id) ->
       @socket.emit "clrPaper", id
+
+    # Helper method to get the meeting_id, user_id and auth_token from the url
+    getUrlVars: ->
+      vars = {}
+      parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m,key,value) ->
+        vars[key] = value
+      )
+      vars
 
   ConnectionModel
