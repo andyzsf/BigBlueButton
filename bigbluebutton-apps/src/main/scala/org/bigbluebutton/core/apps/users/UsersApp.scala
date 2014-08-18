@@ -1,11 +1,11 @@
- package org.bigbluebutton.core.apps.users
+package org.bigbluebutton.core.apps.users
 
 import org.bigbluebutton.core.api._
- import scala.collection.mutable.HashMap
- import org.bigbluebutton.core.User
- import java.util.ArrayList
- import org.bigbluebutton.core.MeetingActor
- import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.HashMap
+import org.bigbluebutton.core.User
+import java.util.ArrayList
+import org.bigbluebutton.core.MeetingActor
+import scala.collection.mutable.ArrayBuffer
 
 trait UsersApp {
   this : MeetingActor =>
@@ -17,7 +17,6 @@ trait UsersApp {
   
   private var locked = false
   private var meetingMuted = false
-  private var meetingMutedExceptPresenter = false
   
   private var currentPresenter = new Presenter("system", "system", "system")
   
@@ -54,8 +53,8 @@ trait UsersApp {
   }
   
   def handleMuteAllExceptPresenterRequest(msg: MuteAllExceptPresenterRequest) {
-    meetingMutedExceptPresenter = msg.mute
-    outGW.send(new MeetingMuted(meetingID, recorded, meetingMuted, meetingMutedExceptPresenter))
+    meetingMuted = msg.mute
+    outGW.send(new MeetingMuted(meetingID, recorded, meetingMuted))
     
     usersWhoAreNotPresenter foreach {u =>
       outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, msg.mute))
@@ -64,7 +63,7 @@ trait UsersApp {
     
   def handleMuteMeetingRequest(msg: MuteMeetingRequest) {
     meetingMuted = msg.mute
-    outGW.send(new MeetingMuted(meetingID, recorded, meetingMuted, meetingMutedExceptPresenter))
+    outGW.send(new MeetingMuted(meetingID, recorded, meetingMuted))
     users.getUsers foreach {u =>
         outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, msg.mute)) 
     }
@@ -220,6 +219,8 @@ trait UsersApp {
 					
 	    outGW.send(new UserJoined(meetingID, recorded, uvo))
 	
+	    outGW.send(new MeetingState(meetingID, recorded, uvo.userID, permissions, meetingMuted))
+	    
 	    // Become presenter if the only moderator		
 	    if (users.numModerators == 1) {
 	      if (ru.role == Role.MODERATOR) {

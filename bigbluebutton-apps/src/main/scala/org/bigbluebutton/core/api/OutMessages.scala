@@ -67,7 +67,6 @@ case class MeetingMuted(
     meetingID: String, 
     recorded: Boolean, 
     meetingMuted: Boolean,
-    meetingMutedExceptPresenter: Boolean,
     version:String = Versions.V_0_0_1    
 ) extends IOutMessage
 
@@ -76,6 +75,15 @@ case class MeetingEnded(
     recorded: Boolean, 
     voiceBridge: String,
     version:String = Versions.V_0_0_1
+) extends IOutMessage
+
+case class MeetingState(
+    meetingID: String, 
+    recorded: Boolean, 
+    userId: String,
+    permissions: Permissions,
+    meetingMuted: Boolean,
+    version:String = Versions.V_0_0_1    
 ) extends IOutMessage
 
 case class MeetingHasEnded(
