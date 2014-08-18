@@ -171,8 +171,7 @@ public class MeetingService implements MessageListener {
 	}
 
 	private void handleCreateMeeting(Meeting m) {
-		log.debug("Storing Meeting with internal id:" + m.getInternalId());
-		log.debug(" ******************* Storing Meeting with internal id:" + m.getInternalId());
+		log.info("Storing Meeting with internalId=[" + m.getInternalId() + "], externalId=[" + m.getExternalId() + "], name=[" + m.getName() + "], duration=[" + m.getDuration() + "], record=[" + m.isRecord() + "]");
 		meetings.put(m.getInternalId(), m);
 		if (m.isRecord()) {
 			Map<String,String> metadata = new LinkedHashMap<String,String>();
@@ -220,6 +219,32 @@ public class MeetingService implements MessageListener {
 		return null;
 	}
 
+	public Collection<Meeting> getMeetingsWithId(String meetingId) {
+		if (meetingId == null) return Collections.<Meeting>emptySet();
+		
+		Collection<Meeting> m = new HashSet<Meeting>();
+		
+		for (String key : meetings.keySet()) {
+			if (key.startsWith(meetingId))
+				m.add(meetings.get(key));
+		}		
+		
+		return m;
+	} 
+	
+	public Meeting getNotEndedMeetingWithId(String meetingId) {
+		if (meetingId == null)
+			return null;
+		for (String key : meetings.keySet()) {
+			if (key.startsWith(meetingId)) {
+				Meeting m = (Meeting) meetings.get(key);
+				if (! m.isForciblyEnded()) return m;
+			}
+		}
+		
+		return null;
+	} 
+	
 	public HashMap<String,Recording> getRecordings(ArrayList<String> idList) {
 		//TODO: this method shouldn't be used 
 		HashMap<String,Recording> recs= reorderRecordings(recordingService.getRecordings(idList));
@@ -398,7 +423,7 @@ public class MeetingService implements MessageListener {
 			User user = m.getUserById(message.userId);
 			if(user != null){
 				user.setStatus(message.status, message.value);
-				log.debug("Setting new status value in meeting " + message.meetingId + " for participant:"+user.getFullname());
+				log.debug("Setting new status value in meeting " + message.meetingId + " for participant:" + user.getFullname());
 				return;
 			}
 			log.warn("The participant " + message.userId + " doesn't exist in the meeting " + message.meetingId);
