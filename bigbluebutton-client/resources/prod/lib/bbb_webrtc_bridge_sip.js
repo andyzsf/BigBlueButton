@@ -184,7 +184,8 @@ function make_call(username, voiceBridge, server, callback) {
 					audio: document.getElementById('remote-media')
 				}
 			}
-		}
+		},
+    extraHeaders: ['X-BBB-Auth-Token: MyCustomHeaderValue']
 	};
 	
 	console.log("Calling to " + voiceBridge + "....");

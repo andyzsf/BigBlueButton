@@ -110,7 +110,8 @@ package org.bigbluebutton.main.model.users
         response.welcome = result.response.welcome;
         response.logoutUrl = result.response.logoutUrl;
         response.defaultLayout = result.response.defaultLayout;
-        response.avatarURL = result.response.avatarURL
+        response.avatarURL = result.response.avatarURL;
+        response.voiceAuthToken = result.response.voiceAuthToken;
         
         if (result.response.hasOwnProperty("modOnlyMessage")) {
           response.modOnlyMessage = result.response.modOnlyMessage;
@@ -143,6 +144,7 @@ package org.bigbluebutton.main.model.users
                                              .withExternalId(response.externMeetingID).withRecorded(response.record.toUpperCase() == "TRUE")
                                              .withDefaultAvatarUrl(response.avatarURL).withDialNumber(response.dialNumber)
                                              .withWelcomeMessage(response.welcome).withModOnlyMessage(response.modOnlyMessage)
+                                             .withVoiceAuthToken(response.voiceAuthToken)
                                              .build();
         
 				if (_resultListener != null) _resultListener(true, response);
