@@ -13,14 +13,15 @@ import org.bigbluebutton.core.apps.chat.ChatApp
 import org.bigbluebutton.core.apps.whiteboard.WhiteboardApp
 import scala.actors.TIMEOUT
 import java.util.concurrent.TimeUnit
+import org.bigbluebutton.core.util._
 
 case object StopMeetingActor
                       
-class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boolean, 
+class MeetingActor(val meetingID: String, val meetingName: String, val recorded: Boolean, 
                    val voiceBridge: String, duration: Long, val outGW: MessageOutGateway) 
                    extends Actor with UsersApp with PresentationApp
                    with PollApp with LayoutApp with ChatApp
-                   with WhiteboardApp {  
+                   with WhiteboardApp with LogHelper {  
 
   var permissionsInited = false
   var permissions = new Permissions()
@@ -65,6 +66,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
 	    case msg: AssignPresenter                        => handleAssignPresenter(msg)
 	    case msg: GetUsers                               => handleGetUsers(msg)
 	    case msg: ChangeUserStatus                       => handleChangeUserStatus(msg)
+	    case msg: EjectUserFromMeeting                   => handleEjectUserFromMeeting(msg)
 	    case msg: UserRaiseHand                          => handleUserRaiseHand(msg)
 	    case msg: UserLowerHand                          => handleUserLowerHand(msg)
 	    case msg: UserShareWebcam                        => handleUserShareWebcam(msg)
@@ -73,7 +75,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
 	    case msg: MuteAllExceptPresenterRequest          => handleMuteAllExceptPresenterRequest(msg)
 	    case msg: IsMeetingMutedRequest                  => handleIsMeetingMutedRequest(msg)
 	    case msg: MuteUserRequest                        => handleMuteUserRequest(msg)
-	    case msg: EjectUserRequest                       => handleEjectUserRequest(msg)
+	    case msg: EjectUserFromVoiceRequest                       => handleEjectUserRequest(msg)
 	    case msg: SetLockSettings                        => handleSetLockSettings(msg)
 	    case msg: InitLockSettings                       => handleInitLockSettings(msg)
 	    case msg: GetChatHistoryRequest                  => handleGetChatHistoryRequest(msg) 
@@ -229,7 +231,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
   def startCheckingIfWeNeedToEndVoiceConf() {
     if (users.numWebUsers == 0) {
       lastWebUserLeftOn = timeNowInMinutes
-	    println("*************** MonitorNumberOfWebUsers started ******************")
+	    logger.debug("MonitorNumberOfWebUsers started for meeting [" + meetingID + "]")
       scheduleEndVoiceConference()
 	  }
   }
@@ -237,7 +239,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
   def handleMonitorNumberOfWebUsers() {
     if (users.numWebUsers == 0 && lastWebUserLeftOn > 0) {
       if (timeNowInMinutes - lastWebUserLeftOn > 2) {
-        println("*************** MonitorNumberOfWebUsers [Ject all from voice] ******************")
+        logger.info("MonitorNumberOfWebUsers empty for meeting [" + meetingID + "]. Ejecting all users from voice.")
         outGW.send(new EjectAllVoiceUsers(meetingID, recorded, voiceBridge))
       } else {
         scheduleEndVoiceConference()
@@ -246,7 +248,7 @@ class MeetingActor(val meetingID: String, meetingName: String, val recorded: Boo
   }
   
   private def scheduleEndVoiceConference() {
-    println("*************** MonitorNumberOfWebUsers monitor ******************")
+    logger.debug("MonitorNumberOfWebUsers continue for meeting [" + meetingID + "]")
     val timerActor = new TimerActor(TIMER_INTERVAL, self, "MonitorNumberOfWebUsers")
     timerActor.start    
   }

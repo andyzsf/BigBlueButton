@@ -359,8 +359,8 @@ public class MeetingService implements MessageListener {
 	
 	public void addUserCustomData(String meetingId, String userID, Map<String,String> userCustomData){
 		Meeting m = getMeeting(meetingId);
-		if(m != null){
-			m.addUserCustomData(userID,userCustomData);
+		if (m != null){
+			m.addUserCustomData(userID, userCustomData);
 		}
 	}
 
@@ -396,7 +396,7 @@ public class MeetingService implements MessageListener {
 		if (m != null) {
 			User user = new User(message.userId, message.externalUserId, message.name, message.role);
 			m.userJoined(user);
-			log.debug("New user in meeting [" + message.meetingId + "] user [" + user.getFullname() + "]");
+			log.info("New user in meeting [" + message.meetingId + "] user [" + user.getFullname() + "]");
 			return;
 		}
 		log.warn("The meeting " + message.meetingId + " doesn't exist");
@@ -408,7 +408,7 @@ public class MeetingService implements MessageListener {
 		if (m != null) {
 			User user = m.userLeft(message.userId);
 			if(user != null){
-				log.debug("User removed from meeting [" + message.meetingId + "] user [" + user.getFullname() + "]");
+				log.info("User removed from meeting [" + message.meetingId + "] user [" + user.getFullname() + "]");
 				return;
 			}
 			log.warn("The participant " + message.userId + " doesn't exist in the meeting " + message.meetingId);
@@ -423,7 +423,7 @@ public class MeetingService implements MessageListener {
 			User user = m.getUserById(message.userId);
 			if(user != null){
 				user.setStatus(message.status, message.value);
-				log.debug("Setting new status value in meeting " + message.meetingId + " for participant:" + user.getFullname());
+				log.info("Setting new status value in meeting " + message.meetingId + " for participant:" + user.getFullname());
 				return;
 			}
 			log.warn("The participant " + message.userId + " doesn't exist in the meeting " + message.meetingId);

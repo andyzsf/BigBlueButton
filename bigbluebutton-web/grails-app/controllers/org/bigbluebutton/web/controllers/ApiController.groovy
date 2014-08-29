@@ -36,6 +36,7 @@ import org.bigbluebutton.presentation.UploadedPresentation
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.bigbluebutton.api.ApiErrors;
+import org.bigbluebutton.api.ClientConfigService;
 import org.bigbluebutton.api.ParamsProcessorUtil;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -56,6 +57,7 @@ class ApiController {
   MeetingService meetingService;
   PresentationService presentationService
   ParamsProcessorUtil paramsProcessorUtil
+	ClientConfigService configService
   
   /* general methods */
   def index = {
@@ -148,7 +150,11 @@ class ApiController {
     }
      
     Meeting newMeeting = paramsProcessorUtil.processCreateParams(params);      
-		      
+		
+		if (! StringUtils.isEmpty(params.moderatorOnlyMessage)) {
+			newMeeting.setModeratorOnlyMessage(params.moderatorOnlyMessage);
+		}
+		
     meetingService.createMeeting(newMeeting);
     
     // See if the request came with pre-uploading of presentation.
@@ -303,20 +309,24 @@ class ApiController {
 	
 	//Return a Map with the user custom data
 	Map<String,String> userCustomData = paramsProcessorUtil.getUserCustomData(params);
+
 	//Currently, it's associated with the externalUserID
-	if(userCustomData.size()>0)
-		meetingService.addUserCustomData(meeting.getInternalId(),externUserID,userCustomData);
+	if (userCustomData.size() > 0)
+		meetingService.addUserCustomData(meeting.getInternalId(), externUserID, userCustomData);
     
 	String configxml = null;
-	
+		
 	if (! StringUtils.isEmpty(params.configToken)) {
 		Config conf = meeting.getConfig(params.configToken);
 		if (conf == null) {
-			errors.noConfigFoundForToken(params.configToken);
-			respondWithErrors(errors);
+			// Check if this config is one of our pre-built config
+			configxml = configService.getConfig(params.configToken)
+			if (configxml == null) {
+				// Default to the default config.
+				configxml = conf.config;
+			}
 		} else {
 			configxml = conf.config;
-			println ("USING PREFERRED CONFIG")
 		}
 	} else {
 		Config conf = meeting.getDefaultConfig();
@@ -325,7 +335,6 @@ class ApiController {
 			respondWithErrors(errors);
 		} else {
 			configxml = conf.config;
-			println ("USING DEFAULT CONFIG")
 		}
 	}
 	
@@ -1312,46 +1321,52 @@ class ApiController {
 
       response.addHeader("Cache-Control", "no-cache")
       withFormat {        
-        xml {
-          render(contentType:"text/xml") {
-            response() {
-              returncode("FAILED")
-              message("Could not find conference.")
-              logoutURL(logoutUrl)
+        json {
+          render(contentType: "application/json") {
+            response = {
+              returncode = "FAILED"
+              message = "Could not find conference."
+              logoutURL = logoutUrl
             }
           }
         }
       }
     } else {
+		
+		Map<String,String> userCustomData = paramsProcessorUtil.getUserCustomData(params);
+		
       log.info("Found conference for " + us.fullname)
       response.addHeader("Cache-Control", "no-cache")
       withFormat {        
-        xml {
-          render(contentType:"text/xml") {
-            response() {
-              returncode("SUCCESS")
-              fullname(us.fullname)
-              confname(us.conferencename)
-              meetingID(us.meetingID)
-              externMeetingID(us.externMeetingID)
-              externUserID(us.externUserID)
-              internalUserID(us.internalUserId)
-              role(us.role)
-              conference(us.conference)
-              room(us.room)
-              voicebridge(us.voicebridge)
-              dialnumber(meeting.getDialNumber())
-              webvoiceconf(us.webvoiceconf)
-              mode(us.mode)
-              record(us.record)
-              welcome(us.welcome)
-              logoutUrl(us.logoutUrl)
-              defaultLayout(us.defaultLayout)
-              avatarURL(us.avatarURL)
-              customdata(){
-                meeting.getUserCustomData(us.externUserID).each{ k,v ->
-                 "$k"("$v")
-                }
+        json {
+          render(contentType: "application/json") {
+            response = {
+              returncode = "SUCCESS"
+              fullname = us.fullname
+              confname = us.conferencename
+              meetingID = us.meetingID
+              externMeetingID = us.externMeetingID
+              externUserID = us.externUserID
+              internalUserID = us.internalUserId
+              role = us.role
+              conference = us.conference
+              room = us.room 
+              voicebridge = us.voicebridge
+              dialnumber = meeting.getDialNumber()
+              webvoiceconf = us.webvoiceconf
+              mode = us.mode
+              record = us.record
+              welcome = us.welcome
+							if (! StringUtils.isEmpty(meeting.moderatorOnlyMessage))
+							  modOnlyMessage = meeting.moderatorOnlyMessage
+              logoutUrl = us.logoutUrl
+              defaultLayout = us.defaultLayout
+              avatarURL = us.avatarURL
+              customdata = array {
+								userCustomData.each { k, v ->
+									// Somehow we need to prepend something (custdata) for the JSON to work
+									custdata "$k" : v
+								}
               }
             }
           }
