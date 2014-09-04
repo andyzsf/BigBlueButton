@@ -23,6 +23,7 @@ package org.bigbluebutton.modules.phone.managers
   import org.bigbluebutton.modules.phone.events.WebRTCAskUserToChangeMicEvent;
   import org.bigbluebutton.modules.phone.events.WebRTCEchoTestEvent;
   import org.bigbluebutton.modules.phone.events.WebRTCEchoTestStartedEvent;
+  import org.bigbluebutton.modules.phone.events.WebRTCJoinedVoiceConferenceEvent;
   import org.bigbluebutton.modules.phone.events.WebRTCMediaEvent;
   import org.bigbluebutton.modules.phone.models.Constants;
   import org.bigbluebutton.modules.phone.models.WebRTCModel;
@@ -106,10 +107,14 @@ package org.bigbluebutton.modules.phone.managers
     public function handleWebRTCCallStartedEvent():void {
 	    trace(LOG + "setting state to IN_CONFERENCE");
       model.state = Constants.IN_CONFERENCE;
+      dispatcher.dispatchEvent(new WebRTCJoinedVoiceConferenceEvent());
+      
     }
     
     public function handleWebRTCCallEndedEvent():void {
       model.state = Constants.INITED;
+      
+      
     }
     
     private function joinVoiceConference():void {
@@ -151,7 +156,6 @@ package org.bigbluebutton.modules.phone.managers
 	
     public function handleUseFlashModeCommand():void {
       usingWebRTC = false;
-      hangup();
     }
 
     public function handleWebRTCEchoTestFailedEvent(reason:String):void {
