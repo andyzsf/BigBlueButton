@@ -294,6 +294,8 @@ public class RedisMessagingService implements MessagingService {
 		} finally {
 			redisPool.returnResource(jedis);
 		}
+        }
+
 	public void removeMeeting(String meetingId){
 		storeService.removeMeeting(meetingId);
 	}
