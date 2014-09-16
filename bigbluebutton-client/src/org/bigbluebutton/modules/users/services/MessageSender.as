@@ -29,16 +29,18 @@ package org.bigbluebutton.modules.users.services
 
     public function kickUser(userID:String):void {
       var message:Object = new Object();
-      message["userID"] = userID;
+      message["userId"] = userID;
+      message["ejectedBy"] = UsersUtil.getMyUserID();
       
       var _nc:ConnectionManager = BBB.initConnectionManager();
-      _nc.sendMessage("participants.kickUser", 
+      _nc.sendMessage("participants.ejectUserFromMeeting", 
         function(result:String):void { // On successful result
           LogUtil.debug(result); 
         },	                   
         function(status:String):void { // status - On error occurred
           LogUtil.error(status); 
-        }
+        },
+        message
       );
     }
     
@@ -139,7 +141,7 @@ package org.bigbluebutton.modules.users.services
     }
     
     public function changeRecordingStatus(userID:String, recording:Boolean):void {
-      trace("Sending setRecordingStatus. recording=[" + recording + "]");
+      trace(LOG + "Sending setRecordingStatus. recording=[" + recording + "]");
       var message:Object = new Object();
       message["userId"] = userID;
       message["recording"] = recording;
@@ -157,17 +159,33 @@ package org.bigbluebutton.modules.users.services
       ); //_netConnection.call
     }
 
-    public function muteAllUsers(mute:Boolean, dontMuteThese:Array = null):void {
-      if (dontMuteThese == null) dontMuteThese = [];
-      
-      trace("Sending muteAllUsers. ");
+    public function muteAllUsers(mute:Boolean):void {
+      trace(LOG + "Sending muteAllUsers. mute=[" + mute + "]");
       var message:Object = new Object();
       message["mute"] = mute;
-      message["exceptUsers"] = dontMuteThese;
+    
+      var _nc:ConnectionManager = BBB.initConnectionManager();
+      _nc.sendMessage(
+        "voice.muteAllUsers",
+        function(result:String):void { // On successful result
+          LogUtil.debug(result); 
+        },	                   
+        function(status:String):void { // status - On error occurred
+          LogUtil.error(status); 
+        },
+        message
+      ); 
+    }
+    
+    public function muteAllUsersExceptPresenter(mute:Boolean):void {
+
+      trace(LOG + "Sending muteAllUsersExceptPresenter. mute=[" + mute + "]");
+      var message:Object = new Object();
+      message["mute"] = mute;
 
       var _nc:ConnectionManager = BBB.initConnectionManager();
       _nc.sendMessage(
-        "voice.muteUnmuteUser",
+        "voice.muteAllUsersExceptPresenter",
         function(result:String):void { // On successful result
           LogUtil.debug(result); 
         },	                   
@@ -179,7 +197,7 @@ package org.bigbluebutton.modules.users.services
     }
     
     public function muteUnmuteUser(userid:String, mute:Boolean):void {
-      trace("Sending muteUnmuteUser. id=[" + userid + "]");
+      trace(LOG + "Sending muteUnmuteUser. id=[" + userid + "], mute=[" + mute + "]");
       var message:Object = new Object();
       message["userId"] = userid;
       message["mute"] = mute;
@@ -201,11 +219,10 @@ package org.bigbluebutton.modules.users.services
       trace("Sending ejectUser. id=[" + userid + "]");
       var message:Object = new Object();
       message["userId"] = userid;
-
       
       var _nc:ConnectionManager = BBB.initConnectionManager();
       _nc.sendMessage(
-        "voice.kickUSer",
+        "voice.ejectUserFromVoice",
         function(result:String):void { // On successful result
           LogUtil.debug(result); 
         },	                   

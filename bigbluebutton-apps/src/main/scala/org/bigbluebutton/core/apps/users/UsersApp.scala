@@ -1,11 +1,11 @@
- package org.bigbluebutton.core.apps.users
+package org.bigbluebutton.core.apps.users
 
 import org.bigbluebutton.core.api._
- import scala.collection.mutable.HashMap
- import org.bigbluebutton.core.User
- import java.util.ArrayList
- import org.bigbluebutton.core.MeetingActor
- import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.HashMap
+import org.bigbluebutton.core.User
+import java.util.ArrayList
+import org.bigbluebutton.core.MeetingActor
+import scala.collection.mutable.ArrayBuffer
 
 trait UsersApp {
   this : MeetingActor =>
@@ -17,6 +17,7 @@ trait UsersApp {
   
   private var locked = false
   private var meetingMuted = false
+  
   private var currentPresenter = new Presenter("system", "system", "system")
   
   def hasUser(userID: String):Boolean = {
@@ -32,10 +33,11 @@ trait UsersApp {
   }
   
   def handleUserConnectedToGlobalAudio(msg: UserConnectedToGlobalAudio) {
-    println("*************** Got UserConnectedToGlobalAudio message for [" + msg.name + "] ********************" )
-    val user = users.getUser(msg.userid)
+//    println("*************** Got UserConnectedToGlobalAudio message for [" + msg.name + "] ********************" )
+    val user = users.getUserWithExternalId(msg.userid)
     user foreach {u =>
-      val uvo = u.copy(listenOnly=true)
+      val vu = u.voiceUser.copy(talking=false)
+      val uvo = u.copy(listenOnly=true, voiceUser=vu)
       users.addUser(uvo)
       outGW.send(new UserListeningOnly(meetingID, recorded, uvo.userID, uvo.listenOnly))        
     }
@@ -43,7 +45,7 @@ trait UsersApp {
   
   def handleUserDisconnectedFromGlobalAudio(msg: UserDisconnectedFromGlobalAudio) {
     println("*************** Got UserDisconnectedToGlobalAudio message for [" + msg.name + "] ********************" )
-    val user = users.getUser(msg.userid)
+    val user = users.getUserWithExternalId(msg.userid)
     user foreach {u =>
       val uvo = u.copy(listenOnly=false)
       users.addUser(uvo)
@@ -51,16 +53,25 @@ trait UsersApp {
     }
   }
   
+  def handleMuteAllExceptPresenterRequest(msg: MuteAllExceptPresenterRequest) {
+    meetingMuted = msg.mute
+    outGW.send(new MeetingMuted(meetingID, recorded, meetingMuted))
+    
+    usersWhoAreNotPresenter foreach {u =>
+      outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, msg.mute))
+    }       
+  }
+    
   def handleMuteMeetingRequest(msg: MuteMeetingRequest) {
     meetingMuted = msg.mute
-    
-//    users2.unlockedUsers map ({ u =>
-//      outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.voice.id, msg.mute))
-//    })
+    outGW.send(new MeetingMuted(meetingID, recorded, meetingMuted))
+    users.getUsers foreach {u =>
+        outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, msg.mute)) 
+    }
   }
   
   def handleValidateAuthToken(msg: ValidateAuthToken) {
-    println("*************** Got ValidateAuthToken message ********************" )
+//    println("*************** Got ValidateAuthToken message ********************" )
     regUsers.get (msg.userId) match {
       case Some(u) => outGW.send(new ValidateAuthTokenReply(meetingID, msg.userId, msg.token, true, msg.correlationId))
       case None => outGW.send(new ValidateAuthTokenReply(meetingID, msg.userId, msg.token, false, msg.correlationId))
@@ -84,29 +95,33 @@ trait UsersApp {
   }
   
   def handleMuteUserRequest(msg: MuteUserRequest) {
-    println("Received mute user request uid=[" + msg.userID + "] mute=[" + msg.mute + "]")
+//    println("Received mute user request uid=[" + msg.userID + "] mute=[" + msg.mute + "]")
     users.getUser(msg.userID) match {
       case Some(u) => {
-        println("Sending mute user request uid=[" + msg.userID + "] mute=[" + msg.mute + "]")
+//        println("Sending mute user request uid=[" + msg.userID + "] mute=[" + msg.mute + "]")
         outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, msg.mute))
       }
       case None => {
-        println("Could not find user to mute. uid=[" + msg.userID + "] mute=[" + msg.mute + "]")
+//        println("Could not find user to mute. uid=[" + msg.userID + "] mute=[" + msg.mute + "]")
       }
     }
   }
   
-  def handleEjectUserRequest(msg: EjectUserRequest) {
-    println("Received eject user request uid=[" + msg.userID + "]")
-    users.getUser(msg.userID) match {
-      case Some(u) => outGW.send(new EjectVoiceUser(meetingID, recorded, msg.requesterID, u.userID))
+  def handleEjectUserRequest(msg: EjectUserFromVoiceRequest) {
+//    println("Received eject user request uid=[" + msg.userID + "]")
+    users.getUser(msg.userId) match {
+      case Some(u) => {
+        if (u.voiceUser.joined) {
+          outGW.send(new EjectVoiceUser(meetingID, recorded, msg.ejectedBy, u.userID))
+        }      
+      }
       case None => // do nothing
     }
   }
    
       
   def handleSetLockSettings(msg: SetLockSettings) {
-    println("*************** Received new lock settings ********************")
+//    println("*************** Received new lock settings ********************")
     if (!permissionsEqual(msg.settings)) {
       newPermissions(msg.settings)
       val au = affectedUsers(msg.settings)
@@ -128,6 +143,17 @@ trait UsersApp {
     }
   }  
 
+  def usersWhoAreNotPresenter():Array[UserVO] = {
+    val au = ArrayBuffer[UserVO]()
+    
+    users.getUsers foreach {u =>
+        if (! u.presenter) {
+          au += u
+        }
+    }
+    au.toArray    
+  }
+  
   def affectedUsers(settings: Permissions):Array[UserVO] = {
     val au = ArrayBuffer[UserVO]()
     
@@ -154,6 +180,21 @@ trait UsersApp {
       val uvo = user.copy(raiseHand=false)
       users.addUser(uvo)
       outGW.send(new UserLoweredHand(meetingID, recorded, uvo.userID, msg.loweredBy))
+    }    
+  }
+  
+  def handleEjectUserFromMeeting(msg: EjectUserFromMeeting) {
+    users.getUser(msg.userId) foreach {user =>
+      if (user.voiceUser.joined) {
+        outGW.send(new EjectVoiceUser(meetingID, recorded, msg.ejectedBy, msg.userId))
+      }
+      
+      users.removeUser(msg.userId)
+      
+      outGW.send(new UserEjectedFromMeeting(meetingID, recorded, msg.userId, msg.ejectedBy))
+      outGW.send(new DisconnectUser(meetingID, msg.userId))
+      
+      outGW.send(new UserLeft(msg.meetingID, recorded, user))
     }    
   }
 
@@ -198,33 +239,37 @@ trait UsersApp {
 					
 	    outGW.send(new UserJoined(meetingID, recorded, uvo))
 	
+	    outGW.send(new MeetingState(meetingID, recorded, uvo.userID, permissions, meetingMuted))
+	    
 	    // Become presenter if the only moderator		
 	    if (users.numModerators == 1) {
 	      if (ru.role == Role.MODERATOR) {
 		      assignNewPresenter(msg.userID, ru.name, msg.userID)
 	      }	  
-	    }      
+	    }   
+      webUserJoined
     }
   }
 			
   def handleUserLeft(msg: UserLeaving):Unit = {
 	 if (users.hasUser(msg.userID)) {
 	  val user = users.removeUser(msg.userID)
-	  user foreach (u => outGW.send(new UserLeft(msg.meetingID, recorded, u)))
+	  user foreach (u => outGW.send(new UserLeft(msg.meetingID, recorded, u)))  
 	  
+    startCheckingIfWeNeedToEndVoiceConf()
 	 }
-   else{
-
-   }
   }
-
+  
   def handleVoiceUserJoined(msg: VoiceUserJoined) = {
       val user = users.getUser(msg.voiceUser.webUserId) match {
         case Some(user) => {
           val nu = user.copy(voiceUser=msg.voiceUser)
           users.addUser(nu)
-          println("Received user joined voice for user [" + nu.name + "] userid=[" + msg.voiceUser.webUserId + "]" )
+          logger.info("Received user joined voice for user [" + nu.name + "] userid=[" + msg.voiceUser.webUserId + "]" )
           outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, nu))
+          
+          if (meetingMuted)
+            outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, meetingMuted))
         }
         case None => {
           // No current web user. This means that the user called in through
@@ -240,10 +285,12 @@ trait UsersApp {
 		                  phoneUser=true, vu, listenOnly=false, permissions)
 		  	
 		      users.addUser(uvo)
-		      println("New user joined voice for user [" + uvo.name + "] userid=[" + msg.voiceUser.webUserId + "]")
+		      logger.info("New user joined voice for user [" + uvo.name + "] userid=[" + msg.voiceUser.webUserId + "]")
 		      outGW.send(new UserJoined(meetingID, recorded, uvo))
 		      
 		      outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, uvo))
+		      if (meetingMuted)
+            outGW.send(new MuteVoiceUser(meetingID, recorded, uvo.userID, uvo.userID, meetingMuted))
         }
       }
   }
@@ -255,7 +302,7 @@ trait UsersApp {
       val nu = user.copy(voiceUser=vu)
       users.addUser(nu)
             
-      println("Received voice user left =[" + user.name + "] wid=[" + msg.userId + "]" )
+//      println("Received voice user left =[" + user.name + "] wid=[" + msg.userId + "]" )
       outGW.send(new UserLeftVoice(meetingID, recorded, voiceBridge, nu))    
       
       if (user.phoneUser) {
@@ -269,10 +316,11 @@ trait UsersApp {
   
   def handleVoiceUserMuted(msg: VoiceUserMuted) {
     users.getUser(msg.userId) foreach {user =>
-      val nv = user.voiceUser.copy(muted=msg.muted)
+      val talking = if (msg.muted) false else user.voiceUser.talking
+      val nv = user.voiceUser.copy(muted=msg.muted, talking=talking)
       val nu = user.copy(voiceUser=nv)
       users.addUser(nu)
-      println("Received voice muted=[" + msg.muted + "] wid=[" + msg.userId + "]" )
+//      println("Received voice muted=[" + msg.muted + "] wid=[" + msg.userId + "]" )
       outGW.send(new UserVoiceMuted(meetingID, recorded, voiceBridge, nu))        
     }   
   }
@@ -282,7 +330,7 @@ trait UsersApp {
       val nv = user.voiceUser.copy(talking=msg.talking)
       val nu = user.copy(voiceUser=nv)
       users.addUser(nu)
-      println("Received voice talking=[" + msg.talking + "] wid=[" + msg.userId + "]" )
+//      println("Received voice talking=[" + msg.talking + "] wid=[" + msg.userId + "]" )
       outGW.send(new UserVoiceTalking(meetingID, recorded, voiceBridge, nu))        
     }     
   }

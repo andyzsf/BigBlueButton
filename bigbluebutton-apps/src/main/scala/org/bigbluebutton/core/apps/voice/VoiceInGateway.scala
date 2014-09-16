@@ -4,7 +4,12 @@ import org.bigbluebutton.core.BigBlueButtonGateway
 import org.bigbluebutton.core.api._
 
 class VoiceInGateway(bbbGW: BigBlueButtonGateway) {
-	def muteAllUsers(meetingID: String, requesterID: String, mute: Boolean) {
+	
+  def muteAllExceptPresenter(meetingID: String, requesterID: String, mute: Boolean) {
+    bbbGW.accept(new MuteAllExceptPresenterRequest(meetingID, requesterID, mute))
+  }
+  
+  def muteAllUsers(meetingID: String, requesterID: String, mute: Boolean) {
 	  bbbGW.accept(new MuteMeetingRequest(meetingID, requesterID, mute))
 	}
 	
@@ -20,15 +25,15 @@ class VoiceInGateway(bbbGW: BigBlueButtonGateway) {
 	  bbbGW.accept(new LockUserRequest(meetingID, requesterID, userID, lock))
 	}
 	
-	def ejectUser(meetingID: String, requesterID: String, userID: String) {
-	  bbbGW.accept(new EjectUserRequest(meetingID, requesterID, userID))
+	def ejectUserFromVoice(meetingID: String, userId: String, ejectedBy: String) {
+	  bbbGW.accept(new EjectUserFromVoiceRequest(meetingID, userId, ejectedBy))
 	}
-	
+			
 	def voiceUserJoined(meetingId: String, userId: String, webUserId: String, 
 	                            conference: String, callerIdNum: String, 
 	                            callerIdName: String,
 								muted: Boolean, talking: Boolean) {
-	  println("VoiceInGateway: Got voiceUserJoined message for meeting [" + meetingId + "] user[" + callerIdName + "]")
+//	  println("VoiceInGateway: Got voiceUserJoined message for meeting [" + meetingId + "] user[" + callerIdName + "]")
 	  val voiceUser = new VoiceUser(userId, webUserId, 
 	                                callerIdName, callerIdNum,  
 	                                true, false, muted, talking)
@@ -36,7 +41,7 @@ class VoiceInGateway(bbbGW: BigBlueButtonGateway) {
 	}
 	
 	def voiceUserLeft(meetingId: String, userId: String) {
-	  println("VoiceInGateway: Got voiceUserLeft message for meeting [" + meetingId + "] user[" + userId + "]")
+//	  println("VoiceInGateway: Got voiceUserLeft message for meeting [" + meetingId + "] user[" + userId + "]")
 	  bbbGW.accept(new VoiceUserLeft(meetingId, userId))
 	}
 	

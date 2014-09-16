@@ -35,6 +35,14 @@ class UsersModel {
     uservos.size
   }
   
+  def numWebUsers():Int = {
+    uservos.values filter (u => u.phoneUser == false) size
+  }
+
+  def getUserWithExternalId(userID:String):Option[UserVO] = {
+    uservos.values find (u => u.externUserID == userID) 
+  }
+    
   def getUser(userID:String):Option[UserVO] = {
     uservos.values find (u => u.userID == userID) 
   }
@@ -44,7 +52,7 @@ class UsersModel {
   }
   
   def numModerators():Int = {
-	getModerators.length
+	  getModerators.length
   }
 
   def getLoneModerator():Option[UserVO] = {
@@ -56,23 +64,23 @@ class UsersModel {
   }
   
   def unbecomePresenter(userID: String) = {
-	uservos.get(userID) match {
-		case Some(u) => {
-		  val nu = u.copy(presenter = false)
-		  uservos += nu.userID -> nu
-		}
-		case None => // do nothing	
-	}      
+	  uservos.get(userID) match {
+		  case Some(u) => {
+		    val nu = u.copy(presenter = false)
+		    uservos += nu.userID -> nu
+		  }
+		  case None => // do nothing	
+	  }      
   }
   
   def becomePresenter(userID: String) = {
-	uservos.get(userID) match {
-		case Some(u) => {
-		  val nu = u.copy(presenter = true)
-		  uservos += nu.userID -> nu
-		}
-		case None => // do nothing	
-	}      
+	  uservos.get(userID) match {
+		  case Some(u) => {
+		    val nu = u.copy(presenter = true)
+		    uservos += nu.userID -> nu
+		  }
+		  case None => // do nothing	
+	  }      
   }
   
   def getModerators():Array[UserVO] = {

@@ -18,7 +18,8 @@
 */
 package org.bigbluebutton.main.model.users
 {
-	import com.asfusion.mate.events.Dispatcher;	
+	import com.asfusion.mate.events.Dispatcher;
+	
 	import org.bigbluebutton.common.Role;
 	import org.bigbluebutton.core.events.LockControlEvent;
 	import org.bigbluebutton.core.events.VoiceConfEvent;
@@ -75,6 +76,7 @@ package org.bigbluebutton.main.model.users
 			verifyUserStatus();
 		}
 		
+		public var raiseHandTime:Date;
 		private var _raiseHand:Boolean = false;
 		[Bindable]
 		public function get raiseHand():Boolean {
@@ -82,6 +84,7 @@ package org.bigbluebutton.main.model.users
 		}
 		public function set raiseHand(r:Boolean):void {
 			_raiseHand = r;
+			raiseHandTime = (r ? new Date() : null);
 			verifyUserStatus();
 		}
 		
@@ -323,7 +326,7 @@ package org.bigbluebutton.main.model.users
   			}
   			
   			//If it's sharing microphone, mute it
-  			if(disableMyMic && !UserManager.getInstance().getConference().isMyVoiceMuted()) {
+  			if (disableMyMic && !UserManager.getInstance().getConference().isMyVoiceMuted()) {
   				var e:VoiceConfEvent = new VoiceConfEvent(VoiceConfEvent.MUTE_USER);
   				e.userid = UserManager.getInstance().getConference().getMyUserId();
   				e.mute = true;

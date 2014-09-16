@@ -33,9 +33,7 @@ public class ParticipantsService {
 	private ParticipantsApplication application;
 
 	public void assignPresenter(Map<String, String> msg) {
-
 		IScope scope = Red5.getConnectionLocal().getScope();
-		log.debug("Checking assignPresenter values " + msg.get("newPresenterID") + " " + msg.get("newPresenterName") + " " + msg.get("assignedBy"));
 		application.assignPresenter(scope.getName(), (String) msg.get("newPresenterID"), (String) msg.get("newPresenterName"), (String) msg.get("assignedBy"));
 	}
 	
@@ -57,6 +55,13 @@ public class ParticipantsService {
 		application.lowerHand(scope.getName(), userId, loweredBy);
 	}
 	
+	public void ejectUserFromMeeting(Map<String, String> msg) {
+		String userId = (String) msg.get("userId");
+		String ejectedBy = (String) msg.get("ejectedBy");
+		IScope scope = Red5.getConnectionLocal().getScope();
+		application.ejectUserFromMeeting(scope.getName(), userId, ejectedBy);
+	}
+	
 	public void shareWebcam(String stream) {
 		IScope scope = Red5.getConnectionLocal().getScope();
 		String userId = getBbbSession().getInternalUserID();
@@ -76,7 +81,6 @@ public class ParticipantsService {
 	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {
-		log.debug("Setting Participants Applications");
 		application = a;
 	}
 	
@@ -87,7 +91,6 @@ public class ParticipantsService {
 
 	public void getRecordingStatus() {
 		String roomName = Red5.getConnectionLocal().getScope().getName();
-		log.info("Client is requesting the recording status in [" + roomName + "].");
 		application.getRecordingStatus(roomName, getMyUserId());
 	}
 	

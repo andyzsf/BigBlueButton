@@ -27,7 +27,11 @@ public class GotoSlidePresentationRecordEvent extends
 	}
 	
 	public void setSlide(int slide) {
-		eventMap.put("slide", Integer.toString(slide));
+		/**
+		 * Subtract 1 from the page number to be zero-based to be
+		 * compatible with 0.81 and earlier. (ralam Sept 2, 2014)
+		 */
+		eventMap.put("slide", Integer.toString(slide - 1));
 	}
 	
 	public void setId(String id) {
@@ -35,6 +39,7 @@ public class GotoSlidePresentationRecordEvent extends
 	}
 	
 	public void setNum(int num) {
+
 		eventMap.put("num", Integer.toString(num));
 	}
 	

@@ -20,7 +20,6 @@ package org.bigbluebutton.conference.service.participants;
 
 import org.slf4j.Logger;
 import org.red5.logging.Red5LoggerFactory;
-import java.util.Map;
 import org.bigbluebutton.core.api.IBigBlueButtonInGW;
 
 public class ParticipantsApplication {
@@ -33,6 +32,10 @@ public class ParticipantsApplication {
 	
 	public void lowerHand(String meetingId, String userId, String loweredBy) {
 		bbbInGW.lowerHand(meetingId, userId, loweredBy);
+	}
+	
+	public void ejectUserFromMeeting(String meetingId, String userId, String ejectedBy) {
+		bbbInGW.ejectUserFromMeeting(meetingId, userId, ejectedBy);
 	}
 	
 	public void shareWebcam(String meetingId, String userId, String stream) {
@@ -49,20 +52,17 @@ public class ParticipantsApplication {
 
 	public boolean participantJoin(String roomName, String userid) { //is this used?!
 		log.debug("Participant " + userid + " joining room " + roomName);
-		System.out.println("\n\n\n\n participantJoin is being used \n\n\n");
 		bbbInGW.userJoin(roomName, userid);
 		return true;
 	}
 
 	public boolean participantLeft(String roomName, String userid) { //is this used?!
 		log.debug("Participant " + userid + " leaving room " + roomName);
-		System.out.println("\n\n\n\n participantLeft is being used \n\n\n");
 		bbbInGW.userLeft(roomName, userid);
 		return true;
 	}
 
 	public boolean registerUser(String roomName, String userid, String username, String role, String externUserID) {
-		System.out.println("\n\n\n\n registerUser is being used \n\n\n");
 		bbbInGW.registerUser(roomName, userid, username, role, externUserID, userid);
 		return true;
 	}

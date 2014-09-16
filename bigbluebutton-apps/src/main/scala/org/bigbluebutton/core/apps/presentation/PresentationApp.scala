@@ -78,6 +78,9 @@ trait PresentationApp {
            sharePresentation(msg.presentationID, false);
         }
       })
+      
+      outGW.send(new RemovePresentationOutMsg(msg.meetingID, recorded, msg.presentationID))
+      
     }
     
     def handleGetPresentationInfo(msg: GetPresentationInfo) {
@@ -124,6 +127,10 @@ trait PresentationApp {
       
       pres foreach { p =>
         outGW.send(new SharePresentationOutMsg(meetingID, recorded, p))
+        
+        presModel.getCurrentPage(p) foreach {page => 
+          outGW.send(new GotoSlideOutMsg(meetingID, recorded, page))
+        }
       }
       	      
     }

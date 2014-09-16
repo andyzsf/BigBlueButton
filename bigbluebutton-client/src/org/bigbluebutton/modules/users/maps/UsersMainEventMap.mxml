@@ -28,7 +28,6 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
       import org.bigbluebutton.core.events.VoiceConfEvent;
       import org.bigbluebutton.main.events.BBBEvent;
       import org.bigbluebutton.main.events.LogoutEvent;
-      import org.bigbluebutton.main.events.SuccessfulLoginEvent;
       import org.bigbluebutton.main.events.UserServicesEvent;
       import org.bigbluebutton.main.model.users.UserService;
       import org.bigbluebutton.main.model.users.events.BroadcastStartedEvent;
@@ -110,7 +109,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
   </EventHandlers>
   
   <EventHandlers type="{VoiceConfEvent.MUTE_ALMOST_ALL}" >
-    <MethodInvoker generator="{UserService}" method="muteAlmostAllUsers" arguments="{event}" />
+    <MethodInvoker generator="{UserService}" method="muteAllUsersExceptPresenter" arguments="{event}" />
   </EventHandlers>
   
   <!-- Lock Events -->

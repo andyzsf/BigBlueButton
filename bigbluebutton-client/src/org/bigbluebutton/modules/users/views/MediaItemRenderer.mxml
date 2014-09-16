@@ -100,7 +100,7 @@
 			}
 			
 			private function onRollOut(e:UsersRollEvent):void{
-				if (moderator && (e.userID == data.userID)) {
+				if (moderator && rolledOver) {
 					rolledOver = false;
 					updateButtons();
 				}
@@ -155,6 +155,9 @@
 			}
 			
 			private function updateButtons(voiceMuted:Boolean = false):void {
+				// reset the mute image filter so the talking indicator doesn't stick
+				muteImg.filters = null;
+				
 				if (data != null) {
 					kickUserBtn.visible = !data.me && rolledOver && options.allowKickUser;
 					
@@ -186,9 +189,9 @@
 							muteBtn.includeInLayout = rolledOver;
 							
 							if(data.talking && !rolledOver){
-								muteImg.filters = [new GlowFilter(0xFF0000)];
+								muteImg.filters = [new GlowFilter(0x000000, 1, 6, 6, 2, BitmapFilterQuality.HIGH, false, false)];
 							}else{
-								muteImg.filters = [];
+								muteImg.filters = [new GlowFilter(0x555555, 1, 6, 6, 2, BitmapFilterQuality.HIGH, true, true)];
 							}
 						}
 					}

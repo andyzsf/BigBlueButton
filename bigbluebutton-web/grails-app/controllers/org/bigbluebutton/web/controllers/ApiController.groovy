@@ -20,6 +20,7 @@ package org.bigbluebutton.web.controllers
 
 import javax.servlet.ServletRequest;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -36,6 +37,7 @@ import org.bigbluebutton.presentation.UploadedPresentation
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import org.bigbluebutton.api.ApiErrors;
+import org.bigbluebutton.api.ClientConfigService;
 import org.bigbluebutton.api.ParamsProcessorUtil;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,11 +53,12 @@ class ApiController {
   private static final String ROLE_MODERATOR = "MODERATOR";
   private static final String ROLE_ATTENDEE = "VIEWER";
   private static final String SECURITY_SALT = '639259d4-9dd8-4b25-bf01-95f9567eaf4b'
-  private static final String API_VERSION = '0.8'
+  private static final String API_VERSION = '0.81'
     
   MeetingService meetingService;
   PresentationService presentationService
   ParamsProcessorUtil paramsProcessorUtil
+	ClientConfigService configService
   
   /* general methods */
   def index = {
@@ -123,7 +126,7 @@ class ApiController {
     
     // Translate the external meeting id into an internal meeting id.
     String internalMeetingId = paramsProcessorUtil.convertToInternalMeetingId(params.meetingID);		
-    Meeting existing = meetingService.getMeeting(internalMeetingId);
+    Meeting existing = meetingService.getNotEndedMeetingWithId(internalMeetingId);
     if (existing != null) {
       log.debug "Existing conference found"
       Map<String, Object> updateParams = paramsProcessorUtil.processUpdateCreateParams(params);
@@ -148,7 +151,11 @@ class ApiController {
     }
      
     Meeting newMeeting = paramsProcessorUtil.processCreateParams(params);      
-		      
+		
+		if (! StringUtils.isEmpty(params.moderatorOnlyMessage)) {
+			newMeeting.setModeratorOnlyMessage(params.moderatorOnlyMessage);
+		}
+		
     meetingService.createMeeting(newMeeting);
     
     // See if the request came with pre-uploading of presentation.
@@ -303,20 +310,24 @@ class ApiController {
 	
 	//Return a Map with the user custom data
 	Map<String,String> userCustomData = paramsProcessorUtil.getUserCustomData(params);
+
 	//Currently, it's associated with the externalUserID
-	if(userCustomData.size()>0)
-		meetingService.addUserCustomData(meeting.getInternalId(),externUserID,userCustomData);
+	if (userCustomData.size() > 0)
+		meetingService.addUserCustomData(meeting.getInternalId(), externUserID, userCustomData);
     
 	String configxml = null;
-	
+		
 	if (! StringUtils.isEmpty(params.configToken)) {
 		Config conf = meeting.getConfig(params.configToken);
 		if (conf == null) {
-			errors.noConfigFoundForToken(params.configToken);
-			respondWithErrors(errors);
+			// Check if this config is one of our pre-built config
+			configxml = configService.getConfig(params.configToken)
+			if (configxml == null) {
+				// Default to the default config.
+				configxml = conf.config;
+			}
 		} else {
 			configxml = conf.config;
-			println ("USING PREFERRED CONFIG")
 		}
 	} else {
 		Config conf = meeting.getDefaultConfig();
@@ -325,7 +336,6 @@ class ApiController {
 			respondWithErrors(errors);
 		} else {
 			configxml = conf.config;
-			println ("USING DEFAULT CONFIG")
 		}
 	}
 	
@@ -609,11 +619,7 @@ class ApiController {
   		return
   	}
   	
-  	if (StringUtils.isEmpty(params.password)) {
-  		invalid("invalidPassword","You must supply the moderator password for this call.");
-  		return
-  	}
-  	
+ 	
   	if (! paramsProcessorUtil.isChecksumSame(API_CALL, params.checksum, request.getQueryString())) {
   		invalid("checksumError", "You did not pass the checksum security check")
   		return
@@ -631,12 +637,6 @@ class ApiController {
     String externalMeetingId = params.meetingID
     if (StringUtils.isEmpty(externalMeetingId)) {
       errors.missingParamError("meetingID");
-    }
-
-    // Do we have a password? If not, complain.
-    String modPW = params.password
-    if (StringUtils.isEmpty(modPW)) {
-      errors.missingParamError("password");
     }
 
     if (errors.hasErrors()) {
@@ -666,18 +666,7 @@ class ApiController {
       respondWithErrors(errors)
       return;
     }
-    
-    if (meeting.getModeratorPassword().equals(modPW) == false) {
-		// BEGIN - backward compatibility
-		invalid("invalidPassword","You must supply the moderator password for this call."); 
-		return;
-		// END - backward compatibility
-		
-	   errors.invalidPasswordError();
-	   respondWithErrors(errors)
-	   return;
-    }
-    
+     
     respondWithConferenceDetails(meeting, null, null, null);
   }
   
@@ -751,10 +740,13 @@ class ApiController {
                       meetingID(m.getExternalId())
 				              meetingName(m.getName())
 				              createTime(m.getCreateTime())
+											createDate(formatPrettyDate(m.getCreateTime()))
                       attendeePW(m.getViewerPassword())
                       moderatorPW(m.getModeratorPassword())
                       hasBeenForciblyEnded(m.isForciblyEnded() ? "true" : "false")
                       running(m.isRunning() ? "true" : "false")
+											duration(m.duration)
+											hasUserJoined(m.hasUserJoined())
                     }
                   }
                 }
@@ -1333,46 +1325,52 @@ class ApiController {
 
       response.addHeader("Cache-Control", "no-cache")
       withFormat {        
-        xml {
-          render(contentType:"text/xml") {
-            response() {
-              returncode("FAILED")
-              message("Could not find conference.")
-              logoutURL(logoutUrl)
+        json {
+          render(contentType: "application/json") {
+            response = {
+              returncode = "FAILED"
+              message = "Could not find conference."
+              logoutURL = logoutUrl
             }
           }
         }
       }
     } else {
+		
+		Map<String,String> userCustomData = paramsProcessorUtil.getUserCustomData(params);
+		
       log.info("Found conference for " + us.fullname)
       response.addHeader("Cache-Control", "no-cache")
       withFormat {        
-        xml {
-          render(contentType:"text/xml") {
-            response() {
-              returncode("SUCCESS")
-              fullname(us.fullname)
-              confname(us.conferencename)
-              meetingID(us.meetingID)
-              externMeetingID(us.externMeetingID)
-              externUserID(us.externUserID)
-              internalUserID(us.internalUserId)
-              role(us.role)
-              conference(us.conference)
-              room(us.room)
-              voicebridge(us.voicebridge)
-              dialnumber(meeting.getDialNumber())
-              webvoiceconf(us.webvoiceconf)
-              mode(us.mode)
-              record(us.record)
-              welcome(us.welcome)
-              logoutUrl(us.logoutUrl)
-              defaultLayout(us.defaultLayout)
-              avatarURL(us.avatarURL)
-              customdata(){
-                meeting.getUserCustomData(us.externUserID).each{ k,v ->
-                 "$k"("$v")
-                }
+        json {
+          render(contentType: "application/json") {
+            response = {
+              returncode = "SUCCESS"
+              fullname = us.fullname
+              confname = us.conferencename
+              meetingID = us.meetingID
+              externMeetingID = us.externMeetingID
+              externUserID = us.externUserID
+              internalUserID = us.internalUserId
+              role = us.role
+              conference = us.conference
+              room = us.room 
+              voicebridge = us.voicebridge
+              dialnumber = meeting.getDialNumber()
+              webvoiceconf = us.webvoiceconf
+              mode = us.mode
+              record = us.record
+              welcome = us.welcome
+							if (! StringUtils.isEmpty(meeting.moderatorOnlyMessage))
+							  modOnlyMessage = meeting.moderatorOnlyMessage
+              logoutUrl = us.logoutUrl
+              defaultLayout = us.defaultLayout
+              avatarURL = us.avatarURL
+              customdata = array {
+								userCustomData.each { k, v ->
+									// Somehow we need to prepend something (custdata) for the JSON to work
+									custdata "$k" : v
+								}
               }
             }
           }
@@ -1786,6 +1784,13 @@ class ApiController {
     }
   }
 
+	def formatPrettyDate(timestamp) {
+//		SimpleDateFormat ft = new SimpleDateFormat ("E yyyy.MM.dd 'at' hh:mm:ss a zzz");
+//		return ft.format(new Date(timestamp))	
+		
+		return new Date(timestamp).toString()	
+	}
+	
   def respondWithConferenceDetails(meeting, room, msgKey, msg) {
     response.addHeader("Cache-Control", "no-cache")
     withFormat {				
@@ -1793,15 +1798,18 @@ class ApiController {
         render(contentType:"text/xml") {
           response() {
             returncode(RESP_CODE_SUCCESS)
-			meetingName(meeting.getName())
+			      meetingName(meeting.getName())
             meetingID(meeting.getExternalId())
-			createTime(meeting.getCreateTime())
-			voiceBridge(meeting.getTelVoice())
-			dialNumber(meeting.getDialNumber())
+			      createTime(meeting.getCreateTime())
+						createDate(formatPrettyDate(meeting.getCreateTime()))
+			      voiceBridge(meeting.getTelVoice())
+			      dialNumber(meeting.getDialNumber())
             attendeePW(meeting.getViewerPassword())
             moderatorPW(meeting.getModeratorPassword())
             running(meeting.isRunning() ? "true" : "false")
-			recording(meeting.isRecord() ? "true" : "false")
+						duration(meeting.duration)
+						hasUserJoined(meeting.hasUserJoined())
+			      recording(meeting.isRecord() ? "true" : "false")
             hasBeenForciblyEnded(meeting.isForciblyEnded() ? "true" : "false")
             startTime(meeting.getStartTime())
             endTime(meeting.getEndTime())
@@ -1847,6 +1855,9 @@ class ApiController {
             attendeePW(meeting.getViewerPassword())
             moderatorPW(meeting.getModeratorPassword())
             createTime(meeting.getCreateTime())
+						createDate(formatPrettyDate(meeting.getCreateTime()))
+						hasUserJoined(meeting.hasUserJoined())
+						duration(meeting.duration)
             hasBeenForciblyEnded(meeting.isForciblyEnded() ? "true" : "false")
             messageKey(msgKey == null ? "" : msgKey)
             message(msg == null ? "" : msg)

@@ -16,23 +16,26 @@ class WhiteboardModel {
     _whiteboards.values.find(wb => wb.id == id)
   }
   
+  def hasWhiteboard(id: String):Boolean = {
+    _whiteboards.contains(id)
+  }
+  
+  def createWhiteboard(wbId: String) {
+    val vec = scala.collection.immutable.Vector.empty
+    val wb = new Whiteboard(wbId, vec)
+    saveWhiteboard(wb)      
+  }
   
   def addAnnotationToShape(wb: Whiteboard, shape: AnnotationVO) = {
-    println("Adding shape to wb [" + wb.id + "]. Before numShapes=[" + wb.shapes.length + "].")
+//    println("Adding shape to wb [" + wb.id + "]. Before numShapes=[" + wb.shapes.length + "].")
     val newWb = wb.copy(shapes=(wb.shapes :+ shape))
-    println("Adding shape to page [" + wb.id + "]. After numShapes=[" + newWb.shapes.length + "].")
+//    println("Adding shape to page [" + wb.id + "]. After numShapes=[" + newWb.shapes.length + "].")
     saveWhiteboard(newWb)
   }
   
   def addAnnotation(wbId:String, shape: AnnotationVO) {
-    getWhiteboard(wbId) match { 
-      case Some(wb) =>
-        addAnnotationToShape(wb, shape)
-      case None => {
-        val vec = scala.collection.immutable.Vector.empty
-        val wb = new Whiteboard(wbId, vec :+ shape)
-        saveWhiteboard(wb)
-      }
+    getWhiteboard(wbId) foreach { wb => 
+       addAnnotationToShape(wb, shape)
     }     
   }
   

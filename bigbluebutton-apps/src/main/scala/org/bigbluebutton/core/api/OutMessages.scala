@@ -45,8 +45,17 @@ case class GetRecordingStatusReply(
 case class MeetingCreated(
     meetingID: String, 
     recorded: Boolean, 
+    name: String,
     voiceBridge: String,
+    duration: Long,
     version:String = Versions.V_0_0_1
+) extends IOutMessage
+
+case class MeetingMuted(
+    meetingID: String, 
+    recorded: Boolean, 
+    meetingMuted: Boolean,
+    version:String = Versions.V_0_0_1    
 ) extends IOutMessage
 
 case class MeetingEnded(
@@ -54,6 +63,15 @@ case class MeetingEnded(
     recorded: Boolean, 
     voiceBridge: String,
     version:String = Versions.V_0_0_1
+) extends IOutMessage
+
+case class MeetingState(
+    meetingID: String, 
+    recorded: Boolean, 
+    userId: String,
+    permissions: Permissions,
+    meetingMuted: Boolean,
+    version:String = Versions.V_0_0_1    
 ) extends IOutMessage
 
 case class MeetingHasEnded(
@@ -143,10 +161,19 @@ case class UserLeft(
   version:String = Versions.V_0_0_1
 ) extends IOutMessage
 
+case class UserEjectedFromMeeting(meetingID: String, recorded: Boolean, userId: String, ejectedBy: String, version:String = Versions.V_0_0_1) extends IOutMessage
+
 case class PresenterAssigned(
     meetingID: String, 
     recorded: Boolean, 
     presenter: Presenter,
+  version:String = Versions.V_0_0_1
+) extends IOutMessage
+
+case class EjectAllVoiceUsers(
+    meetingID: String, 
+    recorded: Boolean,
+    voiceBridge:String,
   version:String = Versions.V_0_0_1
 ) extends IOutMessage
 

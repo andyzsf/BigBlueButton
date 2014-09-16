@@ -27,8 +27,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.bigbluebutton.api.MeetingService;
 
 public class Meeting {
+	private static Logger log = LoggerFactory.getLogger(Meeting.class);
+	
 	private static final long MILLIS_IN_A_MINUTE = 60000;
 	
 	private String name;
@@ -44,6 +49,7 @@ public class Meeting {
 	private String moderatorPass;
 	private String viewerPass;
 	private String welcomeMsg;
+	private String modOnlyMessage;
 	private String logoutUrl;
 	private int maxUsers;
 	private boolean record;
@@ -74,6 +80,7 @@ public class Meeting {
    	metadata = builder.metadata;
    	createdTime = builder.createdTime;
    	userCustomData = new HashMap<String, Object>();
+
 		users = new ConcurrentHashMap<String, User>();
 		
 		configs = new ConcurrentHashMap<String, Config>();
@@ -136,6 +143,14 @@ public class Meeting {
 	
 	public long getEndTime() {
 		return endTime;
+	}
+	
+	public void setModeratorOnlyMessage(String msg) {
+		modOnlyMessage = msg;
+	}
+	
+	public String getModeratorOnlyMessage() {
+		return modOnlyMessage;
 	}
 	
 	public void setEndTime(long t) {
@@ -202,6 +217,10 @@ public class Meeting {
 		return record;
 	}
 	
+	public boolean hasUserJoined() {
+		return userHasJoined;
+	}
+	
 	public void userJoined(User user) {
 		userHasJoined = true;
 		this.users.put(user.getInternalUserId(), user);
@@ -233,6 +252,7 @@ public class Meeting {
 	}
 	
 	public boolean wasNeverJoined(int expiry) {
+		log.debug("WasNeverJoined - hasStarted=[" + hasStarted() + "] && !hasEnded()=[" + !hasEnded() + "] && nobodyJoined(" + expiry + ")=" + nobodyJoined(expiry));
 		return (hasStarted() && !hasEnded() && nobodyJoined(expiry));
 	}
 	
@@ -242,9 +262,11 @@ public class Meeting {
 	}
 	
 	private boolean nobodyJoined(int expiry) {
-		if (meetingInfinite()) return false; 
+		if (expiry == 0) return false; /* Meeting stays created infinitely */
 		
 		long now = System.currentTimeMillis();
+		log.debug("nobodyJoined - !userHasJoined=[" + !userHasJoined + "] && (now - createdTime)=[" + (now - createdTime) + "] > (expiry * MILLIS_IN_A_MINUTE)=" + (expiry * MILLIS_IN_A_MINUTE));
+
 		return (!userHasJoined && (now - createdTime) >  (expiry * MILLIS_IN_A_MINUTE));
 	}
 

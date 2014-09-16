@@ -43,11 +43,13 @@ public interface IBigBlueButtonInGW {
 	void userDisconnectedFromGlobalAudio(String voiceConf, String userid, String name);
 	
 	// Voice
+	void muteAllExceptPresenter(String meetingID, String requesterID, Boolean mute);
 	void muteAllUsers(String meetingID, String requesterID, Boolean mute);
 	void isMeetingMuted(String meetingID, String requesterID);
 	void muteUser(String meetingID, String requesterID, String userID, Boolean mute);
 	void lockUser(String meetingID, String requesterID, String userID, Boolean lock);
-	void ejectUser(String meetingID, String requesterID, String userID);
+	void ejectUserFromVoice(String meetingID, String userId, String ejectedBy);
+	void ejectUserFromMeeting(String meetingId, String userId, String ejectedBy);
 	void voiceUserJoined(String meetingId, String userId, String webUserId, String conference, 
 								String callerIdNum, String callerIdName,
 								Boolean muted, Boolean speaking);

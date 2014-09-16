@@ -19,11 +19,14 @@
 package org.bigbluebutton.main.model.users
 {
 	import com.asfusion.mate.events.Dispatcher;
+	
 	import flash.events.TimerEvent;
 	import flash.external.ExternalInterface;
 	import flash.net.NetConnection;
-	import flash.utils.Timer;	
-	import mx.collections.ArrayCollection;	
+	import flash.utils.Timer;
+	
+	import mx.collections.ArrayCollection;
+	
 	import org.bigbluebutton.common.LogUtil;
 	import org.bigbluebutton.core.BBB;
 	import org.bigbluebutton.core.UsersUtil;
@@ -34,6 +37,7 @@ package org.bigbluebutton.main.model.users
 	import org.bigbluebutton.core.managers.UserConfigManager;
 	import org.bigbluebutton.core.managers.UserManager;
 	import org.bigbluebutton.core.model.Config;
+	import org.bigbluebutton.core.model.MeetingModel;
 	import org.bigbluebutton.main.events.BBBEvent;
 	import org.bigbluebutton.main.events.SuccessfulLoginEvent;
 	import org.bigbluebutton.main.events.UserServicesEvent;
@@ -99,6 +103,8 @@ package org.bigbluebutton.main.model.users
 				UserManager.getInstance().getConference().dialNumber = result.dialnumber;
 				UserManager.getInstance().getConference().record = (result.record != "false");
 				
+        
+        
 				_conferenceParameters = new ConferenceParameters();
 				_conferenceParameters.meetingName = result.conferenceName;
 				_conferenceParameters.externMeetingID = result.externMeetingID;
@@ -169,7 +175,7 @@ package org.bigbluebutton.main.model.users
     }
     
     public function changeRecordingStatus(e:BBBEvent):void {
-      trace("UserService::changeRecordingStatus")
+      trace(LOG + "changeRecordingStatus")
       if (this.isModerator() && !e.payload.remote) {
         var myUserId: String = UserManager.getInstance().getConference().getMyUserId();
         sender.changeRecordingStatus(myUserId, e.payload.recording);
@@ -177,7 +183,7 @@ package org.bigbluebutton.main.model.users
     }
        
 		public function userLoggedIn(e:UsersConnectionEvent):void{
-      trace("In UserService:userLoggedIn - Setting my userid to [" + e.userid + "]");
+      trace(LOG + "userLoggedIn - Setting my userid to [" + e.userid + "]");
 			UserManager.getInstance().getConference().setMyUserid(e.userid);
 			_conferenceParameters.userid = e.userid;
 			
@@ -239,14 +245,9 @@ package org.bigbluebutton.main.model.users
     public function unmuteAllUsers(command:VoiceConfEvent):void{
       sender.muteAllUsers(false);
     }
-    
-    public function muteAlmostAllUsers(command:VoiceConfEvent):void {	
-      var dontMuteThese:Array = [];
-      
-      var pres:BBBUser = UserManager.getInstance().getConference().getPresenter();
-      if (pres != null) dontMuteThese.push(pres.userID);
-      
-      sender.muteAllUsers(true, dontMuteThese);
+       
+    public function muteAllUsersExceptPresenter(command:VoiceConfEvent):void {	
+      sender.muteAllUsersExceptPresenter(true);
     }
         
     public function ejectUser(command:VoiceConfEvent):void {

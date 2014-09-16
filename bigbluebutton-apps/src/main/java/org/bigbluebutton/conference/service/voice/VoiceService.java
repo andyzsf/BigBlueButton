@@ -51,13 +51,11 @@ public class VoiceService {
 	}
 */	
 	
-	public void muteAllUsers(boolean mute, List<Integer> dontMuteThese) {
-		String conference = getBbbSession().getVoiceBridge();    	
-    	log.debug("Mute all users in room[" + conference + "], dontLockThese list size = " + dontMuteThese.size());
-    	
-    	log.error("TODO: Implement this");
-    	
-//    	conferenceService.muteAllBut(conference, mute, dontMuteThese);
+	public void muteAllUsersExceptPresenter(Map<String, Object> msg) {
+  		String meetingID = Red5.getConnectionLocal().getScope().getName();
+  		String requesterID = getBbbSession().getInternalUserID();	
+  		Boolean muteAll = (Boolean) msg.get("mute");
+  		bbbInGW.muteAllExceptPresenter(meetingID, requesterID, muteAll);
 	}
 	
 	public void muteAllUsers(Map<String, Object> msg) {
@@ -91,11 +89,11 @@ public class VoiceService {
 		bbbInGW.lockUser(meetingID, requesterID, userid, lock); 
 	}
 	
-	public void kickUSer(Map<String, Object> msg) {
-		String userid = (String) msg.get("userId");
+	public void ejectUserFromVoice(Map<String, Object> msg) {
+		String userId = (String) msg.get("userId");
 		String meetingID = Red5.getConnectionLocal().getScope().getName();
-		String requesterID = getBbbSession().getInternalUserID();		
-		bbbInGW.ejectUser(meetingID, requesterID, userid); 	
+		String ejectedBy = getBbbSession().getInternalUserID();		
+		bbbInGW.ejectUserFromVoice(meetingID, userId, ejectedBy); 	
 		
 	}
 		
