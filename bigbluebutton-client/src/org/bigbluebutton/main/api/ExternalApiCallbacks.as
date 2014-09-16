@@ -32,6 +32,7 @@ package org.bigbluebutton.main.api
   import org.bigbluebutton.core.events.IsUserPublishingCamRequest;
   import org.bigbluebutton.core.events.VoiceConfEvent;
   import org.bigbluebutton.core.managers.UserManager;
+  import org.bigbluebutton.core.model.MeetingModel;
   import org.bigbluebutton.core.vo.CameraSettingsVO;
   import org.bigbluebutton.main.events.BBBEvent;
   import org.bigbluebutton.main.model.users.events.KickUserEvent;
@@ -188,6 +189,7 @@ package org.bigbluebutton.main.api
 	    obj.dialNumber = UsersUtil.getDialNumber();
 	    obj.voiceBridge = UsersUtil.getVoiceBridge();
 	    obj.customdata = UsersUtil.getCustomData();
+      obj.voiceAuthToken = MeetingModel.getInstance().meeting.voiceAuthToken;
       
       return obj;
     }

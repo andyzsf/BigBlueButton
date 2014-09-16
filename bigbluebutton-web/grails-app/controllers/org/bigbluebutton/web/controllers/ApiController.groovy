@@ -39,6 +39,8 @@ import java.security.NoSuchAlgorithmException;
 import org.bigbluebutton.api.ApiErrors;
 import org.bigbluebutton.api.ClientConfigService;
 import org.bigbluebutton.api.ParamsProcessorUtil;
+import org.bigbluebutton.api.VoiceConfService;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -59,7 +61,8 @@ class ApiController {
   PresentationService presentationService
   ParamsProcessorUtil paramsProcessorUtil
 	ClientConfigService configService
-  
+	VoiceConfService voiceService
+	
   /* general methods */
   def index = {
     log.debug CONTROLLER_NAME + "#index"
@@ -361,6 +364,7 @@ class ApiController {
   us.welcome = meeting.getWelcomeMessage()
 	us.logoutUrl = meeting.getLogoutUrl();
 	us.configXML = configxml;
+	us.voiceAuthToken = voiceService.voiceAuthToken
 			
 	if (! StringUtils.isEmpty(params.defaultLayout)) {
 		us.defaultLayout = params.defaultLayout;
@@ -1372,6 +1376,7 @@ class ApiController {
 									custdata "$k" : v
 								}
               }
+							voiceAuthToken = us.voiceAuthToken
             }
           }
         }
