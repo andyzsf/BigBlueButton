@@ -347,6 +347,12 @@ class ApiController {
 		respondWithErrors(errors);
 	}
 	
+	String dialNumber = meeting.getDialNumber()
+	
+	if (! StringUtils.isEmpty(params.dialNumber)) {
+		dialNumber = params.dialNumber
+	}
+	
 	UserSession us = new UserSession();
 	us.internalUserId = internalUserID
   us.conferencename = meeting.getName()
@@ -365,6 +371,7 @@ class ApiController {
 	us.logoutUrl = meeting.getLogoutUrl();
 	us.configXML = configxml;
 	us.voiceAuthToken = voiceService.voiceAuthToken
+	us.dialNumber = dialNumber
 			
 	if (! StringUtils.isEmpty(params.defaultLayout)) {
 		us.defaultLayout = params.defaultLayout;
@@ -387,8 +394,10 @@ class ApiController {
 	// Register user into the meeting.
 	meetingService.registerUser(us.meetingID, us.internalUserId, us.fullname, us.role, us.externUserID, us.internalUserId /* authToken for now */)
 	
+	meetingService.registerPin(us.meetingID, dialNumber, us.voicebridge, us.voicebridge, us.internalUserId, us.fullname, us.role)
+	
 	log.info("Session user token for " + us.fullname + " [" + session['user-token'] + "]")	
-    session.setMaxInactiveInterval(SESSION_TIMEOUT);
+  session.setMaxInactiveInterval(SESSION_TIMEOUT);
     
 	//check if exists the param redirect
 	boolean redirectClient = true;
@@ -1360,7 +1369,7 @@ class ApiController {
               conference = us.conference
               room = us.room 
               voicebridge = us.voicebridge
-              dialnumber = meeting.getDialNumber()
+              dialnumber = us.dialNumber
               webvoiceconf = us.webvoiceconf
               mode = us.mode
               record = us.record

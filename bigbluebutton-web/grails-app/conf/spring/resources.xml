@@ -47,6 +47,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 	  <property name="expiredMeetingCleanupTimerTask" ref="expiredMeetingCleanupTimerTask"/>
 		<property name="messagingService" ref="messagingService"/>
 		<property name="recordingService" ref="recordingService"/>
+		<property name="voicePinStorageService" ref="voicePinStorageService"/>
   </bean>
 
   <bean id="recordingServiceHelper" class="org.bigbluebutton.api.RecordingServiceHelperImp"/>
@@ -65,6 +66,10 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
     <property name="clientConfigServiceHelper" ref="configServiceHelper"/>
   </bean>
 
+  <bean id="voicePinStorageService" class="org.bigbluebutton.web.services.RedisVoicePinStorageService" init-method="start" destroy-method="stop">
+    <property name="redisPool"> <ref bean="redisPool"/></property> 
+  </bean>
+  
   <bean id="voiceService" class="org.bigbluebutton.api.VoiceConfService">
     <property name="voiceAuthToken" value="${voiceAuthToken}"/>  
   </bean>

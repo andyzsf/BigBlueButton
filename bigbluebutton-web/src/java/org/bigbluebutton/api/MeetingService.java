@@ -44,12 +44,14 @@ import org.bigbluebutton.api.messaging.messages.IMessage;
 import org.bigbluebutton.api.messaging.messages.MeetingDestroyed;
 import org.bigbluebutton.api.messaging.messages.MeetingEnded;
 import org.bigbluebutton.api.messaging.messages.MeetingStarted;
+import org.bigbluebutton.api.messaging.messages.RegisterPin;
 import org.bigbluebutton.api.messaging.messages.RegisterUser;
 import org.bigbluebutton.api.messaging.messages.RemoveExpiredMeetings;
 import org.bigbluebutton.api.messaging.messages.UserJoined;
 import org.bigbluebutton.api.messaging.messages.UserLeft;
 import org.bigbluebutton.api.messaging.messages.UserStatusChanged;
 import org.bigbluebutton.web.services.ExpiredMeetingCleanupTimerTask;
+import org.bigbluebutton.web.services.IVoicePinStorageService;
 import org.bigbluebutton.web.services.KeepAliveService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,8 +75,10 @@ public class MeetingService implements MessageListener {
 	private int defaultMeetingCreateJoinDuration = 5;
 	private RecordingService recordingService;
 	private MessagingService messagingService;
+	private IVoicePinStorageService voicePinStorage;
 	private ExpiredMeetingCleanupTimerTask cleaner;
 	private boolean removeMeetingWhenEnded = false;
+	
 
 	public MeetingService() {
 		meetings = new ConcurrentHashMap<String, Meeting>(8, 0.9f, 1);	
@@ -87,7 +91,14 @@ public class MeetingService implements MessageListener {
 	}
 	
 	public void registerUser(String meetingID, String internalUserId, String fullname, String role, String externUserID, String authToken) {
+		
 		handle(new RegisterUser(meetingID, internalUserId, fullname, role, externUserID, authToken));
+	}
+	
+	public void registerPin(String meetingId, String dialNumber, String voiceConf, String pin, String userId, String username, String role) {
+		log.info("Register pin. mid=[" + meetingId + "] did=[" + dialNumber + "] vc= [" + voiceConf + "] pin=[" + pin + 
+				"] uid=[" + userId + "] name=[" + username + "] role=[" + role + "]");
+		handle(new RegisterPin(meetingId, dialNumber, voiceConf, pin, userId, username, role));
 	}
 	
 	public UserSession getUserSession(String token) {
@@ -175,6 +186,8 @@ public class MeetingService implements MessageListener {
 	
 	private void destroyMeeting(String meetingID) {
 		messagingService.destroyMeeting(meetingID);
+		
+		voicePinStorage.deletePins(meetingID);
 	}
 	
 	public Collection<Meeting> getMeetings() {
@@ -209,6 +222,10 @@ public class MeetingService implements MessageListener {
 	
 	private void processRegisterUser(RegisterUser message) {
 		messagingService.registerUser(message.meetingID, message.internalUserId, message.fullname, message.role, message.externUserID, message.authToken);
+	}
+
+	private void processRegisterPin(RegisterPin message) {
+		voicePinStorage.storePin(message.meetingId, message.dialNumber, message.voiceConf, message.pin, message.userId, message.username, message.role);
 	}
 	
 	public String addSubscription(String meetingId, String event, String callbackURL){
@@ -367,10 +384,10 @@ public class MeetingService implements MessageListener {
 		if (m != null) {
 			m.setForciblyEnded(true);
 			if (removeMeetingWhenEnded) {
-		          processRecording(m.getInternalId());
+		    processRecording(m.getInternalId());
 			  destroyMeeting(m.getInternalId());		  		
-		          meetings.remove(m.getInternalId());		
-		          removeUserSessions(m.getInternalId());
+		    meetings.remove(m.getInternalId());		
+		    removeUserSessions(m.getInternalId());
 			}
 		} else {
 			log.debug("endMeeting - meeting doesn't exist: " + message.meetingId);
@@ -481,6 +498,8 @@ public class MeetingService implements MessageListener {
 	  			processEndMeeting((EndMeeting)message);
 	  		} else if (message instanceof RegisterUser) {
 	  			processRegisterUser((RegisterUser) message);
+	  		}	else if (message instanceof RegisterPin) {
+	  			processRegisterPin((RegisterPin) message);
 	  		}	
 	    }
 		};
@@ -522,6 +541,10 @@ public class MeetingService implements MessageListener {
 	public void stop() {
 		processMessage = false;
 		cleaner.stop();
+	}
+	
+	public void setVoicePinStorageService(IVoicePinStorageService vps){
+		voicePinStorage = vps;
 	}
 	
 	public void setDefaultMeetingCreateJoinDuration(int expiration) {

@@ -17,27 +17,9 @@
 *
 */
 
-package org.bigbluebutton.api.domain;
+package org.bigbluebutton.web.services;
 
-public class UserSession {
-	public String internalUserId = null;
-	public String conferencename = null;
-  public String meetingID = null;
-  public String externMeetingID = null;
-  public String externUserID = null;
-  public String fullname = null; 
-  public String role = null;
-  public String conference = null;
-  public String room = null;
-  public String dialNumber = null;
-  public String voicebridge = null;
-  public String webvoiceconf = null;
-  public String mode = null;
-  public String record = null;
-  public String welcome = null;
-  public String logoutUrl = null;
-  public String defaultLayout = "NOLAYOUT";
-  public String avatarURL;
-  public String configXML;
-  public String voiceAuthToken;
+public interface IVoicePinStorageService{
+	public void storePin(String meetingId, String dialNumber, String voiceConf, String pin, String userId, String username, String role);
+	public void deletePins(String meetingId);
 }
