@@ -14,7 +14,6 @@ public class UserConnectedToGlobalAudio implements IMessage {
 	public final String userid;
 
 
-  
 	public UserConnectedToGlobalAudio(String voiceConf, String userid, String name) {
 		this.voiceConf = voiceConf;
 		this.userid = userid;

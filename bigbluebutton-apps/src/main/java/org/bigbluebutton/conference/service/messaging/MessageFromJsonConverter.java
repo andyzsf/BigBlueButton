@@ -30,9 +30,9 @@ public class MessageFromJsonConverter {
 				  case ValidateAuthTokenMessage.VALIDATE_AUTH_TOKEN:
 					  return processValidateAuthTokenMessage(header, payload);
 				  case UserConnectedToGlobalAudio.USER_CONNECTED_TO_GLOBAL_AUDIO:
-					return UserConnectedToGlobalAudio.fromJson(message);
+					  return UserConnectedToGlobalAudio.fromJson(message);
 				  case UserDisconnectedFromGlobalAudio.USER_DISCONNECTED_FROM_GLOBAL_AUDIO:
-					return UserDisconnectedFromGlobalAudio.fromJson(message);
+					  return UserDisconnectedFromGlobalAudio.fromJson(message);
 				}
 			}
 		}
