@@ -1,0 +1,20 @@
+{
+  "name": "bbb-client-logging",
+  "version": "0.0.1",
+  "private": true,
+  "description": "The node.js application that receives logs from BigBlueButton client",
+  "dependencies": {
+    "express": "4.9.4",
+    "jsnlog": "2.7.4",
+    "jsnlog-nodejs": "2.7.4",
+    "serve-static": "1.6.2",
+    "body-parser": "1.8.3",
+	"winston": "0.8.0"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": "0.10.31"
+  }
+}

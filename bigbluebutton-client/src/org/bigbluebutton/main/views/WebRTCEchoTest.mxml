@@ -61,7 +61,9 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			}
 			
 			private function onCancelClicked():void {
-        JSLog.debug(LOG + "onCancelClicked .");
+        var lo:Object = JSLog.logObject();
+        lo.message = LOG + "onCancelClicked ."
+        JSLog.debug(lo);
 				dotTimer.stop();
 				PopUpManager.removePopUp(this);
 			}
@@ -93,7 +95,10 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			
 			private function yesButtonClicked():void {
 				trace(LOG + "Echo test passed.");
-        JSLog.debug(LOG + "Echo test passed.");
+        var lo:Object = JSLog.logObject();
+        lo.message = LOG + "Echo test passed."
+        JSLog.debug(lo);
+
 				var dispatcher:Dispatcher = new Dispatcher();
 				dispatcher.dispatchEvent(new WebRTCEchoTestEvent(WebRTCEchoTestEvent.WEBRTC_ECHO_TEST_HAS_AUDIO));
 				setCurrentState("connecting");
@@ -102,7 +107,9 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			
 			private function noButtonClicked():void {
 				trace(LOG + "Echo test failed.");
-        JSLog.debug(LOG + "Echo test failed.");
+        var lo:Object = JSLog.logObject();
+        lo.message = LOG + "Echo test failed."
+        JSLog.debug(lo);
 				var dispatcher:Dispatcher = new Dispatcher();
 				dispatcher.dispatchEvent(new WebRTCEchoTestEvent(WebRTCEchoTestEvent.WEBRTC_ECHO_TEST_NO_AUDIO));
 				onCancelClicked();
@@ -134,12 +141,17 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 			}
       
       private function webRTCCallStarted():void {
-        JSLog.debug(LOG + "webRTCCallStarted.");
+        var lo:Object = JSLog.logObject();
+        lo.message = LOG + "webRTCCallStarted.";
+        JSLog.debug(lo);
         onCancelClicked();
       }
 			
 			private function handleWebRTCCallStartedEvent(e:WebRTCJoinedVoiceConferenceEvent):void {
-        JSLog.debug(LOG + "handleWebRTCCallStartedEvent .");
+        var lo:Object = JSLog.logObject();
+        lo.message = LOG + "handleWebRTCCallStartedEvent .";
+        JSLog.debug(lo);
+
         webRTCCallStarted();
 			}
 			

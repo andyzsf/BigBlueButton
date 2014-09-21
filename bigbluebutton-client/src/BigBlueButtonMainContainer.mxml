@@ -73,6 +73,8 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
         EventBroadcaster.getInstance().addEventListener("configLoadedEvent", configLoadedEventHandler);
         BBB.initConfigManager();
         globalModifier = ExternalInterface.call("determineGlobalModifier");
+        
+
       }
       
       private function configLoadedEventHandler(e:Event):void {

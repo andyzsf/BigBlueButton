@@ -38,6 +38,7 @@ package org.bigbluebutton.main.model.users
 	import org.bigbluebutton.core.managers.UserManager;
 	import org.bigbluebutton.core.model.Config;
 	import org.bigbluebutton.core.model.MeetingModel;
+	import org.bigbluebutton.main.api.JSLog;
 	import org.bigbluebutton.main.events.BBBEvent;
 	import org.bigbluebutton.main.events.SuccessfulLoginEvent;
 	import org.bigbluebutton.main.events.UserServicesEvent;
@@ -181,12 +182,31 @@ package org.bigbluebutton.main.model.users
         sender.changeRecordingStatus(myUserId, e.payload.recording);
       }
     }
-       
+    
+    private function userHasJoined():void {
+      var lobj:Object = new Object();
+      lobj.meeingId = UsersUtil.getInternalMeetingID();
+      lobj.userId = UsersUtil.getMyUserID();
+      lobj.messsage = LOG + "User has joined meeting.";
+      JSLog.info(lobj);
+      
+    }
+    
+    private function logCapabilities():void {
+      var lobj:Object = JSLog.logObject();
+      lobj.capabilities = BBB.getFlashCapabilities();
+      lobj.messsage = LOG + "User Flash capabilities.";
+      JSLog.info(lobj);
+    }
+    
 		public function userLoggedIn(e:UsersConnectionEvent):void{
       trace(LOG + "userLoggedIn - Setting my userid to [" + e.userid + "]");
 			UserManager.getInstance().getConference().setMyUserid(e.userid);
 			_conferenceParameters.userid = e.userid;
 			
+      userHasJoined();
+      logCapabilities();
+      
       sender.queryForParticipants();     
       sender.queryForRecordingStatus();
 			

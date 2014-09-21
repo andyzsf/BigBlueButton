@@ -18,12 +18,14 @@
  */
 package org.bigbluebutton.core
 {
+	import flash.system.Capabilities;
+	
 	import org.bigbluebutton.core.managers.ConfigManager2;
 	import org.bigbluebutton.core.managers.ConnectionManager;
 	import org.bigbluebutton.core.managers.UserConfigManager;
 	import org.bigbluebutton.core.managers.UserManager;
 	import org.bigbluebutton.core.model.Session;
-	import flash.system.Capabilities;
+	import org.bigbluebutton.main.api.JSAPI;
 	
 	public class BBB {
 		private static var configManager:ConfigManager2 = null;
@@ -82,5 +84,49 @@ package org.bigbluebutton.core
 			}		
 		}
 		
+    public static function getFlashCapabilities():Object {
+      var obj:Object = new Object();
+      
+      obj.avHardwareDisable = Capabilities.avHardwareDisable;
+      obj.hasAccessibility = Capabilities.hasAccessibility;
+      obj.hasAudio = Capabilities.hasAudio;
+      obj.hasAudioEncoder = Capabilities.hasAudioEncoder;
+      obj.hasEmbeddedVideo = Capabilities.hasEmbeddedVideo;
+      obj.hasIME = Capabilities.hasIME;
+      obj.hasMP3 = Capabilities.hasMP3;
+      obj.hasPrinting = Capabilities.hasPrinting;
+      obj.hasScreenBroadcast = Capabilities.hasScreenBroadcast;
+      obj.hasScreenPlayback = Capabilities.hasScreenPlayback;
+      obj.hasStreamingAudio = Capabilities.hasStreamingAudio;
+      obj.hasStreamingVideo = Capabilities.hasStreamingVideo;
+      obj.hasTLS = Capabilities.hasTLS;
+      obj.hasVideoEncoder = Capabilities.hasVideoEncoder;
+      obj.isDebugger = Capabilities.isDebugger;
+      obj.isEmbeddedInAcrobat = Capabilities.isEmbeddedInAcrobat;
+      obj.language = Capabilities.language;
+      obj.localFileReadDisable = Capabilities.localFileReadDisable;
+      obj.flashPlayer = Capabilities.manufacturer;
+      obj.maxLevelIDC = Capabilities.maxLevelIDC;
+      obj.os = Capabilities.os;
+      obj.pixelAspectRatio = Capabilities.pixelAspectRatio;
+      obj.playerType = Capabilities.playerType;
+      obj.screenColor = Capabilities.screenColor;
+      obj.screenDPI = Capabilities.screenDPI;
+      obj.screenResolutionX = Capabilities.screenResolutionX;
+      obj.screenResolutionY = Capabilities.screenResolutionY;
+      obj.touchscreenType = Capabilities.touchscreenType;
+      obj.flashVersion = Capabilities.version;
+      obj.browserType = "Unknown";
+      obj.browserVersion = "Unknown";
+      
+      var browserInfo:Array = JSAPI.getInstance().getBrowserInfo();
+      if (browserInfo != null) {
+        obj.browserType = browserInfo[0];
+        obj.browserVersion = browserInfo[1];
+      }
+      
+      return obj;
+    }
+    
 	}
 }

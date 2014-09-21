@@ -28,6 +28,7 @@ package org.bigbluebutton.main.model.users
 	
 	import org.bigbluebutton.common.LogUtil;
 	import org.bigbluebutton.core.services.BandwidthMonitor;
+	import org.bigbluebutton.main.api.JSLog;
 	import org.bigbluebutton.main.events.InvalidAuthTokenEvent;
 	import org.bigbluebutton.main.model.ConferenceParameters;
 	import org.bigbluebutton.main.model.users.events.ConnectionFailedEvent;
@@ -288,6 +289,7 @@ package org.bigbluebutton.main.model.users
 					
 				case "NetConnection.Connect.Closed":	
           trace(LOG + "Connection to viewers application closed");
+          logDisconnect(statusCode);
 //          if (logoutOnUserCommand) {
             sendConnectionFailedEvent(ConnectionFailedEvent.CONNECTION_CLOSED);		
 //          } else {
@@ -298,21 +300,28 @@ package org.bigbluebutton.main.model.users
 					break;
 					
 				case "NetConnection.Connect.InvalidApp":	
-          trace(LOG + ":viewers application not found on server");			
+          trace(LOG + ":viewers application not found on server");
+          logDisconnect(statusCode);
 					sendConnectionFailedEvent(ConnectionFailedEvent.INVALID_APP);				
 					break;
 					
 				case "NetConnection.Connect.AppShutDown":
           trace(LOG + ":viewers application has been shutdown");
+          logDisconnect(statusCode);
 					sendConnectionFailedEvent(ConnectionFailedEvent.APP_SHUTDOWN);	
 					break;
 					
 				case "NetConnection.Connect.Rejected":
+          logDisconnect(statusCode);
           trace(LOG + ":Connection to the server rejected. Uri: " + _applicationURI + ". Check if the red5 specified in the uri exists and is running" );
 					sendConnectionFailedEvent(ConnectionFailedEvent.CONNECTION_REJECTED);		
 					break;
 				
 				case "NetConnection.Connect.NetworkChange":
+          var lobj:Object = JSLog.logObject();
+          lobj.reason = "User might be on a wireless and temporarily dropped connection.";
+          lobj.description = LOG + "Detected network change.";
+          JSLog.info(lobj);
           trace(LOG + "Detected network change. User might be on a wireless and temporarily dropped connection. Doing nothing. Just making a note.");
 					break;
 					
@@ -335,21 +344,30 @@ package org.bigbluebutton.main.model.users
 			
 		protected function netSecurityError(event: SecurityErrorEvent):void {
       trace(LOG + "Security error - " + event.text);
+      logDisconnect(event.text);
 			sendConnectionFailedEvent(ConnectionFailedEvent.UNKNOWN_REASON);
 		}
 		
 		protected function netIOError(event: IOErrorEvent):void {
       trace(LOG + "Input/output error - " + event.text);
+      logDisconnect(event.text);
 			sendConnectionFailedEvent(ConnectionFailedEvent.UNKNOWN_REASON);
 		}
 			
 		protected function netASyncError(event: AsyncErrorEvent):void  {
       trace(LOG + "Asynchronous code error - " + event.toString() );
       
-			LogUtil.debug("Asynchronous code error - " + event.toString() );
+      logDisconnect(event.text);
 			sendConnectionFailedEvent(ConnectionFailedEvent.UNKNOWN_REASON);
 		}	
-			
+		
+    private function logDisconnect(reason: String):void {
+      var lobj:Object = JSLog.logObject();
+      lobj.reason = reason;
+      lobj.description = LOG + "Connection closed.";
+      JSLog.info(lobj);
+    }
+    
 		private function sendConnectionFailedEvent(reason:String):void{
 			if (this.logoutOnUserCommand){
 				sendUserLoggedOutEvent();

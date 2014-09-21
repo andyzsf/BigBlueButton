@@ -115,35 +115,43 @@ package org.bigbluebutton.modules.phone.managers {
       switch (statusCode) {
         case "NetConnection.Connect.Success":
           trace(LOG + "Connection success");
-          JSLog.debug(LOG + "Connection success");
+          logDisconnect(statusCode);
           dispatcher.dispatchEvent(new FlashVoiceConnectionStatusEvent(FlashVoiceConnectionStatusEvent.CONNECTED));           
           break;
         case "NetConnection.Connect.Failed":
           trace(LOG + "Connection failed");
-          JSLog.debug(LOG + "Connection failed");
+          logDisconnect(statusCode);
           dispatcher.dispatchEvent(new FlashVoiceConnectionStatusEvent(FlashVoiceConnectionStatusEvent.FAILED));
           break;
         case "NetConnection.Connect.NetworkChange":
-          trace(LOG + "Detected network change. User might be on a wireless and temporarily dropped connection. Doing nothing. Just making a note.");
-          JSLog.debug(LOG + "Detected network change. User might be on a wireless and temporarily dropped connection. Doing nothing. Just making a note.");
-          dispatcher.dispatchEvent(new FlashVoiceConnectionStatusEvent(FlashVoiceConnectionStatusEvent.NETWORK_CHANGE));
+          var lobj:Object = JSLog.logObject();
+          lobj.reason = "User might be on a wireless and temporarily dropped connection.";
+          lobj.description = LOG + "Detected network change.";
+          JSLog.info(lobj);
           break;
         case "NetConnection.Connect.Closed":
           trace(LOG + "Connection closed");
-          JSLog.debug(LOG + "Connection closed");
+          logDisconnect(statusCode);
           handleConnectionClosed();
           break;
       }
 		} 
 		
 		private function asyncErrorHandler(event:AsyncErrorEvent):void {
-      JSLog.debug("AsyncErrorEvent: " + event);
+      logDisconnect(event.text);
     }
 		
 		private function securityErrorHandler(event:SecurityErrorEvent):void {
-      JSLog.debug("securityErrorHandler: " + event);
+      logDisconnect(event.text);
     }
-        
+    
+    private function logDisconnect(reason: String):void {
+      var lobj:Object = JSLog.logObject();
+      lobj.reason = reason;
+      lobj.description = LOG + "Connection closed.";
+      JSLog.info(lobj);
+    }
+    
     //********************************************************************************************
 		//			
 		//			CallBack Methods from Red5 

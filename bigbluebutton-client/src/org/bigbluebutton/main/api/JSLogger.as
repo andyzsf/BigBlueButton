@@ -18,29 +18,26 @@ package org.bigbluebutton.main.api
       return instance;
     }
     
-    public function debug(message:String):void
+    public function debug(text:Object):void
     {
-      log("[DEB] - " + message);
+      ExternalInterface.call("BBBLog.debug", text);
     }
     
-    public function info(message:String):void
+    public function info(text:Object):void
     {
-      log("[INF] - " +message);
+      ExternalInterface.call("BBBLog.info", text);
     }
     
-    public function error(message:String):void
+    public function error(text:Object):void
     {
-      log("[ERR] -" + message);
+      ExternalInterface.call("BBBLog.error", text);
     }
         
-    public function warn(message:String):void
+    public function warn(text:Object):void
     {
-      log("[WAR] - " + message);
+      ExternalInterface.call("BBBLog.warn", text);
     }
-    
-    public function log(text: String):void {
-      ExternalInterface.call("BBBLog.log", text);
-    }    
+       
   }
 }
 
