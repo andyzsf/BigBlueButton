@@ -260,6 +260,94 @@ trait UsersApp {
 	 }
   }
   
+  def handleVoiceUserStatusChangedMessage(msg: VoiceUserStatusChangedMessage) = {
+      val user = users.getUserWithAuthCode(msg.authCode) match {
+        case Some(user) => {
+          val vu = user.voiceUser
+          if (!vu.joined) {
+            val nvu = new VoiceUser(msg.voiceUserId, user.userID, 
+                                 msg.callerIdName, msg.callerIdNum,
+                                 true, false, false, false)
+            val nu = user.copy(voiceUser=nvu)
+            users.addUser(nu)
+            logger.info("Received user joined voice for user [" + nu.name + "] userid=[" + msg.voiceUserId + "]" )
+            outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, nu))     
+            if (meetingMuted)
+              outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, meetingMuted))
+          } else {
+            val vu = user.voiceUser
+            val muteChanged = vu.muted != msg.muted
+            val talkingChanged = vu.talking != msg.talking
+            
+            var nvu = vu.copy()
+            if (vu.muted != msg.muted) {
+              nvu = nvu.copy(muted=msg.muted)
+              
+            }
+            
+            if (talkingChanged) {
+              nvu = nvu.copy(talking=msg.talking)
+            }
+            
+            val nu = user.copy(voiceUser=nvu)
+            users.addUser(nu)
+            
+            if (muteChanged) {
+              outGW.send(new UserVoiceMuted(meetingID, recorded, voiceBridge, nu))
+            }
+            
+            if (talkingChanged) {
+              outGW.send(new UserVoiceTalking(meetingID, recorded, voiceBridge, nu))
+            }
+            
+            if (meetingMuted)
+              outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, meetingMuted))
+          }
+
+        }
+        case None => {
+          // No current web user. This means that the user called in through
+          // the phone. We need to generate a new user as we are not able
+          // to match with a web user.
+          val webUserId = users.generateWebUserId
+          val vu = new VoiceUser(msg.voiceUserId, webUserId, 
+                                 msg.callerIdName, msg.callerIdNum,
+                                 true, false, false, false)
+          val uvo = new UserVO(webUserId, webUserId, msg.callerIdName, 
+		                  Role.VIEWER, raiseHand=false, presenter=false, 
+		                  hasStream=false, locked=false, webcamStream="", 
+		                  phoneUser=true, vu, listenOnly=false, permissions)
+		  	
+		      users.addUser(uvo)
+		      logger.info("New user joined voice for user [" + uvo.name + "] userid=[" + webUserId + "]")
+		      outGW.send(new UserJoined(meetingID, recorded, uvo))
+		      
+		      outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, uvo))
+		      if (meetingMuted)
+            outGW.send(new MuteVoiceUser(meetingID, recorded, uvo.userID, uvo.userID, meetingMuted))
+        }
+      }	    
+  }
+  
+	def handleVoiceUserLeftConfMessage(msg: VoiceUserLeftConfMessage) = {
+    users.getUserWithVoiceUserId(msg.voiceUserId) foreach {user =>
+      val vu = new VoiceUser(user.userID, user.userID, user.name, user.name,  
+                           false, false, false, false)
+      val nu = user.copy(voiceUser=vu)
+      users.addUser(nu)
+            
+//      println("Received voice user left =[" + user.name + "] wid=[" + msg.userId + "]" )
+      outGW.send(new UserLeftVoice(meetingID, recorded, voiceBridge, nu))    
+      
+      if (user.phoneUser) {
+	      if (users.hasUser(user.userID)) {
+	        val userLeaving = users.removeUser(user.userID)
+	        userLeaving foreach (u => outGW.send(new UserLeft(msg.meetingID, recorded, u)))
+	      }        
+      }
+    }   
+	}
+	    
   def handleVoiceUserJoined(msg: VoiceUserJoined) = {
       val user = users.getUser(msg.voiceUser.webUserId) match {
         case Some(user) => {

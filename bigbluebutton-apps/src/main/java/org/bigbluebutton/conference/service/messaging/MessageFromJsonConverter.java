@@ -39,6 +39,8 @@ public class MessageFromJsonConverter {
 				  	return VoiceUserMuted.fromJson(message);
 				  case VoiceUserTalking.VOICE_USER_TALKING:
 				  	return VoiceUserTalking.fromJson(message);
+				  case VoiceUserStatusChanged.VOICE_USER_STATUS_CHANGED:
+				  	return VoiceUserStatusChanged.fromJson(message);
 				}
 			}
 		}

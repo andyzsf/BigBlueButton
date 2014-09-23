@@ -49,6 +49,8 @@ class MeetingActor(val meetingID: String, val meetingName: String, val recorded:
 	    case "MonitorNumberOfWebUsers"                   => handleMonitorNumberOfWebUsers()
 	    case msg: ValidateAuthToken                      => handleValidateAuthToken(msg)
 	    case msg: RegisterUser                           => handleRegisterUser(msg)
+	    case msg: VoiceUserStatusChangedMessage          => handleVoiceUserStatusChangedMessage(msg)
+	    case msg: VoiceUserLeftConfMessage               => handleVoiceUserLeftConfMessage(msg)
 	    case msg: VoiceUserJoined                        => handleVoiceUserJoined(msg)
 	    case msg: VoiceUserLeft                          => handleVoiceUserLeft(msg)
 	    case msg: VoiceUserMuted                         => handleVoiceUserMuted(msg)

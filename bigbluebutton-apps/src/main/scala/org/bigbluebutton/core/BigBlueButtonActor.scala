@@ -33,6 +33,14 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
         val m = meetings.values.find( m => m.voiceBridge == udm.voiceConf)
         m foreach {mActor => mActor ! udm}        
       }
+      case udm: VoiceUserStatusChangedMessage => {
+        val m = meetings.values.find( m => m.voiceBridge == udm.voiceConf)
+        m foreach {mActor => mActor ! udm}        
+      }
+      case udm: VoiceUserLeftConfMessage => {
+        val m = meetings.values.find( m => m.voiceBridge == udm.voiceConf)
+        m foreach {mActor => mActor ! udm}        
+      }
       case allOthers => {
 		    meetings.get(allOthers.meetingID) match {
 		      case None => handleMeetingNotFound(allOthers)

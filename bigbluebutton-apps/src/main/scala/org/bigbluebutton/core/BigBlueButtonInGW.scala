@@ -426,7 +426,15 @@ class BigBlueButtonInGW(bbbGW: BigBlueButtonGateway, presUtil: PreuploadedPresen
 	def ejectUserFromVoice(meetingId: String, userId: String, ejectedBy: String) {
 	  voiceGW.ejectUserFromVoice(meetingId, userId, ejectedBy)
   }
-	  
+	
+	def voiceUserStatusChanged(voiceConf: String, userId: String, username: String, authCode: String, muted: java.lang.Boolean, talking: java.lang.Boolean) {
+	  voiceGW.voiceUserStatusChanged(voiceConf, userId, username, authCode, muted, talking)
+	}
+	
+	def voiceUserLeftVoiceConf(voiceConf: String, userId: String) {
+	  voiceGW.voiceUserLeftVoiceConf(voiceConf, userId)
+	}
+	
 	def voiceUserJoined(meetingId: String, userId: String, webUserId: String, 
 	                            conference: String, callerIdNum: String, 
 	                            callerIdName: String,

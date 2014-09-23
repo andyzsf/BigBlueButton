@@ -9,10 +9,18 @@ public class VoiceUserStatusChanged implements IMessage {
 	
 	public final String confId;
 	public final String userId;
+	public final String username;
+	public final String authCode;
+	public final Boolean muted;
+	public final Boolean talking;
 	
-	public VoiceUserStatusChanged(String confId, String userId) {
+	public VoiceUserStatusChanged(String confId, String userId, String username, String authCode, Boolean muted, Boolean talking) {
 	  this.confId = confId;
 	  this.userId = userId;
+	  this.username = username;
+	  this.authCode = authCode;
+	  this.muted = muted;
+	  this.talking = talking;
 	}
 	
 	public static VoiceUserStatusChanged fromJson(String message) {
@@ -34,7 +42,11 @@ public class VoiceUserStatusChanged implements IMessage {
 							&& payload.has(Constants.TALKING)) {
 						String voiceConf = payload.get(Constants.VOICE_CONF).getAsString();
 						String userid = payload.get(Constants.USER_ID).getAsString();
-						return new VoiceUserStatusChanged(voiceConf, userid);						
+						String username = payload.get(Constants.NAME).getAsString();
+						String authCode = payload.get(Constants.AUTH_CODE).getAsString();
+						Boolean muted = payload.get(Constants.MUTED).getAsBoolean();
+						Boolean talking = payload.get(Constants.TALKING).getAsBoolean();
+						return new VoiceUserStatusChanged(voiceConf, userid, username, authCode, muted, talking);						
 					}
 				} 
 			}

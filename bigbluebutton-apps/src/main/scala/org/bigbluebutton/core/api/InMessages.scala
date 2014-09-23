@@ -417,6 +417,21 @@ case class EjectUserFromVoiceRequest(
     meetingID: String, 
     userId: String, 
     ejectedBy: String) extends InMessage
+
+case class VoiceUserStatusChangedMessage(
+    meetingID: String,
+    voiceConf: String, 
+    voiceUserId: String, 
+    callerIdNum: String, 
+    callerIdName: String, 
+    authCode: String,
+    muted: Boolean, 
+    talking: Boolean) extends InMessage
+
+case class VoiceUserLeftConfMessage(
+    meetingID: String, 
+    voiceConf: String,
+    voiceUserId: String) extends InMessage
     
 case class VoiceUserJoinedMessage(
     meetingID: String,
