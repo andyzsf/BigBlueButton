@@ -117,7 +117,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
                 <ref bean="chatRed5ClientSender"/>   
                 <ref bean="chatRedisRecorder"/>
                 <ref bean="chatRedisPublisher"/>
-                <ref bean="fsConfService"/>                    
+                <ref bean="voiceConfRedisPublisher"/>                    
                 <ref bean="whiteboardEventRedisPublisher"/>
                 <ref bean="collectorGW"/>                   
             </set>        
@@ -147,7 +147,11 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
     <bean id="usersRedisPublisher" class="org.bigbluebutton.core.apps.users.redis.UsersEventRedisPublisher">
       <constructor-arg ref="redisMessageSender" />
     </bean>
-    
+  
+    <bean id="voiceConfRedisPublisher" class="org.bigbluebutton.core.voice.redis.VoiceConfEventRedisPublisher">
+      <constructor-arg ref="redisMessageSender" />
+    </bean>
+      
     <bean id="pollRed5ClientSender" class="org.bigbluebutton.core.apps.poll.red5.PollClientMessageSender">
       <constructor-arg index="0" ref="connInvokerService"/>
     </bean>
@@ -200,8 +204,6 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
       <property name="bigBlueButtonInGW"> <ref bean="bbbInGW"/></property>
     </bean>
     
-
-        
 	<import resource="bbb-redis-pool.xml"/>
 	<import resource="bbb-redis-recorder.xml"/>
 	<import resource="bbb-app-chat.xml" />

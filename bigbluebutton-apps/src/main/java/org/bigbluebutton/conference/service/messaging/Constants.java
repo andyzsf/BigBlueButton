@@ -12,6 +12,7 @@ public class Constants {
   public static final String VOICE_CONF                      = "voice_conf";
   public static final String DURATION                        = "duration";
   public static final String AUTH_TOKEN                      = "auth_token";
+  public static final String AUTH_CODE                       = "auth_code";
   public static final String ROLE                            = "role";
   public static final String EXT_USER_ID                     = "external_user_id";
   public static final String REQUESTER_ID                    = "requester_id";

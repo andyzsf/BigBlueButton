@@ -33,6 +33,12 @@ public class MessageFromJsonConverter {
 					  return UserConnectedToGlobalAudio.fromJson(message);
 				  case UserDisconnectedFromGlobalAudio.USER_DISCONNECTED_FROM_GLOBAL_AUDIO:
 					  return UserDisconnectedFromGlobalAudio.fromJson(message);
+				  case VoiceUserLeft.VOICE_USER_LEFT:
+				  	return VoiceUserLeft.fromJson(message);
+				  case VoiceUserMuted.VOICE_USER_MUTED:
+				  	return VoiceUserMuted.fromJson(message);
+				  case VoiceUserTalking.VOICE_USER_TALKING:
+				  	return VoiceUserTalking.fromJson(message);
 				}
 			}
 		}

@@ -14,6 +14,11 @@ import org.bigbluebutton.conference.service.messaging.RegisterUserMessage;
 import org.bigbluebutton.conference.service.messaging.UserConnectedToGlobalAudio;
 import org.bigbluebutton.conference.service.messaging.UserDisconnectedFromGlobalAudio;
 import org.bigbluebutton.conference.service.messaging.ValidateAuthTokenMessage;
+import org.bigbluebutton.conference.service.messaging.VoiceRecordingStarted;
+import org.bigbluebutton.conference.service.messaging.VoiceUserLeft;
+import org.bigbluebutton.conference.service.messaging.VoiceUserMuted;
+import org.bigbluebutton.conference.service.messaging.VoiceUserStatusChanged;
+import org.bigbluebutton.conference.service.messaging.VoiceUserTalking;
 import org.bigbluebutton.conference.service.messaging.redis.MessageHandler;
 import org.bigbluebutton.core.api.IBigBlueButtonInGW;
 
@@ -72,6 +77,23 @@ public class MeetingMessageHandler implements MessageHandler {
 					bbbGW.isAliveAudit(emm.keepAliveId);					
 				}
 			}
+		} else if (channel.equalsIgnoreCase(MessagingConstants.FROM_VOICE_CHANNEL)) {
+			IMessage msg = MessageFromJsonConverter.convert(message);
+			if (msg != null) {
+				if (msg instanceof VoiceUserLeft) {
+					VoiceUserLeft emm = (VoiceUserLeft) msg;
+					log.debug("Received VoiceUserLeft request. Meeting id [{}]", emm.confId);				
+				} else if (msg instanceof VoiceUserStatusChanged) {
+					VoiceUserStatusChanged emm = (VoiceUserStatusChanged) msg;
+					log.debug("Received VoiceUserStatusChanged request. Voice Conf id [{}]", emm.confId);				
+				} else if (msg instanceof VoiceUserTalking) {
+					VoiceUserTalking emm = (VoiceUserTalking) msg;
+					log.debug("Received VoiceUserTalking request. Meeting id [{}]", emm.confId);				
+				} else if (msg instanceof VoiceRecordingStarted) {
+					VoiceRecordingStarted emm = (VoiceRecordingStarted) msg;
+					log.debug("Received VoiceRecordingStarted request. Meeting id [{}]", emm.confId);				
+				} 
+			}			
 		}
 	}
 	
