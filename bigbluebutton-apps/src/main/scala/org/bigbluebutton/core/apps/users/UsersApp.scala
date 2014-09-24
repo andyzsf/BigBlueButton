@@ -58,7 +58,7 @@ trait UsersApp {
     outGW.send(new MeetingMuted(meetingID, recorded, meetingMuted))
     
     usersWhoAreNotPresenter foreach {u =>
-      outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, msg.mute))
+      outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, voiceBridge, u.voiceUser.userId, msg.mute))
     }       
   }
     
@@ -66,7 +66,7 @@ trait UsersApp {
     meetingMuted = msg.mute
     outGW.send(new MeetingMuted(meetingID, recorded, meetingMuted))
     users.getUsers foreach {u =>
-        outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, msg.mute)) 
+        outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, voiceBridge, u.voiceUser.userId, msg.mute)) 
     }
   }
   
@@ -99,7 +99,7 @@ trait UsersApp {
     users.getUser(msg.userID) match {
       case Some(u) => {
 //        println("Sending mute user request uid=[" + msg.userID + "] mute=[" + msg.mute + "]")
-        outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, msg.mute))
+        outGW.send(new MuteVoiceUser(meetingID, recorded, msg.requesterID, u.userID, voiceBridge, u.voiceUser.userId, msg.mute))
       }
       case None => {
 //        println("Could not find user to mute. uid=[" + msg.userID + "] mute=[" + msg.mute + "]")
@@ -233,7 +233,7 @@ trait UsersApp {
       val uvo = new UserVO(msg.userID, ru.externId, ru.name, 
                   ru.role, raiseHand=false, presenter=false, 
                   hasStream=false, locked=false, webcamStream="", 
-                  phoneUser=false, vu, listenOnly=false, permissions)
+                  phoneUser=false, vu, listenOnly=false, pin=ru.authToken, permissions)
   	
 	    users.addUser(uvo)
 					
@@ -273,7 +273,7 @@ trait UsersApp {
             logger.info("Received user joined voice for user [" + nu.name + "] userid=[" + msg.voiceUserId + "]" )
             outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, nu))     
             if (meetingMuted)
-              outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, meetingMuted))
+              outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, voiceBridge, nu.voiceUser.userId, meetingMuted))
           } else {
             val vu = user.voiceUser
             val muteChanged = vu.muted != msg.muted
@@ -281,8 +281,7 @@ trait UsersApp {
             
             var nvu = vu.copy()
             if (vu.muted != msg.muted) {
-              nvu = nvu.copy(muted=msg.muted)
-              
+              nvu = nvu.copy(muted=msg.muted)              
             }
             
             if (talkingChanged) {
@@ -301,7 +300,7 @@ trait UsersApp {
             }
             
             if (meetingMuted)
-              outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, meetingMuted))
+              outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, voiceBridge, nu.voiceUser.userId, meetingMuted))
           }
 
         }
@@ -316,7 +315,7 @@ trait UsersApp {
           val uvo = new UserVO(webUserId, webUserId, msg.callerIdName, 
 		                  Role.VIEWER, raiseHand=false, presenter=false, 
 		                  hasStream=false, locked=false, webcamStream="", 
-		                  phoneUser=true, vu, listenOnly=false, permissions)
+		                  phoneUser=true, vu, listenOnly=false, pin=msg.authCode, permissions)
 		  	
 		      users.addUser(uvo)
 		      logger.info("New user joined voice for user [" + uvo.name + "] userid=[" + webUserId + "]")
@@ -324,7 +323,7 @@ trait UsersApp {
 		      
 		      outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, uvo))
 		      if (meetingMuted)
-            outGW.send(new MuteVoiceUser(meetingID, recorded, uvo.userID, uvo.userID, meetingMuted))
+            outGW.send(new MuteVoiceUser(meetingID, recorded, uvo.userID, uvo.userID, voiceBridge, uvo.voiceUser.userId, meetingMuted))
         }
       }	    
   }
@@ -357,7 +356,7 @@ trait UsersApp {
           outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, nu))
           
           if (meetingMuted)
-            outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, meetingMuted))
+            outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, voiceBridge, nu.voiceUser.userId, meetingMuted))
         }
         case None => {
           // No current web user. This means that the user called in through
@@ -370,7 +369,7 @@ trait UsersApp {
           val uvo = new UserVO(webUserId, webUserId, msg.voiceUser.callerName, 
 		                  Role.VIEWER, raiseHand=false, presenter=false, 
 		                  hasStream=false, locked=false, webcamStream="", 
-		                  phoneUser=true, vu, listenOnly=false, permissions)
+		                  phoneUser=true, vu, listenOnly=false, pin=webUserId, permissions)
 		  	
 		      users.addUser(uvo)
 		      logger.info("New user joined voice for user [" + uvo.name + "] userid=[" + msg.voiceUser.webUserId + "]")
@@ -378,7 +377,7 @@ trait UsersApp {
 		      
 		      outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, uvo))
 		      if (meetingMuted)
-            outGW.send(new MuteVoiceUser(meetingID, recorded, uvo.userID, uvo.userID, meetingMuted))
+            outGW.send(new MuteVoiceUser(meetingID, recorded, uvo.userID, uvo.userID, voiceBridge, uvo.voiceUser.userId, meetingMuted))
         }
       }
   }

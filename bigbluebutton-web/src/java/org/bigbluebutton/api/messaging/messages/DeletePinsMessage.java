@@ -1,6 +1,6 @@
-package org.bigbluebutton.web.services.messages;
+package org.bigbluebutton.api.messaging.messages;
 
-public class DeletePinsMessage implements IVoiceMessage {
+public class DeletePinsMessage implements IMessage {
 
 	public final String meetingId;
 	public final String voiceConf;

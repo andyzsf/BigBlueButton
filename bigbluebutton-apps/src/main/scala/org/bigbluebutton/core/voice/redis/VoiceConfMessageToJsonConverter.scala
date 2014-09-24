@@ -37,10 +37,12 @@ object VoiceConfMessageToJsonConverter {
     val payload = new java.util.HashMap[String, Any]()
     payload.put(Constants.MEETING_ID, msg.meetingID)
     payload.put(Constants.REQUESTER_ID, msg.requesterID)
-    payload.put(Constants.VOICE_USER, msg.userId)
+    payload.put(Constants.USER_ID, msg.userId)
+    payload.put(Constants.VOICE_CONF, msg.voiceConf)
+    payload.put(Constants.VOICE_USERID, msg.voiceUserId)
     payload.put(Constants.MUTE, msg.mute)
     
-    val header = Util.buildHeader(MessageNames.UNDO_WHITEBOARD, msg.version, None)
+    val header = Util.buildHeader(MessageNames.MUTE_VOICE_USER, msg.version, None)
     Util.buildJson(header, payload)
   }  
   
@@ -50,7 +52,7 @@ object VoiceConfMessageToJsonConverter {
     payload.put(Constants.REQUESTER_ID, msg.requesterID)
     payload.put(Constants.VOICE_USER, msg.userId)
 
-    val header = Util.buildHeader(MessageNames.WHITEBOARD_ENABLED, msg.version, None)
+    val header = Util.buildHeader(MessageNames.EJECT_VOICE_USER, msg.version, None)
     Util.buildJson(header, payload)
   }
 
@@ -59,7 +61,7 @@ object VoiceConfMessageToJsonConverter {
     payload.put(Constants.MEETING_ID, msg.meetingID)
     payload.put(Constants.VOICE_CONF, msg.voiceBridge)
  
-    val header = Util.buildHeader(MessageNames.IS_WHITEBOARD_ENABLED_REPLY, msg.version, None)
+    val header = Util.buildHeader(MessageNames.EJECT_ALL_VOICE_USERS, msg.version, None)
     Util.buildJson(header, payload)
   }  
 }

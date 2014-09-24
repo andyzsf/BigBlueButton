@@ -353,6 +353,12 @@ class ApiController {
 		dialNumber = params.dialNumber
 	}
 	
+	String pin = paramsProcessorUtil.genAccessCode()
+	
+	if (! StringUtils.isEmpty(params.pin)) {
+		pin = params.pin
+	}
+	
 	UserSession us = new UserSession();
 	us.internalUserId = internalUserID
   us.conferencename = meeting.getName()
@@ -370,7 +376,7 @@ class ApiController {
   us.welcome = meeting.getWelcomeMessage()
 	us.logoutUrl = meeting.getLogoutUrl();
 	us.configXML = configxml;
-	us.voiceAuthToken = voiceService.voiceAuthToken
+	us.pin = pin
 	us.dialNumber = dialNumber
 			
 	if (! StringUtils.isEmpty(params.defaultLayout)) {
@@ -392,9 +398,9 @@ class ApiController {
 	meetingService.addUserSession(session['user-token'], us);
 	
 	// Register user into the meeting.
-	meetingService.registerUser(us.meetingID, us.internalUserId, us.fullname, us.role, us.externUserID, us.internalUserId /* authToken for now */)
+	meetingService.registerUser(us.meetingID, us.internalUserId, us.fullname, us.role, us.externUserID, us.pin)
 	
-	meetingService.registerPin(us.meetingID, dialNumber, us.voicebridge, us.voicebridge, us.internalUserId, us.fullname, us.role)
+	meetingService.registerPin(us.meetingID, dialNumber, us.voicebridge, us.pin, us.internalUserId, us.fullname, us.role)
 	
 	log.info("Session user token for " + us.fullname + " [" + session['user-token'] + "]")	
   session.setMaxInactiveInterval(SESSION_TIMEOUT);
@@ -1385,7 +1391,7 @@ class ApiController {
 									custdata "$k" : v
 								}
               }
-							voiceAuthToken = us.voiceAuthToken
+							pin = us.pin
             }
           }
         }

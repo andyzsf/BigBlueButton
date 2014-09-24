@@ -71,6 +71,7 @@ case class UserVO(
   phoneUser: Boolean,
   voiceUser: VoiceUser,
   listenOnly: Boolean,
+  pin: String,
   permissions: Permissions = new Permissions())
 
 case class VoiceUser(userId: String, 

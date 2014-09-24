@@ -257,8 +257,10 @@ case class UserStatusChange(
 case class MuteVoiceUser(
     meetingID: String, 
     recorded: Boolean, 
-    requesterID: String, 
-    userId: String, 
+    requesterID: String,
+    userId: String,
+    voiceConf: String,
+    voiceUserId: String, 
     mute: Boolean,
     version:String = Versions.V_0_0_1
 ) extends IOutMessage

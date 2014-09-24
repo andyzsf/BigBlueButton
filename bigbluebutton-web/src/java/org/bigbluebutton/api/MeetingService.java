@@ -39,6 +39,7 @@ import org.bigbluebutton.api.messaging.MessagingConstants;
 import org.bigbluebutton.api.messaging.MessagingService;
 import org.bigbluebutton.api.messaging.ReceivedMessage;
 import org.bigbluebutton.api.messaging.messages.CreateMeeting;
+import org.bigbluebutton.api.messaging.messages.DeletePinsMessage;
 import org.bigbluebutton.api.messaging.messages.EndMeeting;
 import org.bigbluebutton.api.messaging.messages.IMessage;
 import org.bigbluebutton.api.messaging.messages.MeetingDestroyed;
@@ -101,6 +102,10 @@ public class MeetingService implements MessageListener {
 		handle(new RegisterPin(meetingId, dialNumber, voiceConf, pin, userId, username, role));
 	}
 	
+//	public void deletePins(String meetingId, String voiceConf) {
+//		handle(new DeletePinsMessage(meetingId, voiceConf));
+//	}
+	
 	public UserSession getUserSession(String token) {
 		return sessions.get(token);
 	}
@@ -132,9 +137,10 @@ public class MeetingService implements MessageListener {
 	
 	private void processMeetingForRemoval(Meeting m) {
 		kickOffProcessingOfRecording(m);	  		
-  	destroyMeeting(m.getInternalId());		  		
+  	destroyMeeting(m.getInternalId(), m.getTelVoice());		  		
 		meetings.remove(m.getInternalId());		
 		removeUserSessions(m.getInternalId());
+		
 	}
 	
 	private void removeUserSessions(String meetingId) {
@@ -172,7 +178,7 @@ public class MeetingService implements MessageListener {
 			
 			if (m.wasNeverJoined(defaultMeetingCreateJoinDuration)) {
 				log.info("No user has joined the meeting [id={} , name={}]. Removing it.", m.getInternalId(), m.getName());
-				destroyMeeting(m.getInternalId());			
+				destroyMeeting(m.getInternalId(), m.getTelVoice());			
 				meetings.remove(m.getInternalId());
 				continue;
 			}
@@ -184,10 +190,10 @@ public class MeetingService implements MessageListener {
 		}		
 	}
 	
-	private void destroyMeeting(String meetingID) {
+	private void destroyMeeting(String meetingID, String voiceConf) {
 		messagingService.destroyMeeting(meetingID);
 		
-		voicePinStorage.deletePins(meetingID);
+		voicePinStorage.deletePins(meetingID, voiceConf);
 	}
 	
 	public Collection<Meeting> getMeetings() {
@@ -385,7 +391,7 @@ public class MeetingService implements MessageListener {
 			m.setForciblyEnded(true);
 			if (removeMeetingWhenEnded) {
 		    processRecording(m.getInternalId());
-			  destroyMeeting(m.getInternalId());		  		
+			  destroyMeeting(m.getInternalId(), m.getTelVoice());		  		
 		    meetings.remove(m.getInternalId());		
 		    removeUserSessions(m.getInternalId());
 			}

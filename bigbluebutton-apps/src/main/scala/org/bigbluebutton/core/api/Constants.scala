@@ -83,6 +83,7 @@ object Constants {
   val CURRENT                         = "current"
   val PAGES                           = "pages"
   val WEB_USER_ID                     = "web_user_id"
+  val VOICE_USERID                    = "voice_userid"
   val JOINED                          = "joined"
   val X_PERCENT                       = "x_percent"
   val Y_PERCENT                       = "y_percent"

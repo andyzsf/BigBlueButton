@@ -111,6 +111,7 @@ object MessageNames {
   val USER_VOICE_MUTED                     = "user_voice_muted_message"
   val USER_VOICE_TALKING                   = "user_voice_talking_message"
   val EJECT_VOICE_USER                     = "eject_voice_user_message"
+  val EJECT_ALL_VOICE_USERS                = "eject_all_voice_users_message"
   val USER_JOINED_VOICE                    = "user_joined_voice_message"
   val USER_LEFT_VOICE                      = "user_left_voice_message"
   val IS_MEETING_MUTED_REPLY               = "is_meeting_muted_reply"

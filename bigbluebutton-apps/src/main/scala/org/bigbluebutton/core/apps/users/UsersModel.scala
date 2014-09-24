@@ -44,7 +44,7 @@ class UsersModel {
   }
   
   def getUserWithAuthCode(authCode: String):Option[UserVO] = {
-    uservos.values find (u => u.userID == authCode)  
+    uservos.values find (u => u.pin == authCode)  
   }
   
   def getUserWithVoiceUserId(voiceUserId: String):Option[UserVO] = {

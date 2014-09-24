@@ -21,5 +21,5 @@ package org.bigbluebutton.web.services;
 
 public interface IVoicePinStorageService{
 	public void storePin(String meetingId, String dialNumber, String voiceConf, String pin, String userId, String username, String role);
-	public void deletePins(String meetingId);
+	public void deletePins(String meetingId, String voiceConf);
 }

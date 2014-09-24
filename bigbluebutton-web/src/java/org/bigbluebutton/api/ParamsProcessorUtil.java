@@ -479,6 +479,10 @@ public class ParamsProcessorUtil {
 		return mUsers;
 	}	
 
+	public String genAccessCode() {
+		return RandomStringUtils.randomNumeric(defaultNumDigitsForTelVoice);
+	}
+	
   public int processMeetingDuration(String duration) {
     int mDuration = -1;
     
