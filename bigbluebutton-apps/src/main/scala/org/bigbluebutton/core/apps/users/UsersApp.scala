@@ -83,7 +83,8 @@ trait UsersApp {
       // Check first if the meeting has ended and the user refreshed the client to re-connect.
       sendMeetingHasEnded(msg.userID)
     } else {
-      val regUser = new RegisteredUser(msg.userID, msg.extUserID, msg.name, msg.role, msg.authToken)
+      println("Handling RegisterUser user request uid=[" + msg.userID + "] pin=[" + msg.authToken + "]")
+      val regUser = new RegisteredUser(msg.userID, msg.extUserID, msg.name, msg.role, msg.authToken, msg.pin)
       regUsers += msg.userID -> regUser
       outGW.send(new UserRegistered(meetingID, recorded, regUser))      
     }
@@ -216,9 +217,9 @@ trait UsersApp {
   }
 	                         
   def handleChangeUserStatus(msg: ChangeUserStatus):Unit = {    
-	if (users.hasUser(msg.userID)) {
-		  outGW.send(new UserStatusChange(meetingID, recorded, msg.userID, msg.status, msg.value))
-	}  
+		if (users.hasUser(msg.userID)) {
+			  outGW.send(new UserStatusChange(meetingID, recorded, msg.userID, msg.status, msg.value))
+		}  
   }
   
   def handleGetUsers(msg: GetUsers):Unit = {
@@ -233,8 +234,9 @@ trait UsersApp {
       val uvo = new UserVO(msg.userID, ru.externId, ru.name, 
                   ru.role, raiseHand=false, presenter=false, 
                   hasStream=false, locked=false, webcamStream="", 
-                  phoneUser=false, vu, listenOnly=false, pin=ru.authToken, permissions)
+                  phoneUser=false, vu, listenOnly=false, authToken=ru.authToken, pin=ru.pin, permissions)
   	
+      println("User joined [" + uvo + "]")
 	    users.addUser(uvo)
 					
 	    outGW.send(new UserJoined(meetingID, recorded, uvo))
@@ -263,6 +265,7 @@ trait UsersApp {
   def handleVoiceUserStatusChangedMessage(msg: VoiceUserStatusChangedMessage) = {
       val user = users.getUserWithAuthCode(msg.authCode) match {
         case Some(user) => {
+          println("****** Found user [" + user.name + "] with pin [" + msg.authCode + "]")
           val vu = user.voiceUser
           if (!vu.joined) {
             val nvu = new VoiceUser(msg.voiceUserId, user.userID, 
@@ -305,6 +308,7 @@ trait UsersApp {
 
         }
         case None => {
+          println("****** Cannot find  user with pin [" + msg.authCode + "]")
           // No current web user. This means that the user called in through
           // the phone. We need to generate a new user as we are not able
           // to match with a web user.
@@ -315,7 +319,7 @@ trait UsersApp {
           val uvo = new UserVO(webUserId, webUserId, msg.callerIdName, 
 		                  Role.VIEWER, raiseHand=false, presenter=false, 
 		                  hasStream=false, locked=false, webcamStream="", 
-		                  phoneUser=true, vu, listenOnly=false, pin=msg.authCode, permissions)
+		                  phoneUser=true, vu, listenOnly=false, authToken=webUserId, pin=msg.authCode, permissions)
 		  	
 		      users.addUser(uvo)
 		      logger.info("New user joined voice for user [" + uvo.name + "] userid=[" + webUserId + "]")
@@ -369,7 +373,7 @@ trait UsersApp {
           val uvo = new UserVO(webUserId, webUserId, msg.voiceUser.callerName, 
 		                  Role.VIEWER, raiseHand=false, presenter=false, 
 		                  hasStream=false, locked=false, webcamStream="", 
-		                  phoneUser=true, vu, listenOnly=false, pin=webUserId, permissions)
+		                  phoneUser=true, vu, listenOnly=false, authToken=webUserId, pin=webUserId, permissions)
 		  	
 		      users.addUser(uvo)
 		      logger.info("New user joined voice for user [" + uvo.name + "] userid=[" + msg.voiceUser.webUserId + "]")

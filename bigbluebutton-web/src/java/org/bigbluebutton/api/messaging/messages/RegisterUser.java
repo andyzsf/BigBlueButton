@@ -8,13 +8,16 @@ public class RegisterUser implements IMessage {
 	public final String role;
 	public final String externUserID;
 	public final String authToken;
+	public final String pin;
 	
-	public RegisterUser(String meetingID, String internalUserId, String fullname, String role, String externUserID, String authToken) {
+	public RegisterUser(String meetingID, String internalUserId, String fullname, 
+			          String role, String externUserID, String authToken, String pin) {
 		this.meetingID = meetingID;
 		this.internalUserId = internalUserId;
 		this.fullname = fullname;
 		this.role = role;
 		this.externUserID = externUserID;
-		this.authToken = authToken;		
+		this.authToken = authToken;
+		this.pin = pin;
 	}
 }

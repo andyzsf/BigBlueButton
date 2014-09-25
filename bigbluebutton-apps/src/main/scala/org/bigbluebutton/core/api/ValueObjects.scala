@@ -44,7 +44,8 @@ case class RegisteredUser (
     externId: String,
     name: String, 
     role: Role.Role,
-    authToken: String
+    authToken: String,
+    pin: String
 )
 
 case class Voice(
@@ -71,6 +72,7 @@ case class UserVO(
   phoneUser: Boolean,
   voiceUser: VoiceUser,
   listenOnly: Boolean,
+  authToken: String,
   pin: String,
   permissions: Permissions = new Permissions())
 

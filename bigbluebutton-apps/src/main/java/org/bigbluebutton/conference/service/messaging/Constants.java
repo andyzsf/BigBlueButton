@@ -87,4 +87,7 @@ public class Constants {
   public static final String Y_PERCENT                       = "y_percent";
   public static final String KEEP_ALIVE_ID                   = "keep_alive_id";
   public static final String INTERNAL_USER_ID                = "internal_user_id";
+  public static final String BBB_USERID                      = "bbb_userid";
+  public static final String CALLED_FROM_BBB                 = "called_from_bbb";
+  public static final String VOICE_PIN                       = "voice_pin";
 }

@@ -13,14 +13,19 @@ public class VoiceUserStatusChanged implements IMessage {
 	public final String authCode;
 	public final Boolean muted;
 	public final Boolean talking;
+	public final String bbbUserId;
+	public final Boolean calledFromBbb;
 	
-	public VoiceUserStatusChanged(String confId, String userId, String username, String authCode, Boolean muted, Boolean talking) {
+	public VoiceUserStatusChanged(String confId, String userId, String username, String authCode, 
+			                          Boolean muted, Boolean talking, String bbbUserId, Boolean calledFromBbb) {
 	  this.confId = confId;
 	  this.userId = userId;
 	  this.username = username;
 	  this.authCode = authCode;
 	  this.muted = muted;
 	  this.talking = talking;
+	  this.bbbUserId = bbbUserId;
+	  this.calledFromBbb = calledFromBbb;
 	}
 	
 	public static VoiceUserStatusChanged fromJson(String message) {
@@ -39,14 +44,18 @@ public class VoiceUserStatusChanged implements IMessage {
 							&& payload.has(Constants.NAME)
 							&& payload.has(Constants.AUTH_CODE)
 							&& payload.has(Constants.MUTED)
-							&& payload.has(Constants.TALKING)) {
+							&& payload.has(Constants.TALKING)
+							&& payload.has(Constants.BBB_USERID)
+							&& payload.has(Constants.CALLED_FROM_BBB)) {
 						String voiceConf = payload.get(Constants.VOICE_CONF).getAsString();
 						String userid = payload.get(Constants.USER_ID).getAsString();
 						String username = payload.get(Constants.NAME).getAsString();
 						String authCode = payload.get(Constants.AUTH_CODE).getAsString();
 						Boolean muted = payload.get(Constants.MUTED).getAsBoolean();
 						Boolean talking = payload.get(Constants.TALKING).getAsBoolean();
-						return new VoiceUserStatusChanged(voiceConf, userid, username, authCode, muted, talking);						
+						String bbbUserId = payload.get(Constants.BBB_USERID).getAsString();
+						Boolean calledFromBbb = payload.get(Constants.CALLED_FROM_BBB).getAsBoolean();
+						return new VoiceUserStatusChanged(voiceConf, userid, username, authCode, muted, talking, bbbUserId, calledFromBbb);						
 					}
 				} 
 			}

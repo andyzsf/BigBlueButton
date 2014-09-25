@@ -16,7 +16,6 @@ import org.bigbluebutton.conference.service.messaging.UserDisconnectedFromGlobal
 import org.bigbluebutton.conference.service.messaging.ValidateAuthTokenMessage;
 import org.bigbluebutton.conference.service.messaging.VoiceRecordingStarted;
 import org.bigbluebutton.conference.service.messaging.VoiceUserLeft;
-import org.bigbluebutton.conference.service.messaging.VoiceUserMuted;
 import org.bigbluebutton.conference.service.messaging.VoiceUserStatusChanged;
 import org.bigbluebutton.conference.service.messaging.VoiceUserTalking;
 import org.bigbluebutton.conference.service.messaging.redis.MessageHandler;
@@ -48,7 +47,8 @@ public class MeetingMessageHandler implements MessageHandler {
 					bbbGW.createMeeting2(emm.id, emm.name, emm.record, emm.voiceBridge, emm.duration);
 				} else if (msg instanceof RegisterUserMessage) {
 					RegisterUserMessage emm = (RegisterUserMessage) msg;
-					bbbGW.registerUser(emm.meetingID, emm.internalUserId, emm.fullname, emm.role, emm.externUserID, emm.authToken);
+					log.debug("Received RegisterUserMessage. user id [{}] pin=[{}]", emm.fullname, emm.authToken);
+					bbbGW.registerUser(emm.meetingID, emm.internalUserId, emm.fullname, emm.role, emm.externUserID, emm.authToken, emm.pin);
 				} else if (msg instanceof DestroyMeetingMessage) {
 					DestroyMeetingMessage emm = (DestroyMeetingMessage) msg;
 					log.debug("Received destroy meeting request. Meeting id [{}]", emm.meetingId);
@@ -59,11 +59,11 @@ public class MeetingMessageHandler implements MessageHandler {
 					bbbGW.validateAuthToken(emm.meetingId, emm.userId, emm.token, emm.replyTo);
 				} else if (msg instanceof UserConnectedToGlobalAudio) {
 					UserConnectedToGlobalAudio emm = (UserConnectedToGlobalAudio) msg;
-					log.debug("Received UserConnectedToGlobalAudio toekn request. user id [{}]", emm.name);
+					log.debug("Received UserConnectedToGlobalAudio token request. user id [{}]", emm.name);
 					bbbGW.userConnectedToGlobalAudio(emm.voiceConf, emm.userid, emm.name);
 				} else if (msg instanceof UserDisconnectedFromGlobalAudio) {
 					UserDisconnectedFromGlobalAudio emm = (UserDisconnectedFromGlobalAudio) msg;
-					log.debug("Received UserDisconnectedFromGlobalAudio toekn request. Meeting id [{}]", emm.name);
+					log.debug("Received UserDisconnectedFromGlobalAudio token request. Meeting id [{}]", emm.name);
 					bbbGW.userDisconnectedFromGlobalAudio(emm.voiceConf, emm.userid, emm.name);
 				}
 			}
@@ -78,6 +78,7 @@ public class MeetingMessageHandler implements MessageHandler {
 				}
 			}
 		} else if (channel.equalsIgnoreCase(MessagingConstants.FROM_VOICE_CHANNEL)) {
+			System.out.println("Handle message from voice conference : " + pattern + " " + channel + " " + message);
 			IMessage msg = MessageFromJsonConverter.convert(message);
 			if (msg != null) {
 				if (msg instanceof VoiceUserLeft) {
@@ -86,16 +87,20 @@ public class MeetingMessageHandler implements MessageHandler {
 					bbbGW.voiceUserLeftVoiceConf(emm.confId, emm.userId);
 				} else if (msg instanceof VoiceUserStatusChanged) {
 					VoiceUserStatusChanged emm = (VoiceUserStatusChanged) msg;
-					log.info("Received VoiceUserStatusChanged request. Voice Conf id [{}]", emm.confId);		
-					bbbGW.voiceUserStatusChanged(emm.confId, emm.userId, emm.username, emm.authCode, emm.muted, emm.talking);
+					System.out.println("Received VoiceUserStatusChanged request. Voice Conf id [" + emm.confId + "}]");		
+					bbbGW.voiceUserStatusChanged(emm.confId, emm.userId, emm.username, emm.authCode, emm.muted, emm.talking, emm.bbbUserId, emm.calledFromBbb);
 				} else if (msg instanceof VoiceUserTalking) {
 					VoiceUserTalking emm = (VoiceUserTalking) msg;
 					log.info("Received VoiceUserTalking request. Meeting id [{}]", emm.confId);				
 				} else if (msg instanceof VoiceRecordingStarted) {
 					VoiceRecordingStarted emm = (VoiceRecordingStarted) msg;
 					log.info("Received VoiceRecordingStarted request. Meeting id [{}]", emm.confId);				
-				} 
+				} else {
+					System.out.println("Unknown message: " + pattern + " " + channel + " " + message);
+				}
 			}			
+		} else {
+			System.out.println("Cant handle message from channel [" + channel + "]");
 		}
 	}
 	

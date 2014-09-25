@@ -32,6 +32,6 @@ public interface MessagingService {
 	String storeSubscription(String meetingId, String externalMeetingID, String callbackURL);
 	boolean removeSubscription(String meetingId, String subscriptionId);
 	List<Map<String,String>> listSubscriptions(String meetingId);
-	void registerUser(String meetingID, String internalUserId, String fullname, String role, String externUserID, String authToken);
+	void registerUser(String meetingID, String internalUserId, String fullname, String role, String externUserID, String authToken, String pin);
 	void sendKeepAlive(String keepAliveId);
 }

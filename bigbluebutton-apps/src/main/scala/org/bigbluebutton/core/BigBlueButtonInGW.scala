@@ -74,9 +74,9 @@ class BigBlueButtonInGW(bbbGW: BigBlueButtonGateway, presUtil: PreuploadedPresen
     bbbGW.accept(new ValidateAuthToken(meetingId, userId, token, correlationId))
   }
   
-  def registerUser(meetingID: String, userID: String, name: String, role: String, extUserID: String, authToken: String):Unit = {
+  def registerUser(meetingID: String, userID: String, name: String, role: String, extUserID: String, authToken: String, pin: String):Unit = {
     val userRole = if (role == "MODERATOR") Role.MODERATOR else Role.VIEWER
-    bbbGW.accept(new RegisterUser(meetingID, userID, name, userRole, extUserID, authToken))
+    bbbGW.accept(new RegisterUser(meetingID, userID, name, userRole, extUserID, authToken, pin))
   }
   
   def sendLockSettings(meetingID: String, userId: String, settings: java.util.Map[String, java.lang.Boolean]) {
@@ -427,8 +427,9 @@ class BigBlueButtonInGW(bbbGW: BigBlueButtonGateway, presUtil: PreuploadedPresen
 	  voiceGW.ejectUserFromVoice(meetingId, userId, ejectedBy)
   }
 	
-	def voiceUserStatusChanged(voiceConf: String, userId: String, username: String, authCode: String, muted: java.lang.Boolean, talking: java.lang.Boolean) {
-	  voiceGW.voiceUserStatusChanged(voiceConf, userId, username, authCode, muted, talking)
+	def voiceUserStatusChanged(voiceConf: String, voiceUserId: String, username: String, authCode: String, 
+	            muted: java.lang.Boolean, talking: java.lang.Boolean, userId: String, calledFromBbb: java.lang.Boolean) {
+	  voiceGW.voiceUserStatusChanged(voiceConf, voiceUserId, username, authCode, muted, talking, userId, calledFromBbb)
 	}
 	
 	def voiceUserLeftVoiceConf(voiceConf: String, userId: String) {

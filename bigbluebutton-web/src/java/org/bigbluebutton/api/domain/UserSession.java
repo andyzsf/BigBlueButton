@@ -39,5 +39,6 @@ public class UserSession {
   public String defaultLayout = "NOLAYOUT";
   public String avatarURL;
   public String configXML;
+  public String authToken;
   public String pin;
 }

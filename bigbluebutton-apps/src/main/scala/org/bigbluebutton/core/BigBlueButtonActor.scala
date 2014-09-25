@@ -34,6 +34,7 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
         m foreach {mActor => mActor ! udm}        
       }
       case udm: VoiceUserStatusChangedMessage => {
+        println("Handling VoiceUserStatusChangedMessage message")
         val m = meetings.values.find( m => m.voiceBridge == udm.voiceConf)
         m foreach {mActor => mActor ! udm}        
       }

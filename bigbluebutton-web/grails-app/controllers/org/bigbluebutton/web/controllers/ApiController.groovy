@@ -376,6 +376,7 @@ class ApiController {
   us.welcome = meeting.getWelcomeMessage()
 	us.logoutUrl = meeting.getLogoutUrl();
 	us.configXML = configxml;
+	us.authToken = internalUserID
 	us.pin = pin
 	us.dialNumber = dialNumber
 			
@@ -398,7 +399,7 @@ class ApiController {
 	meetingService.addUserSession(session['user-token'], us);
 	
 	// Register user into the meeting.
-	meetingService.registerUser(us.meetingID, us.internalUserId, us.fullname, us.role, us.externUserID, us.pin)
+	meetingService.registerUser(us.meetingID, us.internalUserId, us.fullname, us.role, us.externUserID, us.internalUserId, us.pin)
 	
 	meetingService.registerPin(us.meetingID, dialNumber, us.voicebridge, us.pin, us.internalUserId, us.fullname, us.role)
 	

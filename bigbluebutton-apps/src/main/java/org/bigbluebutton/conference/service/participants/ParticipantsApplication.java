@@ -62,11 +62,6 @@ public class ParticipantsApplication {
 		return true;
 	}
 
-	public boolean registerUser(String roomName, String userid, String username, String role, String externUserID) {
-		bbbInGW.registerUser(roomName, userid, username, role, externUserID, userid);
-		return true;
-	}
-
 	public void assignPresenter(String room, String newPresenterID, String newPresenterName, String assignedBy){
 		bbbInGW.assignPresenter(room, newPresenterID, newPresenterName, assignedBy);			
 	}

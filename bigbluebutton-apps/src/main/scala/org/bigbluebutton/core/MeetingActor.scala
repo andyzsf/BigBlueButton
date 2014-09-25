@@ -69,7 +69,7 @@ class MeetingActor(val meetingID: String, val meetingName: String, val recorded:
 	    case msg: MuteAllExceptPresenterRequest          => handleMuteAllExceptPresenterRequest(msg)
 	    case msg: IsMeetingMutedRequest                  => handleIsMeetingMutedRequest(msg)
 	    case msg: MuteUserRequest                        => handleMuteUserRequest(msg)
-	    case msg: EjectUserFromVoiceRequest                       => handleEjectUserRequest(msg)
+	    case msg: EjectUserFromVoiceRequest              => handleEjectUserRequest(msg)
 	    case msg: SetLockSettings                        => handleSetLockSettings(msg)
 	    case msg: InitLockSettings                       => handleInitLockSettings(msg)
 	    case msg: GetChatHistoryRequest                  => handleGetChatHistoryRequest(msg) 

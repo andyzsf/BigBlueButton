@@ -18,6 +18,7 @@ public class MessageToJson {
 		payload.put(Constants.ROLE, message.role);
 		payload.put(Constants.EXT_USER_ID, message.externUserID);
 		payload.put(Constants.AUTH_TOKEN, message.authToken);
+		payload.put(Constants.VOICE_PIN, message.pin);
 		
 		java.util.HashMap<String, Object> header = MessageBuilder.buildHeader(RegisterUserMessage.REGISTER_USER, message.VERSION, null);
 

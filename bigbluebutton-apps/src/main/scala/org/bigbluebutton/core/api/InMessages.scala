@@ -85,7 +85,8 @@ case class RegisterUser(
     name: String, 
     role: Role, 
     extUserID: String,
-    authToken: String
+    authToken: String,
+    pin: String
 ) extends InMessage
                        
 case class UserJoining(
@@ -426,7 +427,9 @@ case class VoiceUserStatusChangedMessage(
     callerIdName: String, 
     authCode: String,
     muted: Boolean, 
-    talking: Boolean) extends InMessage
+    talking: Boolean,
+    userId: String,
+    calledFromBbb: Boolean) extends InMessage
 
 case class VoiceUserLeftConfMessage(
     meetingID: String, 

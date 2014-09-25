@@ -14,14 +14,17 @@ public class RegisterUserMessage implements IMessage {
 	public final String role;
 	public final String externUserID;
 	public final String authToken;
-
-	public RegisterUserMessage(String meetingID, String internalUserId, String fullname, String role, String externUserID, String authToken) {
+  public final String pin;
+  
+	public RegisterUserMessage(String meetingID, String internalUserId, String fullname, 
+			           String role, String externUserID, String authToken, String pin) {
 		this.meetingID = meetingID;
 		this.internalUserId = internalUserId;
 		this.fullname = fullname;
 		this.role = role;
 		this.externUserID = externUserID;
 		this.authToken = authToken;
+		this.pin = pin;
 	}
 
 	public String toJson() {
@@ -33,7 +36,8 @@ public class RegisterUserMessage implements IMessage {
 		payload.put(Constants.ROLE, role);
 		payload.put(Constants.EXT_USER_ID, externUserID);
 		payload.put(Constants.AUTH_TOKEN, authToken);
-
+		payload.put(Constants.VOICE_PIN, pin);
+    
 		java.util.HashMap<String, Object> header = MessageBuilder.buildHeader(REGISTER_USER, VERSION, null);
 
 		return MessageBuilder.buildJson(header, payload);				
@@ -53,16 +57,18 @@ public class RegisterUserMessage implements IMessage {
 							&& payload.has(Constants.NAME)
 							&& payload.has(Constants.ROLE)
 							&& payload.has(Constants.EXT_USER_ID)
-							&& payload.has(Constants.AUTH_TOKEN)) {
+							&& payload.has(Constants.AUTH_TOKEN)
+							&& payload.has(Constants.VOICE_PIN)) {
 
 						String meetingID = payload.get(Constants.MEETING_ID).getAsString();
 						String fullname = payload.get(Constants.NAME).getAsString();
 						String role = payload.get(Constants.ROLE).getAsString();
 						String externUserID = payload.get(Constants.EXT_USER_ID).getAsString();
 						String authToken = payload.get(Constants.AUTH_TOKEN).getAsString();
-
+						String pin = payload.get(Constants.VOICE_PIN).getAsString();
+						
 						//use externalUserId twice - once for external, once for internal
-						return new RegisterUserMessage(meetingID, externUserID, fullname, role, externUserID, authToken);
+						return new RegisterUserMessage(meetingID, externUserID, fullname, role, externUserID, authToken, pin);
 					}
 				}
 			}

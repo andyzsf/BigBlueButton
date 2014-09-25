@@ -26,7 +26,7 @@ public interface IBigBlueButtonInGW {
 	
 	// Users
 	void validateAuthToken(String meetingId, String userId, String token, String correlationId);
-	void registerUser(String roomName, String userid, String username, String role, String externUserID, String authToken);
+	void registerUser(String roomName, String userid, String username, String role, String externUserID, String authToken, String pin);
 	void userRaiseHand(String meetingId, String userId);	
 	void lowerHand(String meetingId, String userId, String loweredBy);
 	void shareWebcam(String meetingId, String userId, String stream);
@@ -50,7 +50,8 @@ public interface IBigBlueButtonInGW {
 	void lockUser(String meetingID, String requesterID, String userID, Boolean lock);
 	void ejectUserFromVoice(String meetingID, String userId, String ejectedBy);
 	void ejectUserFromMeeting(String meetingId, String userId, String ejectedBy);
-	void voiceUserStatusChanged(String voiceConf, String userId, String username, String authCode, Boolean muted, Boolean speaking);
+	void voiceUserStatusChanged(String voiceConf, String voiceUserId, String username, String authCode, 
+			                        Boolean muted, Boolean speaking, String userId, Boolean calledFromBbb);
 	void voiceUserLeftVoiceConf(String voiceConf, String userId);
 	void voiceUserJoined(String meetingId, String userId, String webUserId, String conference, 
 								String callerIdNum, String callerIdName,

@@ -91,9 +91,10 @@ public class MeetingService implements MessageListener {
 		sessions.put(token, user);
 	}
 	
-	public void registerUser(String meetingID, String internalUserId, String fullname, String role, String externUserID, String authToken) {
+	public void registerUser(String meetingID, String internalUserId, String fullname, 
+			             String role, String externUserID, String authToken, String pin) {
 		
-		handle(new RegisterUser(meetingID, internalUserId, fullname, role, externUserID, authToken));
+		handle(new RegisterUser(meetingID, internalUserId, fullname, role, externUserID, authToken, pin));
 	}
 	
 	public void registerPin(String meetingId, String dialNumber, String voiceConf, String pin, String userId, String username, String role) {
@@ -227,7 +228,7 @@ public class MeetingService implements MessageListener {
 	}
 	
 	private void processRegisterUser(RegisterUser message) {
-		messagingService.registerUser(message.meetingID, message.internalUserId, message.fullname, message.role, message.externUserID, message.authToken);
+		messagingService.registerUser(message.meetingID, message.internalUserId, message.fullname, message.role, message.externUserID, message.authToken, message.pin);
 	}
 
 	private void processRegisterPin(RegisterPin message) {

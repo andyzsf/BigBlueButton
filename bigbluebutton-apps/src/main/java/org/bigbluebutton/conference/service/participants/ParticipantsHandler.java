@@ -92,7 +92,6 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	@Override
 	public boolean roomJoin(IClient client, IScope scope) {
 		log.debug(APP + ":roomJoin " + scope.getName() + " - " + scope.getParent().getName());
-		registerUser();
 		return true;
 	}
 
@@ -109,25 +108,7 @@ public class ParticipantsHandler extends ApplicationAdapter implements IApplicat
 	public void roomStop(IScope scope) {
 		log.debug("***** " + APP + " [ " + " roomStop [ " + scope.getName() + "] *********");
 	}
-	
-	public void registerUser() {
-		log.debug(APP + ":participantJoin - getting userid");
-		BigBlueButtonSession bbbSession = getBbbSession();
-		if (bbbSession != null) {
-			String userid = bbbSession.getInternalUserID();
-			String username = bbbSession.getUsername();
-			String role = bbbSession.getRole();
-			String room = bbbSession.getRoom();
-			log.debug(APP + ":participantJoin - [" + room + "] [" + userid + ", " + username + ", " + role + "]");
-			
-			Map<String, Boolean> status = new HashMap<String, Boolean>();
-			status.put("raiseHand", false);
-			status.put("presenter", false);
-			status.put("hasStream", false);	
 
-			participantsApplication.registerUser(room, userid, username, role, bbbSession.getExternUserID());
-		}
-	}
 	
 	public void setParticipantsApplication(ParticipantsApplication a) {
 		participantsApplication = a;
