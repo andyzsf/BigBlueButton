@@ -90,6 +90,10 @@ public class ParamsProcessorUtil {
 	    return  welcomeMessage;		
 	}
 
+	public String substituteUserPin(String message, String pin) {
+		String USER_PIN = "%%USER_PIN%%";
+		return message.replaceAll(USER_PIN, pin);
+	}
 	
 	public void processRequiredCreateParams(Map<String, String> params, ApiErrors errors) {
 	    // Do we have a checksum? If not, complain.

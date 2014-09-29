@@ -373,7 +373,7 @@ class ApiController {
   us.webvoiceconf = meeting.getWebVoice()
   us.mode = "LIVE"
   us.record = meeting.isRecord()
-  us.welcome = meeting.getWelcomeMessage()
+  us.welcome = paramsProcessorUtil.substituteUserPin(meeting.getWelcomeMessage(), pin)
 	us.logoutUrl = meeting.getLogoutUrl();
 	us.configXML = configxml;
 	us.authToken = internalUserID
