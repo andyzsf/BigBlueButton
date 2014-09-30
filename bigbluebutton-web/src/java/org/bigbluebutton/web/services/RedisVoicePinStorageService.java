@@ -122,6 +122,7 @@ public class RedisVoicePinStorageService implements IVoicePinStorageService{
 		data.put("voiceConf", message.voiceConf);
 		data.put("pin", message.pin);
 		data.put("userId", message.userId);
+		data.put("externalUserId", message.externalUserId);
 		data.put("username", message.username);
 		data.put("role", message.role);
 		
@@ -129,8 +130,8 @@ public class RedisVoicePinStorageService implements IVoicePinStorageService{
 		try {
 			jedis.hmset(VOICE_PIN + message.pin, data);
 			jedis.sadd(MEETING_PINS + message.meetingId, message.pin);	
-			jedis.hmset(VOICE_USER + message.voiceConf + ":" + message.userId, data);
-			jedis.sadd(VOICE_USERS + message.voiceConf, message.userId);
+			jedis.hmset(VOICE_USER + message.voiceConf + ":" + message.externalUserId, data);
+			jedis.sadd(VOICE_USERS + message.voiceConf, message.externalUserId);
 		} finally {
 			jedisPool.returnResource(jedis);			
 		}		
@@ -153,8 +154,8 @@ public class RedisVoicePinStorageService implements IVoicePinStorageService{
 		}		
 	}
 	
-	public void storePin(String meetingId, String dialNumber, String voiceConf, String pin, String userId, String username, String role) {		
-    handle(new StorePinMessage(meetingId, dialNumber, voiceConf, pin, userId, username, role));
+	public void storePin(String meetingId, String dialNumber, String voiceConf, String pin, String userId, String externalUserId, String username, String role) {		
+    handle(new StorePinMessage(meetingId, dialNumber, voiceConf, pin, userId, externalUserId, username, role));
 	}
 	
 	public void deletePins(String meetingId, String voiceConf) {

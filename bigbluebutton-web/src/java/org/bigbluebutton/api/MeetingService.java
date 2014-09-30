@@ -97,10 +97,10 @@ public class MeetingService implements MessageListener {
 		handle(new RegisterUser(meetingID, internalUserId, fullname, role, externUserID, authToken, pin));
 	}
 	
-	public void registerPin(String meetingId, String dialNumber, String voiceConf, String pin, String userId, String username, String role) {
+	public void registerPin(String meetingId, String dialNumber, String voiceConf, String pin, String userId, String externalUserId, String username, String role) {
 		log.info("Register pin. mid=[" + meetingId + "] did=[" + dialNumber + "] vc= [" + voiceConf + "] pin=[" + pin + 
 				"] uid=[" + userId + "] name=[" + username + "] role=[" + role + "]");
-		handle(new RegisterPin(meetingId, dialNumber, voiceConf, pin, userId, username, role));
+		handle(new RegisterPin(meetingId, dialNumber, voiceConf, pin, userId, externalUserId, username, role));
 	}
 	
 //	public void deletePins(String meetingId, String voiceConf) {
@@ -232,7 +232,7 @@ public class MeetingService implements MessageListener {
 	}
 
 	private void processRegisterPin(RegisterPin message) {
-		voicePinStorage.storePin(message.meetingId, message.dialNumber, message.voiceConf, message.pin, message.userId, message.username, message.role);
+		voicePinStorage.storePin(message.meetingId, message.dialNumber, message.voiceConf, message.pin, message.userId, message.externalUserId, message.username, message.role);
 	}
 	
 	public String addSubscription(String meetingId, String event, String callbackURL){
