@@ -83,7 +83,7 @@ trait UsersApp {
       // Check first if the meeting has ended and the user refreshed the client to re-connect.
       sendMeetingHasEnded(msg.userID)
     } else {
-      println("Handling RegisterUser user request uid=[" + msg.userID + "] pin=[" + msg.authToken + "]")
+      logger.info("Handling RegisterUser user request uid=[" + msg.userID + "] pin=[" + msg.authToken + "]")
       val regUser = new RegisteredUser(msg.userID, msg.extUserID, msg.name, msg.role, msg.authToken, msg.pin)
       regUsers += msg.userID -> regUser
       outGW.send(new UserRegistered(meetingID, recorded, regUser))      
@@ -265,7 +265,7 @@ trait UsersApp {
   def handleVoiceUserStatusChangedMessage(msg: VoiceUserStatusChangedMessage) = {
       val user = users.getUserWithAuthCode(msg.authCode) match {
         case Some(user) => {
-          println("****** Found user [" + user.name + "] with pin [" + msg.authCode + "]")
+          logger.info("****** Found user [" + user.name + "] with pin [" + msg.authCode + "]")
           val vu = user.voiceUser
           if (!vu.joined) {
             val nvu = new VoiceUser(msg.voiceUserId, user.userID, 
@@ -308,7 +308,7 @@ trait UsersApp {
 
         }
         case None => {
-          println("****** Cannot find  user with pin [" + msg.authCode + "]")
+          logger.info("****** Cannot find  user with pin [" + msg.authCode + "]")
           // No current web user. This means that the user called in through
           // the phone. We need to generate a new user as we are not able
           // to match with a web user.

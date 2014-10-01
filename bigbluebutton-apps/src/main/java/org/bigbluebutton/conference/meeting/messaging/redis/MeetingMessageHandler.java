@@ -87,7 +87,7 @@ public class MeetingMessageHandler implements MessageHandler {
 					bbbGW.voiceUserLeftVoiceConf(emm.confId, emm.userId);
 				} else if (msg instanceof VoiceUserStatusChanged) {
 					VoiceUserStatusChanged emm = (VoiceUserStatusChanged) msg;
-					System.out.println("Received VoiceUserStatusChanged request. Voice Conf id [" + emm.confId + "}]");		
+					log.info("Received VoiceUserStatusChanged request. Voice Conf id [" + emm.confId + "}]");		
 					bbbGW.voiceUserStatusChanged(emm.confId, emm.userId, emm.username, emm.authCode, emm.muted, emm.talking, emm.bbbUserId, emm.calledFromBbb);
 				} else if (msg instanceof VoiceUserTalking) {
 					VoiceUserTalking emm = (VoiceUserTalking) msg;
