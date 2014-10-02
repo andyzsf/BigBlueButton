@@ -254,12 +254,16 @@ trait UsersApp {
   }
 			
   def handleUserLeft(msg: UserLeaving):Unit = {
-	 if (users.hasUser(msg.userID)) {
-	  val user = users.removeUser(msg.userID)
-	  user foreach (u => outGW.send(new UserLeft(msg.meetingID, recorded, u)))  
+     processUserLeft(msg.userID)
+  }
+  
+  def processUserLeft(userId: String) {
+	 if (users.hasUser(userId)) {
+	  val user = users.removeUser(userId)
+	  user foreach (u => outGW.send(new UserLeft(meetingID, recorded, u)))  
 	  
     startCheckingIfWeNeedToEndVoiceConf()
-	 }
+	 }    
   }
   
   def updateVoiceUser(user: UserVO, muted: Boolean, talking: Boolean) = {     
@@ -304,7 +308,7 @@ trait UsersApp {
      // No current web user. This means that the user called in through
      // the phone. We need to generate a new user as we are not able
      // to match with a web user.
-     val webUserId = voiceUserId //users.generateWebUserId
+     val webUserId = users.generateWebUserId
      val vu = new VoiceUser(voiceUserId, webUserId, 
                             callerName, callerNum,
                             true, false, false, false)
@@ -314,12 +318,28 @@ trait UsersApp {
 		           phoneUser=true, vu, listenOnly=false, authToken=webUserId, pin=pin, permissions)
 		  	
 		 users.addUser(uvo)
-		 logger.info("Phone caller joined voice conference, user [" + uvo.name + "] userid=[" + webUserId + "]")
+		 logger.info("Phone caller joined voice conference. conf=[" + voiceBridge + "] userid=[" + webUserId + "]")
 		 outGW.send(new UserJoined(meetingID, recorded, uvo))
 		      
 		 outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, uvo))
 		 if (meetingMuted)
         outGW.send(new MuteVoiceUser(meetingID, recorded, uvo.userID, uvo.userID, voiceBridge, uvo.voiceUser.userId, meetingMuted))    
+  }
+  
+  def removePhoneCallerFromUsers(voiceUserId: String) {
+    users.getUserWithVoiceUserId(voiceUserId) foreach {user =>
+      val vu = new VoiceUser(user.userID, user.userID, user.name, user.name,  
+                           false, false, false, false)
+      val nu = user.copy(voiceUser=vu)
+      users.addUser(nu)
+            
+      logger.info("Removing phone caller from users list. conf=[" + voiceBridge + "] vid=[" + voiceUserId + "]" )
+      outGW.send(new UserLeftVoice(meetingID, recorded, voiceBridge, nu))    
+      
+      if (user.phoneUser) {
+	      processUserLeft(user.userID)       
+      }
+    }    
   }
   
   def handleVoiceUserStatusChangedMessage(msg: VoiceUserStatusChangedMessage) = {
@@ -332,8 +352,9 @@ trait UsersApp {
             case Some(userWithAuthCode) => {
               logger.info("Web user joined voice conference. pin=[" + msg.authCode + "], vuid=[" + msg.voiceUserId + "], " +
           		         "conf=[" + msg.voiceConf + "], meeting=[" + meetingID + "]")
+          		removePhoneCallerFromUsers(msg.voiceUserId)         
               webUserJoinedVoiceConference(userWithAuthCode, msg.voiceUserId, userWithAuthCode.userID, msg.callerIdName, msg.callerIdNum)
-              handleVoiceUserLeftConfMessage(new VoiceUserLeftConfMessage(meetingID, msg.voiceConf, msg.voiceUserId))
+              
             }
             case None => logger.info("Cannot find web user with pin=[" + msg.authCode + "]")
           }
@@ -365,13 +386,14 @@ trait UsersApp {
       val nu = user.copy(voiceUser=vu)
       users.addUser(nu)
             
-      logger.info("Received voice user left =[" + user.name + "] wid=[" + msg.voiceUserId + "]" )
+      logger.info("Received voice user left. conf=[" + voiceBridge + "] vid=[" + msg.voiceUserId + "] uid=[" + user.userID + "]" )
       outGW.send(new UserLeftVoice(meetingID, recorded, voiceBridge, nu))    
       
       if (user.phoneUser) {
+        logger.info("Phone caller leaving. conf=[" + voiceBridge + "] vid=[" + msg.voiceUserId + "] uid=[" + user.userID + "]" )
 	      if (users.hasUser(user.userID)) {
-	        val userLeaving = users.removeUser(user.userID)
-	        userLeaving foreach (u => outGW.send(new UserLeft(msg.meetingID, recorded, u)))
+	        logger.info("Removing caller from users. conf=[" + voiceBridge + "] vid=[" + msg.voiceUserId + "] uid=[" + user.userID + "]" )
+	        processUserLeft(user.userID)
 	      }        
       }
     }   

@@ -32,7 +32,7 @@ public class MeetingMessageHandler implements MessageHandler {
 	
 	@Override
 	public void handleMessage(String pattern, String channel, String message) {
-		log.debug("Checking message: " + pattern + " " + channel + " " + message);
+		log.debug("Handling message: " + pattern + " " + channel + " " + message);
 		if (channel.equalsIgnoreCase(MessagingConstants.TO_MEETING_CHANNEL)) {
 //			System.out.println("Meeting message: " + channel + " " + message);
 			IMessage msg = MessageFromJsonConverter.convert(message);
@@ -83,20 +83,20 @@ public class MeetingMessageHandler implements MessageHandler {
 			if (msg != null) {
 				if (msg instanceof VoiceUserLeft) {
 					VoiceUserLeft emm = (VoiceUserLeft) msg;
-					log.info("Received VoiceUserLeft request. Meeting id [{}]", emm.confId);		
+					log.debug("Received VoiceUserLeft request. Meeting id [{}]", emm.confId);		
 					bbbGW.voiceUserLeftVoiceConf(emm.confId, emm.userId);
 				} else if (msg instanceof VoiceUserStatusChanged) {
 					VoiceUserStatusChanged emm = (VoiceUserStatusChanged) msg;
-					log.info("Received VoiceUserStatusChanged request. Voice Conf id [" + emm.confId + "}]");		
+					log.debug("Received VoiceUserStatusChanged request. Voice Conf id [" + emm.confId + "}]");		
 					bbbGW.voiceUserStatusChanged(emm.confId, emm.userId, emm.username, emm.authCode, emm.muted, emm.talking, emm.bbbUserId, emm.calledFromBbb);
 				} else if (msg instanceof VoiceUserTalking) {
 					VoiceUserTalking emm = (VoiceUserTalking) msg;
-					log.info("Received VoiceUserTalking request. Meeting id [{}]", emm.confId);				
+					log.debug("Received VoiceUserTalking request. Meeting id [{}]", emm.confId);				
 				} else if (msg instanceof VoiceRecordingStarted) {
 					VoiceRecordingStarted emm = (VoiceRecordingStarted) msg;
 					log.info("Received VoiceRecordingStarted request. Meeting id [{}]", emm.confId);				
 				} else {
-					System.out.println("Unknown message: " + pattern + " " + channel + " " + message);
+					log.warn("Unknown message: " + pattern + " " + channel + " " + message);
 				}
 			}			
 		} else {
