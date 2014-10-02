@@ -32,7 +32,7 @@ public class MeetingMessageHandler implements MessageHandler {
 	
 	@Override
 	public void handleMessage(String pattern, String channel, String message) {
-		System.out.println("Checking message: " + pattern + " " + channel + " " + message);
+		log.debug("Checking message: " + pattern + " " + channel + " " + message);
 		if (channel.equalsIgnoreCase(MessagingConstants.TO_MEETING_CHANNEL)) {
 //			System.out.println("Meeting message: " + channel + " " + message);
 			IMessage msg = MessageFromJsonConverter.convert(message);
@@ -47,7 +47,7 @@ public class MeetingMessageHandler implements MessageHandler {
 					bbbGW.createMeeting2(emm.id, emm.name, emm.record, emm.voiceBridge, emm.duration);
 				} else if (msg instanceof RegisterUserMessage) {
 					RegisterUserMessage emm = (RegisterUserMessage) msg;
-					log.debug("Received RegisterUserMessage. user id [{}] pin=[{}]", emm.fullname, emm.authToken);
+					log.debug("Received RegisterUserMessage. user id [{}] pin=[{}]", emm.fullname, emm.pin);
 					bbbGW.registerUser(emm.meetingID, emm.internalUserId, emm.fullname, emm.role, emm.externUserID, emm.authToken, emm.pin);
 				} else if (msg instanceof DestroyMeetingMessage) {
 					DestroyMeetingMessage emm = (DestroyMeetingMessage) msg;
@@ -73,12 +73,12 @@ public class MeetingMessageHandler implements MessageHandler {
 			if (msg != null) {
 				if (msg instanceof KeepAliveMessage) {
 					KeepAliveMessage emm = (KeepAliveMessage) msg;
-					log.debug("Received KeepAliveMessage request. Meeting id [{}]", emm.keepAliveId);
+					//log.debug("Received KeepAliveMessage request. Meeting id [{}]", emm.keepAliveId);
 					bbbGW.isAliveAudit(emm.keepAliveId);					
 				}
 			}
 		} else if (channel.equalsIgnoreCase(MessagingConstants.FROM_VOICE_CHANNEL)) {
-			System.out.println("Handle message from voice conference : " + pattern + " " + channel + " " + message);
+			log.debug("Handle message from voice conference : " + pattern + " " + channel + " " + message);
 			IMessage msg = MessageFromJsonConverter.convert(message);
 			if (msg != null) {
 				if (msg instanceof VoiceUserLeft) {
@@ -100,7 +100,7 @@ public class MeetingMessageHandler implements MessageHandler {
 				}
 			}			
 		} else {
-			System.out.println("Cant handle message from channel [" + channel + "]");
+			log.warn("Cant handle message from channel [" + channel + "]");
 		}
 	}
 	

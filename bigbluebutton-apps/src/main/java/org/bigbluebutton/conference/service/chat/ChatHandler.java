@@ -37,78 +37,63 @@ public class ChatHandler implements IApplication{
 	
 	@Override
 	public boolean appConnect(IConnection conn, Object[] params) {
-		log.debug("***** " + APP + " [ " + " appConnect *********");
 		return true;
 	}
 
 	@Override
 	public void appDisconnect(IConnection conn) {
-		log.debug("***** " + APP + " [ " + " appDisconnect *********");
 	}
 
 	@Override
 	public boolean appJoin(IClient client, IScope scope) {
-		log.debug("***** " + APP + " [ " + " appJoin [ " + scope.getName() + "] *********");
 		return true;
 	}
 
 	@Override
 	public void appLeave(IClient client, IScope scope) {
-		log.debug("***** " + APP + " [ " + " appLeave [ " + scope.getName() + "] *********");
 	}
 
 	@Override
 	public boolean appStart(IScope scope) {
-		log.debug("***** " + APP + " [ " + " appStart [ " + scope.getName() + "] *********");
 		return true;
 	}
 
 	@Override
 	public void appStop(IScope scope) {
-		log.debug("***** " + APP + " [ " + " appStop [ " + scope.getName() + "] *********");
 	}
 	
 	@Override
 	public void roomDisconnect(IConnection connection) {
-		log.debug("***** " + APP + " [ " + " roomDisconnect [ " + connection.getScope().getName() + "] *********");
 	}
 
 	@Override
 	public boolean roomJoin(IClient client, IScope scope) {
-		log.debug("***** " + APP + " [ " + " roomJoin [ " + scope.getName() + "] *********");
 		return true;
 	}
 
 	@Override
 	public void roomLeave(IClient client, IScope scope) {
-		log.debug("***** " + APP + " [ " + " roomLeave [ " + scope.getName() + "] *********");
 	}
 
 	@Override
-	public boolean roomConnect(IConnection connection, Object[] params) {
-		log.debug("***** " + APP + " [ " + " roomConnect [ " + connection.getScope().getName() + "] *********");
-		
+	public boolean roomConnect(IConnection connection, Object[] params) {		
 		return true;
 	}
 
 	@Override
 	public boolean roomStart(IScope scope) {
-		log.debug("***** " + APP + " [ " + " roomStart [ " + scope.getName() + "] *********");
     	return true;
 	}
 
 	@Override
 	public void roomStop(IScope scope) {
-		log.debug("***** " + APP + " [ " + " roomStop [ " + scope.getName() + "] *********");
 	}
 	
 	public void setChatApplication(ChatApplication a) {
-		log.debug("Setting chat application");
 		chatApplication = a;
 	}
 	
 	public void setRecorderApplication(RecorderApplication a) {
-		log.debug("Setting archive application");
 		recorderApplication = a;
 	}
 }

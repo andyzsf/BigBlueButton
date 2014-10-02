@@ -4,8 +4,9 @@ import scala.actors.Actor
 import scala.actors.Actor._
 import scala.collection.mutable.HashMap
 import org.bigbluebutton.core.api._
+import org.bigbluebutton.core.util._
 
-class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
+class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor with LogHelper {
 
   private var meetings = new HashMap[String, MeetingActor]
   
@@ -34,7 +35,7 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
         m foreach {mActor => mActor ! udm}        
       }
       case udm: VoiceUserStatusChangedMessage => {
-        println("Handling VoiceUserStatusChangedMessage message")
+        //println("Handling VoiceUserStatusChangedMessage message")
         val m = meetings.values.find( m => m.voiceBridge == udm.voiceConf)
         m foreach {mActor => mActor ! udm}        
       }
@@ -57,7 +58,7 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
   private def handleMeetingNotFound(msg: InMessage) {
     msg match {
       case vat:ValidateAuthToken => {
-        println("No meeting [" + vat.meetingID + "] for auth token [" + vat.token + "]")
+        logger.info("No meeting [" + vat.meetingID + "] for auth token [" + vat.token + "]")
         outGW.send(new ValidateAuthTokenReply(vat.meetingID, vat.userId, vat.token, false, vat.correlationId))
       }
       case _ => {
@@ -72,16 +73,16 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
   }
     
   private def handleDestroyMeeting(msg: DestroyMeeting) {
-    println("****************** BBBActor received DestroyMeeting message for meeting id [" + msg.meetingID + "] **************")
+    logger.info("BBBActor received DestroyMeeting message for meeting id [" + msg.meetingID + "]")
     meetings.get(msg.meetingID) match {
-      case None => println("Could not find meeting id[" + msg.meetingID + "] to destroy.")
+      case None => logger.info("Could not find meeting id[" + msg.meetingID + "] to destroy.")
       case Some(m) => {
         m ! StopMeetingActor
         meetings -= msg.meetingID    
-        println("Kinc everyone out on meeting id[" + msg.meetingID + "].")
+        logger.info("Kicking everyone out of meeting id[" + msg.meetingID + "].")
         outGW.send(new EndAndKickAll(msg.meetingID, m.recorded))
         
-        println("Destroyed meeting id[" + msg.meetingID + "].")
+        logger.info("Destroyed meeting id[" + msg.meetingID + "].")
         outGW.send(new MeetingDestroyed(msg.meetingID))
       }
     }
@@ -90,7 +91,7 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
   private def handleCreateMeeting(msg: CreateMeeting):Unit = {
     meetings.get(msg.meetingID) match {
       case None => {
-        println("New meeting create request [" + msg.meetingName + "]")
+        logger.info("New meeting create request [" + msg.meetingName + "]")
     	  var m = new MeetingActor(msg.meetingID, msg.meetingName, msg.recorded, msg.voiceBridge, msg.duration, outGW)
     	  m.start
     	  meetings += m.meetingID -> m
@@ -100,7 +101,7 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor {
     	  m ! "StartTimer"
       }
       case Some(m) => {
-        println("Meeting already created [" + msg.meetingName + "]")
+        logger.info("Meeting already created [" + msg.meetingName + "]")
         // do nothing
       }
     }

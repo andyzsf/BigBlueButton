@@ -84,7 +84,7 @@ trait PresentationApp {
     }
     
     def handleGetPresentationInfo(msg: GetPresentationInfo) {
-      println("PresentationApp : handleGetPresentationInfo GetPresentationInfo for meeting [" + msg.meetingID + "] [" + msg.requesterID + "]" )
+//      println("PresentationApp : handleGetPresentationInfo GetPresentationInfo for meeting [" + msg.meetingID + "] [" + msg.requesterID + "]" )
       
       val curPresenter = getCurrentPresenter;
       val presenter = new CurrentPresenter(curPresenter.presenterID, 
@@ -107,14 +107,14 @@ trait PresentationApp {
     }
     
     def handleGotoSlide(msg: GotoSlide) {
-      println("Received GotoSlide for meeting=[" +  msg.meetingID + "] page=[" + msg.page + "]")
-      println("*** Before change page ****")
+//      println("Received GotoSlide for meeting=[" +  msg.meetingID + "] page=[" + msg.page + "]")
+//      println("*** Before change page ****")
       printPresentations
       presModel.changePage(msg.page) foreach {page => 
-        println("Switching page for meeting=[" +  msg.meetingID + "] page=[" + page.id + "]")
+//        println("Switching page for meeting=[" +  msg.meetingID + "] page=[" + page.id + "]")
         outGW.send(new GotoSlideOutMsg(meetingID, recorded, page))
       }
-      println("*** After change page ****")
+//      println("*** After change page ****")
       printPresentations
     }
     
@@ -146,9 +146,9 @@ trait PresentationApp {
     
     def printPresentations() {
       presModel.getPresentations foreach {pres =>
-        println("presentation id=[" + pres.id + "] current=[" + pres.current + "]")
+//        println("presentation id=[" + pres.id + "] current=[" + pres.current + "]")
         pres.pages.values foreach {page =>
-          println("page id=[" + page.id + "] current=[" + page.current + "]")
+//          println("page id=[" + page.id + "] current=[" + page.current + "]")
         }
       }
       
