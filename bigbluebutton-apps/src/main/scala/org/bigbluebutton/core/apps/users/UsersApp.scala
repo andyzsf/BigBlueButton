@@ -83,7 +83,7 @@ trait UsersApp {
       // Check first if the meeting has ended and the user refreshed the client to re-connect.
       sendMeetingHasEnded(msg.userID)
     } else {
-      logger.info("Handling RegisterUser user request uid=[" + msg.userID + "] pin=[" + msg.pin + "]")
+      logger.info("Handling RegisterUser. mid=[" + meetingID + "]  wid=[" + msg.userID + "] pin=[" + msg.pin + "]")
       val regUser = new RegisteredUser(msg.userID, msg.extUserID, msg.name, msg.role, msg.authToken, msg.pin)
       regUsers += msg.userID -> regUser
       outGW.send(new UserRegistered(meetingID, recorded, regUser))      
@@ -236,7 +236,7 @@ trait UsersApp {
                   hasStream=false, locked=false, webcamStream="", 
                   phoneUser=false, vu, listenOnly=false, authToken=ru.authToken, pin=ru.pin, permissions)
   	
-      println("User joined [" + uvo + "]")
+      logger.info("Web eser joined [" + uvo + "]")
 	    users.addUser(uvo)
 					
 	    outGW.send(new UserJoined(meetingID, recorded, uvo))
@@ -298,7 +298,7 @@ trait UsersApp {
                   true, false, false, false)
      val nu = user.copy(voiceUser=nvu)
      users.addUser(nu)
-     logger.info("Received user joined voice for user [" + nu.name + "] userid=[" + voiceUserId + "]" )
+     logger.info("Web user joined voice conference. conf=[" + voiceBridge + "] vid=[" + voiceUserId + "], wid=[" + user.userID + "]" )
      outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, nu))     
      if (meetingMuted)
         outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, voiceBridge, nu.voiceUser.userId, meetingMuted))   
@@ -318,7 +318,7 @@ trait UsersApp {
 		           phoneUser=true, vu, listenOnly=false, authToken=webUserId, pin=pin, permissions)
 		  	
 		 users.addUser(uvo)
-		 logger.info("Phone caller joined voice conference. conf=[" + voiceBridge + "] userid=[" + webUserId + "]")
+		 logger.info("Phone caller joined voice conference. conf=[" + voiceBridge + "] wid=[" + webUserId + "] vid=[" + voiceUserId + "]")
 		 outGW.send(new UserJoined(meetingID, recorded, uvo))
 		      
 		 outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, uvo))
@@ -333,13 +333,19 @@ trait UsersApp {
       val nu = user.copy(voiceUser=vu)
       users.addUser(nu)
             
-      logger.info("Removing phone caller from users list. conf=[" + voiceBridge + "] vid=[" + voiceUserId + "]" )
+      logger.info("Removing phone caller from users list. conf=[" + voiceBridge + "] vid=[" + voiceUserId + "] wid=[" + user.userID + "]" )
       outGW.send(new UserLeftVoice(meetingID, recorded, voiceBridge, nu))    
       
       if (user.phoneUser) {
 	      processUserLeft(user.userID)       
       }
     }    
+  }
+  
+  def ejectVoiceUserFromVoiceConference(voiceUserId: String) {
+//    if (u.voiceUser.joined) {
+//      outGW.send(new EjectVoiceUser(meetingID, recorded, msg.ejectedBy, u.userID))
+//    }    
   }
   
   def handleVoiceUserStatusChangedMessage(msg: VoiceUserStatusChangedMessage) = {
@@ -350,8 +356,8 @@ trait UsersApp {
         } else {
           users.getUserWithAuthCode(msg.authCode) match {
             case Some(userWithAuthCode) => {
-              logger.info("Web user joined voice conference. pin=[" + msg.authCode + "], vuid=[" + msg.voiceUserId + "], " +
-          		         "conf=[" + msg.voiceConf + "], meeting=[" + meetingID + "]")
+              logger.info("Web user joined voice conference using phone. pin=[" + msg.authCode + "], vid=[" + msg.voiceUserId + "], " +
+          		         "conf=[" + msg.voiceConf + "], wid=[" + userWithAuthCode.userID + "]")
           		removePhoneCallerFromUsers(msg.voiceUserId)         
               webUserJoinedVoiceConference(userWithAuthCode, msg.voiceUserId, userWithAuthCode.userID, msg.callerIdName, msg.callerIdNum)
               
@@ -364,15 +370,13 @@ trait UsersApp {
         if (msg.calledFromBbb) {
           users.getUserWithAuthCode(msg.authCode) match {
             case Some(userWithAuthCode) => {
-              logger.info("Web user joined voice conference. pin=[" + msg.authCode + "], vuid=[" + msg.voiceUserId + "], " +
-          		         "conf=[" + msg.voiceConf + "], meeting=[" + meetingID + "]")
+              logger.info("Web user joined voice conference from client. pin=[" + msg.authCode + "], vuid=[" + msg.voiceUserId + "], " +
+          		         "conf=[" + msg.voiceConf + "], wid=[" + userWithAuthCode.userID + "]")
               webUserJoinedVoiceConference(userWithAuthCode, msg.voiceUserId, userWithAuthCode.userID, msg.callerIdName, msg.callerIdNum)
             }
             case None => logger.info("Cannot find web user with pin=[" + msg.authCode + "]")
           }
         } else {
-          logger.info("User calling from phone. pin=[" + msg.authCode + "], vuid=[" + msg.voiceUserId + "], " +
-          		         "conf=[" + msg.voiceConf + "], meeting=[" + meetingID + "]")
           nonWebUserJoinedVoiceConference(msg.voiceUserId, msg.callerIdName, msg.callerIdNum, msg.authCode)
         }
       }
@@ -392,7 +396,7 @@ trait UsersApp {
       if (user.phoneUser) {
         logger.info("Phone caller leaving. conf=[" + voiceBridge + "] vid=[" + msg.voiceUserId + "] uid=[" + user.userID + "]" )
 	      if (users.hasUser(user.userID)) {
-	        logger.info("Removing caller from users. conf=[" + voiceBridge + "] vid=[" + msg.voiceUserId + "] uid=[" + user.userID + "]" )
+	        logger.info("Removing phone caller from users. conf=[" + voiceBridge + "] vid=[" + msg.voiceUserId + "] uid=[" + user.userID + "]" )
 	        processUserLeft(user.userID)
 	      }        
       }
