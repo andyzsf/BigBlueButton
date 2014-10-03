@@ -70,6 +70,7 @@ case class UserVO(
   locked: Boolean, 
   webcamStream: String, 
   phoneUser: Boolean,
+  calledFromBbb: Boolean,
   voiceUser: VoiceUser,
   listenOnly: Boolean,
   authToken: String,
