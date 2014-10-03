@@ -41,4 +41,5 @@ public class UserSession {
   public String configXML;
   public String authToken;
   public String pin;
+  public String phoneInInstruction = "";
 }

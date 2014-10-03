@@ -359,6 +359,11 @@ class ApiController {
 		pin = params.pin
 	}
 	
+	String phoneInInstruction = ""
+	if (! StringUtils.isEmpty(params.phoneInInstruction)) {
+		phoneInInstruction = params.phoneInInstruction
+	}
+	
 	UserSession us = new UserSession();
 	us.internalUserId = internalUserID
   us.conferencename = meeting.getName()
@@ -379,6 +384,7 @@ class ApiController {
 	us.authToken = internalUserID
 	us.pin = pin
 	us.dialNumber = dialNumber
+	us.phoneInInstruction = phoneInInstruction
 			
 	if (! StringUtils.isEmpty(params.defaultLayout)) {
 		us.defaultLayout = params.defaultLayout;
@@ -1393,6 +1399,7 @@ class ApiController {
 								}
               }
 							pin = us.pin
+							phoneInInstruction = us.phoneInInstruction
             }
           }
         }
