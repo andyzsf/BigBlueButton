@@ -31,33 +31,42 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 	
 	<mx:Script>
 		<![CDATA[
-			import com.asfusion.mate.events.Dispatcher;
-			
-			import mx.managers.PopUpManager;
-			
-			import org.bigbluebutton.core.UsersUtil;
-			import org.bigbluebutton.core.managers.UserManager;
-			import org.bigbluebutton.main.events.MadePresenterEvent;
-			import org.bigbluebutton.modules.phone.PhoneOptions;
-			import org.bigbluebutton.modules.phone.events.AudioSelectionWindowEvent;
-			import org.bigbluebutton.modules.phone.events.JoinVoiceConferenceCommand;
-			import org.bigbluebutton.util.i18n.ResourceUtil;
+      import com.asfusion.mate.events.Dispatcher;
+      
+      import mx.managers.PopUpManager;
+      
+      import org.bigbluebutton.core.UsersUtil;
+      import org.bigbluebutton.core.managers.UserManager;
+      import org.bigbluebutton.core.model.MeetingModel;
+      import org.bigbluebutton.main.events.MadePresenterEvent;
+      import org.bigbluebutton.modules.phone.PhoneOptions;
+      import org.bigbluebutton.modules.phone.events.AudioSelectionWindowEvent;
+      import org.bigbluebutton.modules.phone.events.JoinVoiceConferenceCommand;
+      import org.bigbluebutton.util.i18n.ResourceUtil;
 			
 			private var phoneOptions:PhoneOptions = new PhoneOptions;
 			
+      private function hidePhoneOption():void {
+        vrulePhone.visible = vrulePhone.includeInLayout = false;
+        vboxPhone.visible = vboxPhone.includeInLayout = false;
+        this.width = 440;
+        this.height = 300;
+        vboxMic.percentWidth = 50;
+        vboxListen.percentWidth = 50;        
+      }
+      
 			private function onCreationComplete():void {
 				if (!phoneOptions.listenOnlyMode) btnListenOnly.enabled = false;
 				if (phoneOptions.presenterShareOnly && !UsersUtil.amIPresenter() && !UsersUtil.amIModerator()) btnMicrophone.enabled = false;
 				
 				if (phoneOptions.showPhoneOption) {
-					txtPhone.text=ResourceUtil.getInstance().getString('bbb.audioSelection.txtPhone.text', [UserManager.getInstance().getConference().dialNumber, UserManager.getInstance().getConference().voiceBridge]);
-				} else {
-					vrulePhone.visible = vrulePhone.includeInLayout = false;
-					vboxPhone.visible = vboxPhone.includeInLayout = false;
-					this.width = 440;
-					this.height = 300;
-					vboxMic.percentWidth = 50;
-					vboxListen.percentWidth = 50;
+          if ((MeetingModel.getInstance().phoneInInstruction != "") && (MeetingModel.getInstance().phoneInInstruction != null)) {
+            txtPhone.text = MeetingModel.getInstance().phoneInInstruction;
+          } else {
+            hidePhoneOption();
+          }
+        } else {
+          hidePhoneOption();
 				}
 			}
 			

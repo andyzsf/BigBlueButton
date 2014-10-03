@@ -53,6 +53,10 @@ package org.bigbluebutton.core.model
     public function get modOnlyMessage():String {
       return _modOnlyMessage;
     }
+    
+    public function get phoneInInstruction():String {
+      return _meeting.phoneInInstruction;
+    }
   }
 }
 

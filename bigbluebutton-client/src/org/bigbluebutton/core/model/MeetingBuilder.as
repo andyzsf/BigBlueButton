@@ -13,6 +13,7 @@ package org.bigbluebutton.core.model
     internal var welcomeMessage:String;
     internal var modOnlyMessage:String;
     internal var voiceAuthToken:String;
+    internal var phoneInInstruction:String;
     
     public function MeetingBuilder(id: String, name: String) {
       this.id = id;
@@ -63,6 +64,11 @@ package org.bigbluebutton.core.model
       voiceAuthToken = value;
       return this;
     }    
+    
+    public function withPhoneInInstruction(value: String):MeetingBuilder {
+      phoneInInstruction = value;
+      return this;
+    }
     
     public function build():Meeting {
       return new Meeting(this);

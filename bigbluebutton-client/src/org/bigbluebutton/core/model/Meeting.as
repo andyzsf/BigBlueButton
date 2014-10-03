@@ -13,6 +13,7 @@ package org.bigbluebutton.core.model
     private var _welcomeMessage:String;
     private var _modOnlyMessage:String;
     private var _voiceAuthToken:String;
+    private var _phoneInInstruction:String;
     
     public var isRecording: Boolean = false;
     
@@ -29,6 +30,7 @@ package org.bigbluebutton.core.model
       _welcomeMessage = build.welcomeMessage;
       _modOnlyMessage = build.modOnlyMessage;
       _voiceAuthToken = build.voiceAuthToken;
+      _phoneInInstruction = build.phoneInInstruction;
     }
     
     public function get name():String {
@@ -65,6 +67,10 @@ package org.bigbluebutton.core.model
     
     public function get voiceAuthToken():String {
       return _voiceAuthToken;
+    }
+    
+    public function get phoneInInstruction():String {
+      return _phoneInInstruction;
     }
   }
 }
