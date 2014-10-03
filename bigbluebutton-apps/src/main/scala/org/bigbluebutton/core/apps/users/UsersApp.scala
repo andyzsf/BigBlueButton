@@ -113,7 +113,7 @@ trait UsersApp {
     users.getUser(msg.userId) match {
       case Some(u) => {
         if (u.voiceUser.joined) {
-          outGW.send(new EjectVoiceUser(meetingID, recorded, msg.ejectedBy, u.userID))
+          outGW.send(new EjectVoiceUser(meetingID, recorded, msg.ejectedBy, u.userID, voiceBridge, u.voiceUser.userId))
         }      
       }
       case None => // do nothing
@@ -187,7 +187,7 @@ trait UsersApp {
   def handleEjectUserFromMeeting(msg: EjectUserFromMeeting) {
     users.getUser(msg.userId) foreach {user =>
       if (user.voiceUser.joined) {
-        outGW.send(new EjectVoiceUser(meetingID, recorded, msg.ejectedBy, msg.userId))
+        outGW.send(new EjectVoiceUser(meetingID, recorded, msg.ejectedBy, msg.userId, voiceBridge, user.voiceUser.userId))
       }
       
       users.removeUser(msg.userId)
@@ -272,6 +272,10 @@ trait UsersApp {
      val muteChanged = vu.muted != muted
      val talkingChanged = vu.talking != talking        
      
+     logger.debug("Voice user status changed. vid=[" + vu.userId +"] conf=[" + voiceBridge 
+         + "] muted[old,new]=[" + vu.muted + "," + muted
+         + "] talking[old,new]=[" + vu.talking + "," + talking + "]");
+         
      var nvu = vu.copy()
      if (vu.muted != muted) {
        nvu = nvu.copy(muted=muted)              
@@ -283,13 +287,18 @@ trait UsersApp {
      
      val nu = user.copy(voiceUser=nvu)
      users.addUser(nu)
-            
+     
+     
      if (muteChanged) {
-         outGW.send(new UserVoiceMuted(meetingID, recorded, voiceBridge, nu))
+       logger.debug("Sending voice user muted. vid=[" + vu.userId +"] conf=[" + voiceBridge 
+         + "] muted=[" + nvu.muted + "]");
+       outGW.send(new UserVoiceMuted(meetingID, recorded, voiceBridge, nu))
      }
             
      if (talkingChanged) {
-         outGW.send(new UserVoiceTalking(meetingID, recorded, voiceBridge, nu))
+       logger.debug("Sending voice user is talking. vid=[" + vu.userId +"] conf=[" + voiceBridge 
+         + "] talking=[" + nvu.talking + "]");
+       outGW.send(new UserVoiceTalking(meetingID, recorded, voiceBridge, nu))
      }
   }
   

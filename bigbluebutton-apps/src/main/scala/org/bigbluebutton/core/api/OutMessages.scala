@@ -286,6 +286,8 @@ case class EjectVoiceUser(
     recorded: Boolean, 
     requesterID: String, 
     userId: String,
+    voiceConf: String,
+    voiceUserId: String,
     version:String = Versions.V_0_0_1
 ) extends IOutMessage
 

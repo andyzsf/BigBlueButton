@@ -50,7 +50,9 @@ object VoiceConfMessageToJsonConverter {
     val payload = new java.util.HashMap[String, Any]()
     payload.put(Constants.MEETING_ID, msg.meetingID)
     payload.put(Constants.REQUESTER_ID, msg.requesterID)
-    payload.put(Constants.VOICE_USER, msg.userId)
+    payload.put(Constants.USER_ID, msg.userId)
+    payload.put(Constants.VOICE_CONF, msg.voiceConf)
+    payload.put(Constants.VOICE_USERID, msg.voiceUserId)
 
     val header = Util.buildHeader(MessageNames.EJECT_VOICE_USER, msg.version, None)
     Util.buildJson(header, payload)
