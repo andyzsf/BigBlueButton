@@ -61,7 +61,7 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
 				
 				if (phoneOptions.showPhoneOption) {
           if ((MeetingModel.getInstance().phoneInInstruction != "") && (MeetingModel.getInstance().phoneInInstruction != null)) {
-            txtPhone.text = MeetingModel.getInstance().phoneInInstruction;
+            txtPhone.htmlText = MeetingModel.getInstance().phoneInInstruction;
           } else {
             hidePhoneOption();
           }
