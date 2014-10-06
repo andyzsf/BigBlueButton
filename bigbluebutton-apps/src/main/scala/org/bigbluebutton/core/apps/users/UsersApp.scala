@@ -36,8 +36,8 @@ trait UsersApp {
 //    println("*************** Got UserConnectedToGlobalAudio message for [" + msg.name + "] ********************" )
     val user = users.getUserWithExternalId(msg.userid)
     user foreach {u =>
-      val vu = u.voiceUser.copy(talking=false)
-      val uvo = u.copy(listenOnly=true, voiceUser=vu)
+      val vu = u.voiceUser.copy(talking=false, joined=true)
+      val uvo = u.copy(listenOnly=true, voiceUser=vu, phoneUser=false, calledFromBbb=true)
       users.addUser(uvo)
       outGW.send(new UserListeningOnly(meetingID, recorded, uvo.userID, uvo.listenOnly))        
     }
@@ -47,7 +47,8 @@ trait UsersApp {
     println("*************** Got UserDisconnectedToGlobalAudio message for [" + msg.name + "] ********************" )
     val user = users.getUserWithExternalId(msg.userid)
     user foreach {u =>
-      val uvo = u.copy(listenOnly=false)
+      val vu = u.voiceUser.copy(talking=false, joined=false)
+      val uvo = u.copy(listenOnly=false, phoneUser=false, calledFromBbb=false)
       users.addUser(uvo)
       outGW.send(new UserListeningOnly(meetingID, recorded, uvo.userID, uvo.listenOnly))        
     }
@@ -357,7 +358,7 @@ trait UsersApp {
 
   def ejectWebUserAsUserIsCallingInFromPhone(user: UserVO) {
     logger.info("Ejecting web user uid[=" + user.userID + "] vid=[" + user.voiceUser.userId + "] conf=[" + voiceBridge + "]." 
-        + "joined=[" + user.voiceUser.joined + "] phoneCalled=[" + user.phoneUser + "]")
+                         + "joined=[" + user.voiceUser.joined + "] phoneCalled=[" + user.phoneUser + "]")
     if (user.voiceUser.joined && user.calledFromBbb) {
       logger.info("Eject uid[=" + user.userID + "] vid=[" + user.voiceUser.userId + "] conf=[" + voiceBridge + "]. Calling in from phone." ) 
       outGW.send(new EjectVoiceUser(meetingID, recorded, user.userID, user.userID, voiceBridge, user.voiceUser.userId))
@@ -366,7 +367,7 @@ trait UsersApp {
     
   def ejectPhoneUserAsUserIsJoiningFromClient(user: UserVO) {
     logger.info("Ejecting Phone User uid[=" + user.userID + "] vid=[" + user.voiceUser.userId + "] conf=[" + voiceBridge + "]." 
-        + "joined=[" + user.voiceUser.joined + "] phoneCalled=[" + user.phoneUser + "]")
+                        + "joined=[" + user.voiceUser.joined + "] phoneCalled=[" + user.phoneUser + "]")
     if (user.voiceUser.joined && !user.calledFromBbb) {
       logger.info("Eject uid[=" + user.userID + "] vid=[" + user.voiceUser.userId + "] conf=[" + voiceBridge + "]. Calling in from client." ) 
       outGW.send(new EjectVoiceUser(meetingID, recorded, user.userID, user.userID, voiceBridge, user.voiceUser.userId))
