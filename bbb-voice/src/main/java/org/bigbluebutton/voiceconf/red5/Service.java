@@ -19,6 +19,9 @@
 package org.bigbluebutton.voiceconf.red5;
 
 import java.text.MessageFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.bigbluebutton.voiceconf.sip.PeerNotFoundException;
 import org.bigbluebutton.voiceconf.sip.SipPeerManager;
@@ -33,14 +36,25 @@ public class Service {
     private SipPeerManager sipPeerManager;
 	
 	private MessageFormat callExtensionPattern = new MessageFormat("{0}");
-    	
+  
+	private static final Pattern CALLERNAME_PATTERN = Pattern.compile("(.*)-bbbID-(.*)$");
+	
 	public Boolean call(String peerId, String callerName, String destination, Boolean listenOnly) {
 		if (listenOnly) {
 			if (GlobalCall.reservePlaceToCreateGlobal(destination)) {
 				String extension = callExtensionPattern.format(new String[] { destination });
 				try {
-					sipPeerManager.call(peerId, destination, "GLOBAL_AUDIO_" + destination, extension);
-					Red5.getConnectionLocal().setAttribute("VOICE_CONF_PEER", peerId);
+			    Matcher matcher = CALLERNAME_PATTERN.matcher(callerName);
+			    if (matcher.matches()) {			
+				    String voiceUserId = matcher.group(1).trim();
+				    String callerIdName = matcher.group(2).trim();
+				    log.info("[" + callerIdName + "]is joining [" + destination + "] in listen only.");
+						sipPeerManager.call(peerId, destination, "GLOBAL_AUDIO_" + destination + "_" + voiceUserId, extension);
+						Red5.getConnectionLocal().setAttribute("VOICE_CONF_PEER", peerId);
+			    } else {
+			    	log.error("Wrong callerName format [" + callerName + "]");
+			    }
+
 				} catch (PeerNotFoundException e) {
 					log.error("PeerNotFound {}", peerId);
 					return false;
