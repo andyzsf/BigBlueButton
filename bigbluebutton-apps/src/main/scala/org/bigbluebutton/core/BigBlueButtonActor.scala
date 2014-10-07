@@ -34,6 +34,16 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor with LogHelper 
         val m = meetings.values.find( m => m.voiceBridge == udm.voiceConf)
         m foreach {mActor => mActor ! udm}        
       }
+      case udm: VoiceConferenceRecordingStartedMessage => {
+        //println("Handling VoiceUserStatusChangedMessage message")
+        val m = meetings.values.find( m => m.voiceBridge == udm.voiceConf)
+        m foreach {mActor => mActor ! udm}        
+      }
+      case udm: VoiceConferenceRecordingStoppedMessage => {
+        //println("Handling VoiceUserStatusChangedMessage message")
+        val m = meetings.values.find( m => m.voiceBridge == udm.voiceConf)
+        m foreach {mActor => mActor ! udm}        
+      }
       case udm: VoiceUserStatusChangedMessage => {
         //println("Handling VoiceUserStatusChangedMessage message")
         val m = meetings.values.find( m => m.voiceBridge == udm.voiceConf)
