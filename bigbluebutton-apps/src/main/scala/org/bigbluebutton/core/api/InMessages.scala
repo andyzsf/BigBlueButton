@@ -419,6 +419,17 @@ case class EjectUserFromVoiceRequest(
     userId: String, 
     ejectedBy: String) extends InMessage
 
+case class VoiceConferenceRecordingStartedMessage(
+    meetingID: String, 
+    voiceConf: String,
+    filename: String,
+    timestamp: String) extends InMessage
+
+case class VoiceConferenceRecordingStoppedMessage(
+    meetingID: String, 
+    voiceConf: String,
+    timestamp: String) extends InMessage
+    
 case class VoiceUserStatusChangedMessage(
     meetingID: String,
     voiceConf: String, 

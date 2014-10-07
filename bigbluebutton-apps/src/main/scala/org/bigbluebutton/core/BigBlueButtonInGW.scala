@@ -432,6 +432,14 @@ class BigBlueButtonInGW(bbbGW: BigBlueButtonGateway, presUtil: PreuploadedPresen
 	  voiceGW.voiceUserStatusChanged(voiceConf, voiceUserId, username, authCode, muted, talking, userId, calledFromBbb)
 	}
 	
+	def voiceConferenceRecordingStarted(voiceConf: String, filename: String, timestamp: String) {
+	  voiceGW.voiceConferenceRecordingStarted(voiceConf, filename, timestamp)
+	}
+	
+	def voiceConferenceRecordingStopped(voiceConf: String, timestamp: String) {
+	  voiceGW.voiceConferenceRecordingStopped(voiceConf, timestamp)
+	}
+	
 	def voiceUserLeftVoiceConf(voiceConf: String, userId: String) {
 	  voiceGW.voiceUserLeftVoiceConf(voiceConf, userId)
 	}

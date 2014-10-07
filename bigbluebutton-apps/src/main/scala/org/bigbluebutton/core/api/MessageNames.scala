@@ -159,5 +159,6 @@ object MessageNames {
   val MEETING_DESTROYED_EVENT              = "meeting_destroyed_event"
   val KEEP_ALIVE_REPLY                     = "keep_alive_reply"
   val USER_LISTEN_ONLY                     = "user_listening_only"
-  
+  val START_RECORDING_VOICE_CONF           = "start_recording_voice_conference"
+  val STOP_RECORDING_VOICE_CONF            = "stop_recording_voice_conference"
 }

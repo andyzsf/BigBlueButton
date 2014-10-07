@@ -62,25 +62,25 @@ class UsersEventRedisRecorder(recorder: RecorderApplication) extends OutMessageL
   	
 	def handleVoiceRecordingStarted(msg: VoiceRecordingStarted) {
 	  if (msg.recorded) {
-		val evt = new StartRecordingVoiceRecordEvent(true);
-		evt.setMeetingId(msg.meetingID);
-		evt.setTimestamp(TimestampGenerator.generateTimestamp);
-		evt.setBridge(msg.confNum);
-		evt.setRecordingTimestamp(msg.timestamp);
-		evt.setFilename(msg.recordingFile);
-		recorder.record(msg.meetingID, evt);	    
+		  val evt = new StartRecordingVoiceRecordEvent(true);
+		  evt.setMeetingId(msg.meetingID);
+		  evt.setTimestamp(TimestampGenerator.generateTimestamp);
+		  evt.setBridge(msg.confNum);
+		  evt.setRecordingTimestamp(msg.timestamp);
+		  evt.setFilename(msg.recordingFile);
+		  recorder.record(msg.meetingID, evt);	    
 	  }
 	}
 	
 	def handleVoiceRecordingStopped(msg: VoiceRecordingStopped) {
 	  if (msg.recorded) {
-		val evt = new StartRecordingVoiceRecordEvent(false);
-		evt.setMeetingId(msg.meetingID);
-		evt.setTimestamp(TimestampGenerator.generateTimestamp);
-		evt.setBridge(msg.confNum);
-		evt.setRecordingTimestamp(msg.timestamp);
-		evt.setFilename(msg.recordingFile);
-		recorder.record(msg.meetingID, evt);	    
+		  val evt = new StartRecordingVoiceRecordEvent(false);
+		  evt.setMeetingId(msg.meetingID);
+		  evt.setTimestamp(TimestampGenerator.generateTimestamp);
+		  evt.setBridge(msg.confNum);
+		  evt.setRecordingTimestamp(msg.timestamp);
+		  evt.setFilename(msg.recordingFile);
+		  recorder.record(msg.meetingID, evt);	    
 	  }
 	}
 	    

@@ -6,6 +6,7 @@ import org.bigbluebutton.core.User
 import java.util.ArrayList
 import org.bigbluebutton.core.MeetingActor
 import scala.collection.mutable.ArrayBuffer
+import javax.print.attribute.standard.NumberOfDocuments
 
 trait UsersApp {
   this : MeetingActor =>
@@ -374,6 +375,21 @@ trait UsersApp {
     }       
   }
   
+  def startRecordingVoiceConference() = {
+    if (recorded && (users.numberOfUsersInVoiceConference == 1)) {
+      logger.info("Request to start recording voice conference. mid=[" + meetingID + "] voiceConf=[" + voiceBridge + "]")
+      val filename = meetingID + "-" + TimestampGenerator.generateTimestamp
+      outGW.send(new StartRecordingVoiceConference(meetingID, recorded, voiceBridge, filename))
+    }
+  }
+
+  def stopRecordingVoiceConference() = {
+    if (recorded && (users.numberOfUsersInVoiceConference == 0)) {
+      logger.info("Request to stop recording voice conference. mid=[" + meetingID + "] voiceConf=[" + voiceBridge + "]")
+      outGW.send(new StopRecordingVoiceConference(meetingID, recorded, voiceBridge))
+    }      
+  }
+    
   def handleVoiceUserStatusChangedMessage(msg: VoiceUserStatusChangedMessage) = {
     users.getUserWithVoiceUserId(msg.voiceUserId) match {
       case Some(user) => {
@@ -383,11 +399,14 @@ trait UsersApp {
           users.getUserWithAuthCode(msg.authCode) match {
             case Some(userWithAuthCode) => {
               ejectWebUserAsUserIsCallingInFromPhone(userWithAuthCode)
-              logger.info("Web user joined voice conference using phone. pin=[" + msg.authCode + "], vid=[" + msg.voiceUserId + "], " +
-          		         "conf=[" + msg.voiceConf + "], wid=[" + userWithAuthCode.userID + "]")
+              logger.info("Web user joined voice conference using phone. pin=[" 
+                  + msg.authCode + "], vid=[" + msg.voiceUserId + "], " 
+                  + "conf=[" + msg.voiceConf + "], wid=[" + userWithAuthCode.userID + "]")
           		removePhoneCallerFromUsers(msg.voiceUserId)         
-              webUserJoinedVoiceConference(userWithAuthCode, msg.voiceUserId, userWithAuthCode.userID, msg.callerIdName, msg.callerIdNum, calledFromBbb=false)
-              
+              webUserJoinedVoiceConference(userWithAuthCode, msg.voiceUserId, 
+                  userWithAuthCode.userID, msg.callerIdName, msg.callerIdNum, 
+                  calledFromBbb=false)
+              startRecordingVoiceConference()
             }
             case None => logger.info("Cannot find web user with pin=[" + msg.authCode + "]")
           }
@@ -398,18 +417,25 @@ trait UsersApp {
           users.getUserWithAuthCode(msg.authCode) match {
             case Some(userWithAuthCode) => {
               ejectPhoneUserAsUserIsJoiningFromClient(userWithAuthCode)
-              logger.info("Web user joined voice conference from client. pin=[" + msg.authCode + "], vuid=[" + msg.voiceUserId + "], " +
-          		         "conf=[" + msg.voiceConf + "], wid=[" + userWithAuthCode.userID + "]")
-              webUserJoinedVoiceConference(userWithAuthCode, msg.voiceUserId, userWithAuthCode.userID, msg.callerIdName, msg.callerIdNum, calledFromBbb=true)
+              logger.info("Web user joined voice conference from client. pin=[" 
+                  + msg.authCode + "], vuid=[" + msg.voiceUserId + "], " 
+                  + "conf=[" + msg.voiceConf + "], wid=[" 
+                  + userWithAuthCode.userID + "]")
+              webUserJoinedVoiceConference(userWithAuthCode, msg.voiceUserId, 
+                  userWithAuthCode.userID, msg.callerIdName, msg.callerIdNum, 
+                  calledFromBbb=true)
+              startRecordingVoiceConference()
             }
             case None => logger.info("Cannot find web user with pin=[" + msg.authCode + "]")
           }
         } else {
           nonWebUserJoinedVoiceConference(msg.voiceUserId, msg.callerIdName, msg.callerIdNum, msg.authCode, calledFromBbb=false)
+          startRecordingVoiceConference()
         }
       }
     }    
   }
+  
   
 	def handleVoiceUserLeftConfMessage(msg: VoiceUserLeftConfMessage) = {
     users.getUserWithVoiceUserId(msg.voiceUserId) foreach {user =>
@@ -428,6 +454,8 @@ trait UsersApp {
 	        processUserLeft(user.userID)
 	      }        
       }
+      
+      stopRecordingVoiceConference()
     }   
 	}
 	    

@@ -25,7 +25,6 @@ public class MessageFromJsonConverter {
 				  case KeepAliveMessage.KEEP_ALIVE_REQUEST:
 					  return processKeepAlive(payload);
 				  case RegisterUserMessage.REGISTER_USER:
-					  System.out.println("Registering a user");
 					  return RegisterUserMessage.fromJson(message);
 				  case ValidateAuthTokenMessage.VALIDATE_AUTH_TOKEN:
 					  return processValidateAuthTokenMessage(header, payload);
@@ -41,6 +40,10 @@ public class MessageFromJsonConverter {
 				  	return VoiceUserTalking.fromJson(message);
 				  case VoiceUserStatusChanged.VOICE_USER_STATUS_CHANGED:
 				  	return VoiceUserStatusChanged.fromJson(message);
+				  case VoiceConferenceRecordingStarted.VOICE_CONFERENCE_RECORDING_STARTED:
+				  	return VoiceConferenceRecordingStarted.fromJson(message);
+				  case VoiceConferenceRecordingStopped.VOICE_CONFERENCE_RECORDING_STOPPED:
+				  	return VoiceConferenceRecordingStopped.fromJson(message);
 				}
 			}
 		}

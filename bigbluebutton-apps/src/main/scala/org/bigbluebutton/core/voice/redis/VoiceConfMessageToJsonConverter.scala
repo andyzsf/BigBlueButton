@@ -16,6 +16,25 @@ object VoiceConfMessageToJsonConverter {
     Util.buildJson(header, payload)
   }
   
+  def stopRecordingVoiceConferenceToJson(msg: StopRecordingVoiceConference):String = {
+    val payload = new java.util.HashMap[String, Any]()
+    payload.put(Constants.MEETING_ID, msg.meetingID)
+    payload.put(Constants.VOICE_CONF, msg.voiceConf)
+    
+    val header = Util.buildHeader(MessageNames.STOP_RECORDING_VOICE_CONF, msg.version, None)
+    Util.buildJson(header, payload)    
+  }
+  
+  def startRecordingVoiceConferenceToJson(msg: StartRecordingVoiceConference):String = {
+    val payload = new java.util.HashMap[String, Any]()
+    payload.put(Constants.MEETING_ID, msg.meetingID)
+    payload.put(Constants.VOICE_CONF, msg.voiceConf)
+    payload.put(Constants.FILENAME, msg.filename)
+    
+    val header = Util.buildHeader(MessageNames.START_RECORDING_VOICE_CONF, msg.version, None)
+    Util.buildJson(header, payload)    
+  }
+  
   def meetingEndedToJson(msg: MeetingEnded):String = {
     val payload = new java.util.HashMap[String, Any]()
     payload.put(Constants.MEETING_ID, msg.meetingID)

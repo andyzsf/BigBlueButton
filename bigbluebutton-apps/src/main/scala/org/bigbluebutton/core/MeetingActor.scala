@@ -29,6 +29,9 @@ class MeetingActor(val meetingID: String, val meetingName: String, val recorded:
   var muted = false;
   var meetingEnded = false
   
+  var isRecordingVoice = false
+  var voiceRecordingFilename = ""
+    
   val TIMER_INTERVAL = 30000
   var hasLastWebUserLeft = false
   var lastWebUserLeftOn:Long = 0
@@ -51,6 +54,8 @@ class MeetingActor(val meetingID: String, val meetingName: String, val recorded:
 	    case msg: RegisterUser                           => handleRegisterUser(msg)
 	    case msg: VoiceUserStatusChangedMessage          => handleVoiceUserStatusChangedMessage(msg)
 	    case msg: VoiceUserLeftConfMessage               => handleVoiceUserLeftConfMessage(msg)
+	    case msg: VoiceConferenceRecordingStartedMessage => handleVoiceConferenceRecordingStartedMessage(msg)
+	    case msg: VoiceConferenceRecordingStoppedMessage => handleVoiceConferenceRecordingStoppedMessage(msg)
 	    case msg: VoiceUserJoined                        => handleVoiceUserJoined(msg)
 	    case msg: VoiceUserLeft                          => handleVoiceUserLeft(msg)
 	    case msg: VoiceUserMuted                         => handleVoiceUserMuted(msg)
@@ -93,19 +98,19 @@ class MeetingActor(val meetingID: String, val meetingName: String, val recorded:
     	case msg: SharePresentation                      => handleSharePresentation(msg)
     	case msg: GetSlideInfo                           => handleGetSlideInfo(msg)
     	case msg: PreuploadedPresentations               => handlePreuploadedPresentations(msg)
-        case msg: PreCreatedPoll                         => handlePreCreatedPoll(msg)
-        case msg: CreatePoll                             => handleCreatePoll(msg)
-        case msg: UpdatePoll                             => handleUpdatePoll(msg)
-        case msg: DestroyPoll                            => handleDestroyPoll(msg)
-        case msg: RemovePoll                             => handleRemovePoll(msg)
-        case msg: SharePoll                              => handleSharePoll(msg)
-        case msg: StopPoll                               => handleStopPoll(msg)
-        case msg: StartPoll                              => handleStartPoll(msg)
-        case msg: ClearPoll                              => handleClearPoll(msg)
-        case msg: GetPolls                               => handleGetPolls(msg)
-        case msg: RespondToPoll                          => handleRespondToPoll(msg)
-        case msg: HidePollResult                         => handleHidePollResult(msg)
-        case msg: ShowPollResult                         => handleShowPollResult(msg)
+      case msg: PreCreatedPoll                         => handlePreCreatedPoll(msg)
+      case msg: CreatePoll                             => handleCreatePoll(msg)
+      case msg: UpdatePoll                             => handleUpdatePoll(msg)
+      case msg: DestroyPoll                            => handleDestroyPoll(msg)
+      case msg: RemovePoll                             => handleRemovePoll(msg)
+      case msg: SharePoll                              => handleSharePoll(msg)
+      case msg: StopPoll                               => handleStopPoll(msg)
+      case msg: StartPoll                              => handleStartPoll(msg)
+      case msg: ClearPoll                              => handleClearPoll(msg)
+      case msg: GetPolls                               => handleGetPolls(msg)
+      case msg: RespondToPoll                          => handleRespondToPoll(msg)
+      case msg: HidePollResult                         => handleHidePollResult(msg)
+      case msg: ShowPollResult                         => handleShowPollResult(msg)
 	    case msg: SendWhiteboardAnnotationRequest        => handleSendWhiteboardAnnotationRequest(msg)
 	    case msg: GetWhiteboardShapesRequest             => handleGetWhiteboardShapesRequest(msg)
 	    case msg: ClearWhiteboardRequest                 => handleClearWhiteboardRequest(msg)
@@ -185,6 +190,43 @@ class MeetingActor(val meetingID: String, val meetingName: String, val recorded:
     outGW.send(new MeetingEnded(msg.meetingID, recorded, voiceBridge))
     outGW.send(new DisconnectAllUsers(msg.meetingID))
   }
+  
+  private def handleVoiceConferenceRecordingStartedMessage(msg: VoiceConferenceRecordingStartedMessage) {
+    if (recorded) {
+      if (!isRecordingVoice) {
+        logger.info("Voice conference is being recorded. mid=[" 
+            + meetingID + "] voiceConf=[" + voiceBridge + "]")            
+	      isRecordingVoice = true
+	      voiceRecordingFilename = msg.filename
+	      outGW.send(new VoiceRecordingStarted(meetingID, recorded, 
+	                       voiceRecordingFilename, msg.timestamp, voiceBridge))        
+      } else {
+        logger.info("Ignoring recording started message as voice conference is already being recorded. mid=[" 
+            + meetingID + "] voiceConf=[" + voiceBridge + "]") 
+      }
+    } else {
+        logger.info("Ignoring recording started message as voice conference is not set to be recorded. mid=[" 
+            + meetingID + "] voiceConf=[" + voiceBridge + "]")       
+    }   
+  }
+  
+  private def handleVoiceConferenceRecordingStoppedMessage(msg: VoiceConferenceRecordingStoppedMessage) {
+    if (recorded) {
+      if (isRecordingVoice) {
+        logger.info("Voice conference recording stopped. mid=[" 
+            + meetingID + "] voiceConf=[" + voiceBridge + "]")
+        isRecordingVoice = false
+        outGW.send(new VoiceRecordingStopped(meetingID, recorded, 
+                        voiceRecordingFilename, msg.timestamp, voiceBridge))      
+      } else {
+        logger.info("Ignoring recording stopped message as voice conference recording has already stopped. mid=[" 
+            + meetingID + "] voiceConf=[" + voiceBridge + "]")         
+      }
+    } else {
+        logger.info("Ignoring recording stopped message as voice conference is not set to be recorded. mid=[" 
+            + meetingID + "] voiceConf=[" + voiceBridge + "]")          
+    }
+  } 
   
   private def handleVoiceRecording(msg: VoiceRecording) {
      if (msg.recording) {

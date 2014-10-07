@@ -38,7 +38,15 @@ class UsersModel {
   def numWebUsers():Int = {
     uservos.values filter (u => u.phoneUser == false) size
   }
+  
+  def numberOfUsersInVoiceConference():Int = {
+    uservos.values filter (u => u.voiceUser.joined == true && u.listenOnly != true) size
+  }
 
+  def hasUserInVoiceConference():Boolean = {
+    numberOfUsersInVoiceConference > 0  
+  }
+  
   def getUserWithExternalId(userID:String):Option[UserVO] = {
     uservos.values find (u => u.externUserID == userID) 
   }

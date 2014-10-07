@@ -35,6 +35,14 @@ class VoiceInGateway(bbbGW: BigBlueButtonGateway) {
 	                          username, authCode, muted, talking, userId, calledFromBbb))
 	}
 	
+	def voiceConferenceRecordingStarted(voiceConf: String, filename: String, timestamp: String) {
+	  bbbGW.accept(new VoiceConferenceRecordingStartedMessage(voiceConf, voiceConf, filename, timestamp))	  
+	}
+	
+	def voiceConferenceRecordingStopped(voiceConf: String, timestamp: String) {
+	  bbbGW.accept(new VoiceConferenceRecordingStoppedMessage(voiceConf, voiceConf, timestamp))	  
+	}	
+	
 	def voiceUserLeftVoiceConf(voiceConf: String, userId: String) {
 	  bbbGW.accept(new VoiceUserLeftConfMessage(voiceConf, voiceConf, userId))
 	}

@@ -14,6 +14,8 @@ import org.bigbluebutton.conference.service.messaging.RegisterUserMessage;
 import org.bigbluebutton.conference.service.messaging.UserConnectedToGlobalAudio;
 import org.bigbluebutton.conference.service.messaging.UserDisconnectedFromGlobalAudio;
 import org.bigbluebutton.conference.service.messaging.ValidateAuthTokenMessage;
+import org.bigbluebutton.conference.service.messaging.VoiceConferenceRecordingStarted;
+import org.bigbluebutton.conference.service.messaging.VoiceConferenceRecordingStopped;
 import org.bigbluebutton.conference.service.messaging.VoiceRecordingStarted;
 import org.bigbluebutton.conference.service.messaging.VoiceUserLeft;
 import org.bigbluebutton.conference.service.messaging.VoiceUserStatusChanged;
@@ -95,6 +97,14 @@ public class MeetingMessageHandler implements MessageHandler {
 				} else if (msg instanceof VoiceRecordingStarted) {
 					VoiceRecordingStarted emm = (VoiceRecordingStarted) msg;
 					log.info("Received VoiceRecordingStarted request. Meeting id [{}]", emm.confId);				
+				} else if (msg instanceof VoiceConferenceRecordingStarted) {
+					VoiceConferenceRecordingStarted emm = (VoiceConferenceRecordingStarted) msg;
+					log.debug("Received VoiceConferenceRecordingStarted request. Meeting id [{}]", emm.confId);		
+					bbbGW.voiceConferenceRecordingStarted(emm.confId, emm.filename, emm.timestamp);
+				} else if (msg instanceof VoiceConferenceRecordingStopped) {
+					VoiceConferenceRecordingStopped emm = (VoiceConferenceRecordingStopped) msg;
+					log.debug("Received VoiceConferenceRecordingStopped request. Meeting id [{}]", emm.confId);	
+					bbbGW.voiceConferenceRecordingStopped(emm.confId, emm.timestamp);
 				} else {
 					log.warn("Unknown message: " + pattern + " " + channel + " " + message);
 				}
