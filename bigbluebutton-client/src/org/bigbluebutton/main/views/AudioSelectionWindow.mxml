@@ -55,11 +55,11 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
         vboxListen.percentWidth = 50;        
       }
       
-			private function onCreationComplete():void {
-				if (!phoneOptions.listenOnlyMode) btnListenOnly.enabled = false;
-				if (phoneOptions.presenterShareOnly && !UsersUtil.amIPresenter() && !UsersUtil.amIModerator()) btnMicrophone.enabled = false;
+      private function onCreationComplete():void {
+        if (!phoneOptions.listenOnlyMode) btnListenOnly.enabled = false;
+        if (phoneOptions.presenterShareOnly && !UsersUtil.amIPresenter() && !UsersUtil.amIModerator()) btnMicrophone.enabled = false;
 				
-				if (phoneOptions.showPhoneOption) {
+        if (phoneOptions.showPhoneOption) {
           if ((MeetingModel.getInstance().phoneInInstruction != "") && (MeetingModel.getInstance().phoneInInstruction != null)) {
             txtPhone.htmlText = MeetingModel.getInstance().phoneInInstruction;
           } else {
@@ -67,49 +67,51 @@ with BigBlueButton; if not, see <http://www.gnu.org/licenses/>.
           }
         } else {
           hidePhoneOption();
-				}
-			}
+        }
+      }
+
+      private function onMicClick():void {
+        trace("AudioSelectionWindow - Share Microphone Clicked");
+        var dispatcher:Dispatcher = new Dispatcher();
+        var command:JoinVoiceConferenceCommand = new JoinVoiceConferenceCommand();
+
+        command.mic = true;
+        dispatcher.dispatchEvent(command);
+
+        PopUpManager.removePopUp(this);
+      }
 			
-			private function onMicClick():void {
-				trace("AudioSelectionWindow - Share Microphone Clicked");
-				var dispatcher:Dispatcher = new Dispatcher();
-				var command:JoinVoiceConferenceCommand = new JoinVoiceConferenceCommand();
-				command.mic = true;
-				dispatcher.dispatchEvent(command);
+      private function onListenClick():void {
+        trace("AudioSelectionWindow - Share Microphone Clicked");
+        var dispatcher:Dispatcher = new Dispatcher();
+        var command:JoinVoiceConferenceCommand = new JoinVoiceConferenceCommand();
+
+        command.mic = false;
+        dispatcher.dispatchEvent(command);
+
+        PopUpManager.removePopUp(this);
+      }
+			
+      private function onCancelClicked():void {
+        trace("AudioSelectionWindow - Cancel clicked");
+        var dispatcher:Dispatcher = new Dispatcher();
+        dispatcher.dispatchEvent(new AudioSelectionWindowEvent(AudioSelectionWindowEvent.CLOSED_AUDIO_SELECTION));
 				
-				PopUpManager.removePopUp(this);
-			}
+        PopUpManager.removePopUp(this);
+      }
 			
-			private function onListenClick():void {
-				trace("AudioSelectionWindow - Share Microphone Clicked");
-				var dispatcher:Dispatcher = new Dispatcher();
-				var command:JoinVoiceConferenceCommand = new JoinVoiceConferenceCommand();
-				command.mic = false;
-				dispatcher.dispatchEvent(command);
-				
-				PopUpManager.removePopUp(this);
-			}
+      private function handleBecomePresenter(e:MadePresenterEvent):void {
+        if (phoneOptions.presenterShareOnly) btnMicrophone.enabled = true;
+      }
 			
-			private function onCancelClicked():void {
-				trace("AudioSelectionWindow - Cancel clicked");
-				var dispatcher:Dispatcher = new Dispatcher();
-				dispatcher.dispatchEvent(new AudioSelectionWindowEvent(AudioSelectionWindowEvent.CLOSED_AUDIO_SELECTION));
-				
-				PopUpManager.removePopUp(this);
-			}
-			
-			private function handleBecomePresenter(e:MadePresenterEvent):void {
-				if (phoneOptions.presenterShareOnly) btnMicrophone.enabled = true;
-			}
-			
-			private function handleBecomeViewer(e:MadePresenterEvent):void {
-				if (phoneOptions.presenterShareOnly && !UsersUtil.amIModerator()) btnMicrophone.enabled = false;
-			}
+      private function handleBecomeViewer(e:MadePresenterEvent):void {
+        if (phoneOptions.presenterShareOnly && !UsersUtil.amIModerator()) btnMicrophone.enabled = false;
+      }
 		]]>
 	</mx:Script>
 	<mx:VBox width="100%" height="100%"  paddingBottom="5" paddingLeft="5" paddingRight="5" paddingTop="5" horizontalAlign="right">
-		<mx:HBox width="100%">
-			<mx:TextArea borderSkin="{null}"
+		<mx:HBox width="100%" height="100%">
+			<mx:TextArea borderSkin="{null}" verticalScrollPolicy="off" height="100%"
 						 editable="false"
 						 text="{ResourceUtil.getInstance().getString('bbb.audioSelection.title')}"
 						 styleName="micSettingsWindowTitleStyle"
