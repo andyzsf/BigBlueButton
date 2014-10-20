@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>  
+<document type="freeswitch/xml">
+  <section name="dialplan" description="Forward Call">
+    <context name="public">
+    <extension name="bbb_extensions">
+      <condition field="destination_number" expression="^<%= destNum %>$">
+        <action application="set" data="jitterbuffer_msec=120"/>
+        <action application="answer"/>
+        <!-- Set custom variables. You also have to set verbose-events=true in conference profile
+         <param name="verbose-events" value="true"/> for these vars to be sent in the ESL event.
+         They will be sent as "variable_***", e.g., "variable_bbb_userid".
+        -->
+        <action application="export" data="bbb_userid=abc120"/>
+        <action application="export" data="bbb_user_role=moderator"/>
+        <action application="export" data="bbb_user_pin=1234"/>
+        <action application="export" data="bbb_user_listening_only=false"/>
+        <action application="export" data="bbb_user_called_from_bbb=true"/>
+        <action application="conference" data="$1@cdquality"/>
+      </condition>
+    </extension>
+    </context>
+  </section>
+</document>

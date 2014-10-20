@@ -1,0 +1,39 @@
+{
+  "name": "fsesl",
+  "version": "0.0.1",
+  "private": true,
+  "description": "FreeSWITCH Events Socket Layer for BigBlueButton",
+  "dependencies": {
+    "express": "3.5.1",
+    "ejs": "1.0.0",
+    "request": "2.34.0",
+    "bunyan": "0.22.2",
+    "xml2js": "0.4.4",
+    "xmlbuilder": "2.2.1",
+    "postal": "0.10.1",
+    "redis": "0.10.3",
+    "hiredis": "0.1.17",
+    "requirejs": "2.1.14",
+    "coffee-script": "1.7.1",
+    "lodash": "2.4.1",
+    "glob": "4.0.3",
+    "monotonic-timestamp": "0.0.9",
+    "modesl": "1.1.2"
+  },
+  "devDependencies": {
+    "chai": "1.9.1",
+    "codo": "2.0.9",
+    "grunt": "^0.4.5",
+    "grunt-mocha-test": "^0.11.0",
+    "mocha": "1.20.1",
+    "should": "4.0.4",
+    "sinon": "1.10.2",
+    "supertest": "0.13.0"
+  },
+  "scripts": {
+    "start": "coffee index.coffee"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
+}
