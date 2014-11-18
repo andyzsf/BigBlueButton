@@ -18,7 +18,9 @@ import org.bigbluebutton.core.util._
 case object StopMeetingActor
                       
 class MeetingActor(val meetingID: String, val meetingName: String, val recorded: Boolean, 
-                   val voiceBridge: String, duration: Long, val outGW: MessageOutGateway) 
+                   val voiceBridge: String, duration: Long, 
+                   val autoStartRecording: Boolean, val allowStartStopRecording: Boolean,
+                   val outGW: MessageOutGateway) 
                    extends Actor with UsersApp with PresentationApp
                    with PollApp with LayoutApp with ChatApp
                    with WhiteboardApp with LogHelper {  
@@ -151,6 +153,23 @@ class MeetingActor(val meetingID: String, val meetingName: String, val recorded:
 	  }      
   }
   
+  def startRecordingIfAutoStart() {
+    if (!recording && autoStartRecording && users.numWebUsers == 1) {
+      logger.info("Auto start recording for meeting=[" + meetingID + "]")
+     recording = true
+     outGW.send(new RecordingStatusChanged(meetingID, recorded, "system", recording))          
+    }
+  }
+  
+  def stopAutoStartedRecording() {
+    if (recording && autoStartRecording 
+        && users.numWebUsers == 0) {
+      logger.info("Last web user left. Auto stopping recording for meeting=[{}", meetingID)
+      recording = false
+      outGW.send(new RecordingStatusChanged(meetingID, recorded, "system", recording))          
+    }    
+  }
+  
   def startCheckingIfWeNeedToEndVoiceConf() {
     if (users.numWebUsers == 0) {
       lastWebUserLeftOn = timeNowInMinutes
@@ -240,8 +259,12 @@ class MeetingActor(val meetingID: String, val meetingName: String, val recorded:
   }
   
   private def handleSetRecordingStatus(msg: SetRecordingStatus) {
+    logger.debug("Change recording status for meeting [" + meetingID + "], recording=[" + msg.recording + "]")
+    if (allowStartStopRecording && recording != msg.recording) {
      recording = msg.recording
-     outGW.send(new RecordingStatusChanged(meetingID, recorded, msg.userId, msg.recording))
+     logger.debug("Sending recording status for meeting [" + meetingID + "], recording=[" + msg.recording + "]")
+     outGW.send(new RecordingStatusChanged(meetingID, recorded, msg.userId, msg.recording))      
+    }
   }   
 
   private def handleGetRecordingStatus(msg: GetRecordingStatus) {

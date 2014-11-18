@@ -253,6 +253,7 @@ trait UsersApp {
 	      }	  
 	    }   
       webUserJoined
+      startRecordingIfAutoStart()
     }
   }
 			
@@ -315,6 +316,7 @@ trait UsersApp {
      outGW.send(new UserJoinedVoice(meetingID, recorded, voiceBridge, nu))     
      if (meetingMuted)
         outGW.send(new MuteVoiceUser(meetingID, recorded, nu.userID, nu.userID, voiceBridge, nu.voiceUser.userId, meetingMuted))   
+    stopAutoStartedRecording()
   }
   
   def nonWebUserJoinedVoiceConference(voiceUserId: String, callerName: String, callerNum: String, pin: String, calledFromBbb: Boolean) {

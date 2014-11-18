@@ -103,6 +103,7 @@ package org.bigbluebutton.main.model.users
         response.room = result.response.room;
         response.authToken = result.response.room;
         response.record = result.response.record;
+        response.allowStartStopRecording = result.response.allowStartStopRecording;
         response.webvoiceconf = result.response.webvoiceconf;
         response.dialnumber = result.response.dialnumber;
         response.voicebridge = result.response.voicebridge;
@@ -146,8 +147,9 @@ package org.bigbluebutton.main.model.users
                                              .withDefaultAvatarUrl(response.avatarURL).withDialNumber(response.dialNumber)
                                              .withWelcomeMessage(response.welcome).withModOnlyMessage(response.modOnlyMessage)
                                              .withVoiceAuthToken(response.voiceAuthToken)
-                                             .withPhoneInInstruction(response.phoneInInstruction).build();
-        trace(LOG + "phoneInInstruction=[" + response.phoneInInstruction + "]");
+                                             .withAllowStartStopRecording(response.allowStartStopRecording)
+                                             .withPhoneInInstruction(response.phoneInInstruction)
+                                             .build();
         
 				if (_resultListener != null) _resultListener(true, response);
 			}

@@ -14,6 +14,7 @@ package org.bigbluebutton.core.model
     private var _modOnlyMessage:String;
     private var _voiceAuthToken:String;
     private var _phoneInInstruction:String;
+    private var _allowStartStopRecording:Boolean;
     
     public var isRecording: Boolean = false;
     
@@ -31,6 +32,7 @@ package org.bigbluebutton.core.model
       _modOnlyMessage = build.modOnlyMessage;
       _voiceAuthToken = build.voiceAuthToken;
       _phoneInInstruction = build.phoneInInstruction;
+      _allowStartStopRecording = build.allowStartStopRecording;
     }
     
     public function get name():String {
@@ -71,6 +73,10 @@ package org.bigbluebutton.core.model
     
     public function get phoneInInstruction():String {
       return _phoneInInstruction;
+    }
+
+    public function get allowStartStopRecording():Boolean {
+      return _allowStartStopRecording;
     }
   }
 }

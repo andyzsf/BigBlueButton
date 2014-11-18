@@ -101,8 +101,11 @@ class BigBlueButtonActor(outGW: MessageOutGateway) extends Actor with LogHelper 
   private def handleCreateMeeting(msg: CreateMeeting):Unit = {
     meetings.get(msg.meetingID) match {
       case None => {
-        logger.info("New meeting create request [" + msg.meetingName + "]")
-    	  var m = new MeetingActor(msg.meetingID, msg.meetingName, msg.recorded, msg.voiceBridge, msg.duration, outGW)
+        println("New meeting create request [" + msg.meetingName + "]")
+    	  var m = new MeetingActor(msg.meetingID, msg.meetingName, msg.recorded, 
+    	                  msg.voiceBridge, msg.duration, 
+    	                  msg.autoStartRecording, msg.allowStartStopRecording,
+    	                  outGW)
     	  m.start
     	  meetings += m.meetingID -> m
     	  outGW.send(new MeetingCreated(m.meetingID, m.recorded, m.meetingName, m.voiceBridge, msg.duration))
